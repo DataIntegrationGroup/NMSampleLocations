@@ -14,73 +14,128 @@
 # limitations under the License.
 # ===============================================================================
 from geoalchemy2 import Geometry
-from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Float, Boolean, Text, DateTime
+from sqlalchemy.orm import relationship, declared_attr, Mapped, mapped_column
 
 from models import Base
 
 
-class SampleLocations(Base):
-    __tablename__ = 'SampleLocations'
+class AutoBaseMixin:
+    @declared_attr
+    def __tablename__(self):
+        return self.__name__.lower()
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    @declared_attr
+    def id(self):
+        return Column(Integer, primary_key=True, autoincrement=True)
 
+
+class SampleLocation(Base, AutoBaseMixin):
     name = Column(String(100), nullable=False, unique=True)
     description = Column(String(255), nullable=True)
     # point = Column(Geometry(geometry_type='POINT', srid=4326))
+    owner_id = Column(Integer, ForeignKey('owner.id'), nullable=True)
 
 
-class Wells(Base):
-    __tablename__ = 'Wells'
+class Asset(Base, AutoBaseMixin):
+    fs_path = Column(String(255), nullable=False, unique=True)
+    name = Column(String(100), nullable=False, unique=True)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    location_id = Column(Integer, ForeignKey('SampleLocations.id'), nullable=False)
+
+class AssetLocation(Base, AutoBaseMixin):
+    asset_id = Column(Integer, ForeignKey('asset.id'), nullable=False)
+    location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+
+    asset = relationship("Asset")
+    location = relationship("SampleLocation")
+
+
+class Owner(Base, AutoBaseMixin):
+    name = Column(String(100), nullable=False, unique=True)
+    description = Column(String(255), nullable=True)
+
+    contacts = relationship("Contact", back_populates="owner", cascade="all, delete-orphan")
+
+
+class Contact(Base, AutoBaseMixin):
+    name = Column(String(100), nullable=False, unique=True)
+    description = Column(String(255), nullable=True)
+    email = Column(String(100), nullable=True)
+    phone = Column(String(20), nullable=True)
+    owner_id = Column(Integer, ForeignKey('owner.id'), nullable=False)
+
+    owner = relationship("Owner")
+
+
+class Well(Base, AutoBaseMixin):
+    location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
     well_depth = Column(Float, nullable=False)
     hole_depth = Column(Float, nullable=False)
-    # Define a relationship to SampleLocations if needed
-    location = relationship("SampleLocations")
+    # Define a relationship to samplelocations if needed
+    location = relationship("SampleLocation")
 
 
-class Springs(Base):
-    __tablename__ = 'Springs'
+class GroundWaterLevel(Base, AutoBaseMixin):
+    well_id = Column(Integer, ForeignKey('well.id'), nullable=False)
+    water_level = Column(Float, nullable=False)
+    water_level_bgs = Column(Float, nullable=False)
+    measuring_point_height = Column(Float, nullable=True)
+    timestamp = Column(DateTime, nullable=True)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    location_id = Column(Integer, ForeignKey('SampleLocations.id'), nullable=False)
+    # Define a relationship to samplelocations if needed
+    well = relationship("Well")
+#
+#
+# class Spring(Base):
+#     __tablename__ = 'Spring'
+#
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+#
+#     # Define a relationship to samplelocation if needed
+#     location = relationship("samplelocation")
+#
+#
+# class Stream(Base):
+#     __tablename__ = 'Stream'
+#
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+#
+#     # Define a relationship to samplelocation if needed
+#     location = relationship("samplelocation")
+#
+#
+# class Surface(Base):
+#     __tablename__ = 'Surface'
+#
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+#
+#     # Define a relationship to samplelocation if needed
+#     location = relationship("samplelocation")
+#
+#
+# class Subsurface(Base):
+#     __tablename__ = 'Subsurface'
+#
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+#
+#     # Define a relationship to samplelocation if needed
+#     location = relationship("samplelocation")
+#
 
-    # Define a relationship to SampleLocations if needed
-    location = relationship("SampleLocations")
+class User(Base):
+    __tablename__ = "user"
 
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    username: Mapped[str] = mapped_column(String(length=255), nullable=False)
+    password: Mapped[str] = mapped_column(String(length=255), nullable=False)
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    avatar_url: Mapped[str | None] = mapped_column(Text, nullable=True)
 
-class Streams(Base):
-    __tablename__ = 'Streams'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    location_id = Column(Integer, ForeignKey('SampleLocations.id'), nullable=False)
-
-    # Define a relationship to SampleLocations if needed
-    location = relationship("SampleLocations")
-
-
-class Surfaces(Base):
-    __tablename__ = 'Surfaces'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    location_id = Column(Integer, ForeignKey('SampleLocations.id'), nullable=False)
-
-    # Define a relationship to SampleLocations if needed
-    location = relationship("SampleLocations")
-
-
-class Subsurfaces(Base):
-    __tablename__ = 'Subsurfaces'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    location_id = Column(Integer, ForeignKey('SampleLocations.id'), nullable=False)
-
-    # Define a relationship to SampleLocations if needed
-    location = relationship("SampleLocations")
-
-
-
-
+    def __str__(self):
+        return self.username
 # ============= EOF =============================================

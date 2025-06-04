@@ -14,3 +14,7 @@ wheels/
 .idea/
 
 # VS Code
+
+# local development files
+alembic.db
+.env

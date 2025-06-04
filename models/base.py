@@ -14,7 +14,7 @@
 # limitations under the License.
 # ===============================================================================
 from geoalchemy2 import Geometry
-from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Float, Boolean, Text, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Float, Boolean, Text, DateTime, func
 from sqlalchemy.orm import relationship, declared_attr, Mapped, mapped_column
 
 from models import Base
@@ -29,10 +29,20 @@ class AutoBaseMixin:
     def id(self):
         return Column(Integer, primary_key=True, autoincrement=True)
 
+    @declared_attr
+    def created_at(self):
+        return Column(DateTime, nullable=False, default=func.now())
+
+    @declared_attr
+    def updated_at(self):
+        return Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
+
 
 class SampleLocation(Base, AutoBaseMixin):
     name = Column(String(100), nullable=False, unique=True)
     description = Column(String(255), nullable=True)
+    visible = Column(Boolean, default=True, nullable=False)
+
     # point = Column(Geometry(geometry_type='POINT', srid=4326))
     owner_id = Column(Integer, ForeignKey('owner.id'), nullable=True)
 
@@ -40,6 +50,7 @@ class SampleLocation(Base, AutoBaseMixin):
 class Asset(Base, AutoBaseMixin):
     fs_path = Column(String(255), nullable=False, unique=True)
     name = Column(String(100), nullable=False, unique=True)
+    file_type = Column(String(50), nullable=False)
 
 
 class AssetLocation(Base, AutoBaseMixin):
@@ -69,23 +80,14 @@ class Contact(Base, AutoBaseMixin):
 
 class Well(Base, AutoBaseMixin):
     location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
-    well_depth = Column(Float, nullable=False)
-    hole_depth = Column(Float, nullable=False)
+    well_depth = Column(Float, nullable=True)
+    hole_depth = Column(Float, nullable=True)
+    well_type = Column(String(50), nullable=True)  # e.g., "Production", "Observation", etc.
+
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")
 
 
-class GroundWaterLevel(Base, AutoBaseMixin):
-    well_id = Column(Integer, ForeignKey('well.id'), nullable=False)
-    water_level = Column(Float, nullable=False)
-    water_level_bgs = Column(Float, nullable=False)
-    measuring_point_height = Column(Float, nullable=True)
-    timestamp = Column(DateTime, nullable=True)
-
-    # Define a relationship to samplelocations if needed
-    well = relationship("Well")
-#
-#
 # class Spring(Base):
 #     __tablename__ = 'Spring'
 #

@@ -26,16 +26,6 @@ from models import sqlalchemy_sessionmaker, Base
 from models.base import SampleLocation, User
 
 
-@register(SampleLocation, sqlalchemy_sessionmaker=sqlalchemy_sessionmaker)
-class SampleLocationsAdmin(SqlAlchemyModelAdmin):
-    """
-    Admin interface for SampleLocations.
-    This class is a placeholder for future implementation.
-    """
-
-    list_display = ("name",)
-
-
 @register(User, sqlalchemy_sessionmaker=sqlalchemy_sessionmaker)
 class UserModelAdmin(SqlAlchemyModelAdmin):
     list_display = ("id", "username", "is_superuser")
@@ -56,7 +46,7 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
     }
 
     async def authenticate(
-        self, username: str, password: str
+            self, username: str, password: str
     ) -> uuid.UUID | int | None:
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
@@ -92,6 +82,5 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
             )
             await session.execute(query)
             await session.commit()
-
 
 # ============= EOF =============================================

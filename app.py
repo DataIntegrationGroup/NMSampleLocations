@@ -19,7 +19,7 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 
 from models import sqlalchemy_sessionmaker, sqlalchemy_engine, Base
-from models.admin import User
+from admin.user import User
 
 
 async def init_db():

@@ -23,7 +23,7 @@ from sqlalchemy import Integer, Boolean, Text, String, update, select
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models import sqlalchemy_sessionmaker, Base
-from models.base import SampleLocation, User
+from models.base import SampleLocation, Well
 
 
 @register(SampleLocation, sqlalchemy_sessionmaker=sqlalchemy_sessionmaker)
@@ -36,4 +36,21 @@ class SampleLocationsAdmin(SqlAlchemyModelAdmin):
     list_display = ("name",)
 
 
+@register(Well, sqlalchemy_sessionmaker=sqlalchemy_sessionmaker)
+class WellAdmin(SqlAlchemyModelAdmin):
+    """
+    Admin interface for Well.
+    This class is a placeholder for future implementation.
+    """
+
+    list_display = ("name", "location", "well_depth")
+    list_display_links = ("name",)
+    list_filter = ("location",)
+    search_fields = ("name", "location")
+
+    formfield_overrides = {
+        "name": (WidgetType.SlugInput, {"required": True}),
+        # "description": (WidgetType.Textarea, {"required": False}),
+        # "well_depth": (WidgetType.NumberInput, {"required": True}),
+    }
 # ============= EOF =============================================

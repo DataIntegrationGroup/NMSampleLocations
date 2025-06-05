@@ -19,7 +19,6 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 
 from models import sqlalchemy_sessionmaker, sqlalchemy_engine, Base
-from admin.user import User
 
 
 async def init_db():
@@ -29,6 +28,7 @@ async def init_db():
 
 
 async def create_superuser():
+    from admin.user import User
     async with sqlalchemy_sessionmaker() as s:
         user = User(
             username="admin",

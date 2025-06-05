@@ -13,14 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base, sessionmaker
-
-from fastadmin import SqlAlchemyModelAdmin, register
+from sqlalchemy.orm import declarative_base
 
 sqlalchemy_engine = create_async_engine(
-    "sqlite+aiosqlite:///./alembic.db",
+    "sqlite+aiosqlite:///./development.db",
     echo=True,
 )
 sqlalchemy_sessionmaker = async_sessionmaker(sqlalchemy_engine, expire_on_commit=False)

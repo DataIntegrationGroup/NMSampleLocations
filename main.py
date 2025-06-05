@@ -21,6 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# import all the admin models
+from admin.user import UserModelAdmin
+from admin.base import SampleLocationsAdmin, WellAdmin
+
 
 if __name__ == "__main__":
     import uvicorn

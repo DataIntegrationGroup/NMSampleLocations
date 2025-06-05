@@ -17,8 +17,6 @@ jobs:
         with:
           ignore: "F401,E501"
           args: "--exit-zero --select=E"
-          exclude: ""
-
   format:
     runs-on: ubuntu-latest
     steps:

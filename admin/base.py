@@ -36,5 +36,4 @@ class SampleLocationsAdmin(SqlAlchemyModelAdmin):
     list_display = ("name",)
 
 
-
 # ============= EOF =============================================

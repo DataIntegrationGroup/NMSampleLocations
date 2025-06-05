@@ -46,7 +46,7 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
     }
 
     async def authenticate(
-            self, username: str, password: str
+        self, username: str, password: str
     ) -> uuid.UUID | int | None:
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
@@ -82,5 +82,6 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
             )
             await session.execute(query)
             await session.commit()
+
 
 # ============= EOF =============================================

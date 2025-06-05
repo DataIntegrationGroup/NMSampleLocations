@@ -10,7 +10,6 @@ def test_get_wells():
     response = client.get("/base/wells")
     assert response.status_code == 200
 
-
     # assert "message" in data
     # assert data["message"] == "This endpoint will return all wells."
 

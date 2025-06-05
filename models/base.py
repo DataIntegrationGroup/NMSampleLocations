@@ -14,7 +14,18 @@
 # limitations under the License.
 # ===============================================================================
 from geoalchemy2 import Geometry
-from sqlalchemy import Column, Integer, String, ForeignKey, UUID, Float, Boolean, Text, DateTime, func
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    UUID,
+    Float,
+    Boolean,
+    Text,
+    DateTime,
+    func,
+)
 from sqlalchemy.orm import relationship, declared_attr, Mapped, mapped_column
 
 from models import Base
@@ -44,7 +55,7 @@ class SampleLocation(Base, AutoBaseMixin):
     visible = Column(Boolean, default=True, nullable=False)
 
     # point = Column(Geometry(geometry_type='POINT', srid=4326))
-    owner_id = Column(Integer, ForeignKey('owner.id'), nullable=True)
+    owner_id = Column(Integer, ForeignKey("owner.id"), nullable=True)
 
 
 class Asset(Base, AutoBaseMixin):
@@ -54,8 +65,8 @@ class Asset(Base, AutoBaseMixin):
 
 
 class AssetLocation(Base, AutoBaseMixin):
-    asset_id = Column(Integer, ForeignKey('asset.id'), nullable=False)
-    location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+    asset_id = Column(Integer, ForeignKey("asset.id"), nullable=False)
+    location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
 
     asset = relationship("Asset")
     location = relationship("SampleLocation")
@@ -65,7 +76,9 @@ class Owner(Base, AutoBaseMixin):
     name = Column(String(100), nullable=False, unique=True)
     description = Column(String(255), nullable=True)
 
-    contacts = relationship("Contact", back_populates="owner", cascade="all, delete-orphan")
+    contacts = relationship(
+        "Contact", back_populates="owner", cascade="all, delete-orphan"
+    )
 
 
 class Contact(Base, AutoBaseMixin):
@@ -73,16 +86,18 @@ class Contact(Base, AutoBaseMixin):
     description = Column(String(255), nullable=True)
     email = Column(String(100), nullable=True)
     phone = Column(String(20), nullable=True)
-    owner_id = Column(Integer, ForeignKey('owner.id'), nullable=False)
+    owner_id = Column(Integer, ForeignKey("owner.id"), nullable=False)
 
     owner = relationship("Owner")
 
 
 class Well(Base, AutoBaseMixin):
-    location_id = Column(Integer, ForeignKey('samplelocation.id'), nullable=False)
+    location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
     well_depth = Column(Float, nullable=True)
     hole_depth = Column(Float, nullable=True)
-    well_type = Column(String(50), nullable=True)  # e.g., "Production", "Observation", etc.
+    well_type = Column(
+        String(50), nullable=True
+    )  # e.g., "Production", "Observation", etc.
 
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")
@@ -128,6 +143,7 @@ class Well(Base, AutoBaseMixin):
 #     location = relationship("samplelocation")
 #
 
+
 class User(Base):
     __tablename__ = "user"
 
@@ -140,4 +156,6 @@ class User(Base):
 
     def __str__(self):
         return self.username
+
+
 # ============= EOF =============================================

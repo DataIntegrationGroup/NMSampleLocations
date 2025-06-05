@@ -12,9 +12,10 @@ def test_get_wells():
     data = response.json()
     assert response.status_code == 200
 
-
     # assert "message" in data
     # assert data["message"] == "This endpoint will return all wells."
+
+
 # class TestBase(TestCase):
 #     def test_get_wells(self):
 #         client = TestClient(app)

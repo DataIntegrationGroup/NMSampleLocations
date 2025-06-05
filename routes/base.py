@@ -19,6 +19,7 @@ router = APIRouter(
     prefix="/base",
 )
 
+
 @router.get("/wells", summary="Get all wells")
 def get_wells():
     """

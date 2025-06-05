@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app import app
 
 from routes.base import router
+
 app.include_router(router)
 
 

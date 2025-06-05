@@ -32,8 +32,8 @@ class SampleLocationsAdmin(SqlAlchemyModelAdmin):
     Admin interface for SampleLocations.
     This class is a placeholder for future implementation.
     """
-    list_display = ("name",)
 
+    list_display = ("name",)
 
 
 @register(User, sqlalchemy_sessionmaker=sqlalchemy_sessionmaker)
@@ -55,10 +55,14 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
         ),
     }
 
-    async def authenticate(self, username: str, password: str) -> uuid.UUID | int | None:
+    async def authenticate(
+        self, username: str, password: str
+    ) -> uuid.UUID | int | None:
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
-            query = select(self.model_cls).filter_by(username=username, password=password, is_superuser=True)
+            query = select(self.model_cls).filter_by(
+                username=username, password=password, is_superuser=True
+            )
             result = await session.scalars(query)
             obj = result.first()
             if not obj:
@@ -69,7 +73,11 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
             # use hash password for real usage
-            query = update(self.model_cls).where(User.id.in_([id])).values(password=password)
+            query = (
+                update(self.model_cls)
+                .where(User.id.in_([id]))
+                .values(password=password)
+            )
             await session.execute(query)
             await session.commit()
 
@@ -77,7 +85,13 @@ class UserModelAdmin(SqlAlchemyModelAdmin):
         sessionmaker = self.get_sessionmaker()
         async with sessionmaker() as session:
             # convert base64 to bytes, upload to s3/filestorage, get url and save or save base64 as is to db (don't recomment it)
-            query = update(self.model_cls).where(User.id.in_([obj.id])).values(**{field: base64})
+            query = (
+                update(self.model_cls)
+                .where(User.id.in_([obj.id]))
+                .values(**{field: base64})
+            )
             await session.execute(query)
             await session.commit()
+
+
 # ============= EOF =============================================

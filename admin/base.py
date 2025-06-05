@@ -53,4 +53,6 @@ class WellAdmin(SqlAlchemyModelAdmin):
         # "description": (WidgetType.Textarea, {"required": False}),
         # "well_depth": (WidgetType.NumberInput, {"required": True}),
     }
+
+
 # ============= EOF =============================================

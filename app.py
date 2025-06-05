@@ -29,6 +29,7 @@ async def init_db():
 
 async def create_superuser():
     from admin.user import User
+
     async with sqlalchemy_sessionmaker() as s:
         user = User(
             username="admin",

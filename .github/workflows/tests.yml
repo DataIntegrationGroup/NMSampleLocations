@@ -39,7 +39,7 @@ jobs:
 
     - name: Run tests
       # For example, using `pytest`
-      run: uv run pytest -vv --durations=20 --cov --cov-report=xml --junitxml=junit.xml
+      run: uv run pytest -vv --durations=20 --junitxml=junit.xml
 
     - name: Upload results to Codecov
       uses: codecov/codecov-action@v4

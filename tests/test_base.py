@@ -51,9 +51,52 @@ def test_add_well():
     assert "id" in data
 
 
+def test_add_well_screen():
+    response = client.post("/base/wellscreen", json={
+        "well_id": 1,
+        "screen_depth_top": 10.0,
+        "screen_depth_bottom": 20.0
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["well_id"] == 1
+
+
 def test_add_group():
     response = client.post("/base/group", json={"name": "Test Group"})
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
     assert data["name"] == "Test Group"
+
+
+def test_add_group_location():
+    response = client.post("/base/group_location", json={"group_id": 1, "location_id": 1})
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["group_id"] == 1
+    assert data["location_id"] == 1
+
+
+def test_add_owner():
+    response = client.post("/base/owner", json={"name": "Test Owner"})
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["name"] == "Test Owner"
+
+
+def test_add_contact():
+    response = client.post("/base/contact", json={
+        "owner_id": 1,
+        "name": "Test Contact",
+        "email": "fasdfasdf",
+        "phone": "1234567890"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["name"] == "Test Contact"
+    assert data["email"] == "fasdfasdf"

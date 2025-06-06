@@ -15,6 +15,8 @@
 # ===============================================================================
 from datetime import datetime
 
+from pydantic import field_validator, model_validator
+
 from schemas import ORMBaseModel
 
 
@@ -35,12 +37,57 @@ class CreateWell(ORMBaseModel):
     location_id: int
 
 
+class CreateScreenWell(ORMBaseModel):
+    """
+    Schema for creating a well screen.
+    """
+    well_id: int
+    screen_depth_bottom: float
+    screen_depth_top: float
+
+    # validate that screen depth bottom is greater than top
+    @model_validator(mode="after")
+    def check_depths(self):
+        if self.screen_depth_bottom < self.screen_depth_top:
+            raise ValueError("screen_depth_bottom must be greater than screen_depth_top")
+        return self
+
+
 class CreateGroup(ORMBaseModel):
     """
     Schema for creating a group.
     """
 
     name: str
+
+class CreateGroupLocation(ORMBaseModel):
+    """
+    Schema for creating a group location.
+    """
+
+    group_id: int
+    location_id: int
+
+
+class CreateOwner(ORMBaseModel):
+    """
+    Schema for creating an owner.
+    """
+
+    name: str
+    description: str | None = None
+
+
+class CreateContact(ORMBaseModel):
+    """
+    Schema for creating a contact.
+    """
+    owner_id: int
+
+    name: str | None = None
+    description: str | None = None
+    email: str | None = None
+    phone: str | None = None
 
 
 class BaseRecord(ORMBaseModel):

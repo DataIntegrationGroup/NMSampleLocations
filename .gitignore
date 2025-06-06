@@ -18,3 +18,4 @@ wheels/
 # local development files
 development.db
 .env
+reset_db.sh

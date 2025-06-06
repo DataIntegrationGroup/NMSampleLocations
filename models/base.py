@@ -110,7 +110,8 @@ class Well(Base, AutoBaseMixin):
 
 class WellScreen(Base, AutoBaseMixin):
     well_id = Column(Integer, ForeignKey("well.id"), nullable=False)
-    screen_depth = Column(Float, nullable=True)
+    screen_depth_top = Column(Float, nullable=False)
+    screen_depth_bottom = Column(Float, nullable=False)
     screen_type = Column(String(50), nullable=True)  # e.g., "PVC", "Steel", etc.
 
     # Define a relationship to well if needed

@@ -41,6 +41,7 @@ class CreateScreenWell(ORMBaseModel):
     """
     Schema for creating a well screen.
     """
+
     well_id: int
     screen_depth_bottom: float
     screen_depth_top: float
@@ -49,7 +50,9 @@ class CreateScreenWell(ORMBaseModel):
     @model_validator(mode="after")
     def check_depths(self):
         if self.screen_depth_bottom < self.screen_depth_top:
-            raise ValueError("screen_depth_bottom must be greater than screen_depth_top")
+            raise ValueError(
+                "screen_depth_bottom must be greater than screen_depth_top"
+            )
         return self
 
 
@@ -59,6 +62,7 @@ class CreateGroup(ORMBaseModel):
     """
 
     name: str
+
 
 class CreateGroupLocation(ORMBaseModel):
     """
@@ -82,6 +86,7 @@ class CreateContact(ORMBaseModel):
     """
     Schema for creating a contact.
     """
+
     owner_id: int
 
     name: str | None = None

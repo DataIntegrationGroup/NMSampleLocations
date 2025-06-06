@@ -27,7 +27,7 @@ class CreateLocation(ORMBaseModel):
 
     name: str
     description: str | None = None
-
+    point: str= 'POINT(0 0)'  # Default to a point at the origin
 
 class CreateWell(ORMBaseModel):
     """

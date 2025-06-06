@@ -13,21 +13,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+import os
+
+from geoalchemy2 import load_spatialite
+from sqlalchemy import create_engine
+from sqlalchemy.event import listen
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
 
+os.environ['SPATIALITE_LIBRARY_PATH'] = "/opt/homebrew/lib/mod_spatialite.dylib"
 
-sqlalchemy_engine = create_async_engine(
-    "sqlite+aiosqlite:///./development.db",
+# engine = create_async_engine(
+#     "sqlite+aiosqlite:///./development.db",
+#     echo=True,
+#     plugins=['geoalchemy2'],
+# )
+
+engine = create_engine(
+    "sqlite:///./development.db",
     echo=True,
+    plugins=['geoalchemy2'],
 )
-sqlalchemy_sessionmaker = async_sessionmaker(sqlalchemy_engine, expire_on_commit=False)
+
+listen(engine, "connect", load_spatialite)
+
+# sqlalchemy_sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
+sqlalchemy_sessionmaker = sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_db():
     session = sqlalchemy_sessionmaker()
     yield session
-    await session.close()
+    session.close()
 
 
 Base = declarative_base()

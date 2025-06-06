@@ -1,18 +1,20 @@
 from unittest import TestCase
 from fastapi.testclient import TestClient
+from geoalchemy2 import load_spatialite
+from sqlalchemy.event import listen
+
 from main import app
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy import create_engine
 
-sync_engine = create_engine(
-    "sqlite:///./development.db",
-    echo=True,
-)
-from models import Base
+# engine = create_engine(
+#     "sqlite:///./development.db",
+#     echo=True)
 
-Base.metadata.drop_all(sync_engine)
-Base.metadata.create_all(sync_engine)
+from models import Base, engine
+
+Base.metadata.drop_all(engine)
+Base.metadata.create_all(engine)
 
 client = TestClient(app)
 

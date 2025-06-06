@@ -18,11 +18,11 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 
-from models import sqlalchemy_sessionmaker, sqlalchemy_engine, Base
+from models import sqlalchemy_sessionmaker, engine, Base
 
 
 async def init_db():
-    async with sqlalchemy_engine.begin() as c:
+    async with engine.begin() as c:
         await c.run_sync(Base.metadata.drop_all)
         await c.run_sync(Base.metadata.create_all)
 

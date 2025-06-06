@@ -50,7 +50,7 @@ async def adder(db, table, model):
     """
     obj = table(**model.model_dump())
     db.add(obj)
-    await db.commit()
+    db.commit()
     return obj
 
 
@@ -122,7 +122,7 @@ async def get_location(db: Session = Depends(get_db)):
     # Placeholder for actual database retrieval logic
     # return {"message": "This endpoint will return all wells."}
     sql = select(SampleLocation)
-    result = await db.execute(sql)
+    result = db.execute(sql)
     return result
 
 
@@ -134,7 +134,7 @@ async def get_wells(db: Session = Depends(get_db)):
     # Placeholder for actual database retrieval logic
     # return {"message": "This endpoint will return all wells."}
     sql = select(Well)
-    result = await db.execute(sql)
+    result = db.execute(sql)
     return result
 
 
@@ -144,7 +144,7 @@ async def get_groups(db: Session = Depends(get_db)):
     Retrieve all groups from the database.
     """
     sql = select(Group)
-    result = await db.execute(sql)
+    result = db.execute(sql)
     return result.all()
 
 

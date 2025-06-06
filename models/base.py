@@ -59,7 +59,7 @@ class SampleLocation(Base, AutoBaseMixin):
     description = Column(String(255), nullable=True)
     visible = Column(Boolean, default=True, nullable=False)
 
-    # point = Column(Geometry(geometry_type='POINT', srid=4326))
+    point = Column(Geometry('POINT', srid=4326))
     owner_id = Column(Integer, ForeignKey("owner.id"), nullable=True)
 
 

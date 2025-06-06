@@ -42,11 +42,13 @@ class AutoBaseMixin:
 
     @declared_attr
     def created_at(self):
-        return Column(DateTime, nullable=False, default=func.now())
+        return Column(DateTime, nullable=False, server_default=func.now())
 
     @declared_attr
     def updated_at(self):
-        return Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
+        return Column(DateTime, nullable=False,
+                      server_default=func.now(),
+                      server_onupdate=func.now())
 
 
 class SampleLocation(Base, AutoBaseMixin):
@@ -101,6 +103,28 @@ class Well(Base, AutoBaseMixin):
 
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")
+
+
+class WellScreen(Base, AutoBaseMixin):
+    well_id = Column(Integer, ForeignKey("well.id"), nullable=False)
+    screen_depth = Column(Float, nullable=True)
+    screen_type = Column(String(50), nullable=True)  # e.g., "PVC", "Steel", etc.
+
+    # Define a relationship to well if needed
+    well = relationship("Well")
+
+
+class Group(Base, AutoBaseMixin):
+    name = Column(String(100), nullable=False, unique=True)
+    description = Column(String(255), nullable=True)
+
+    # Define a relationship to samplelocations if needed
+    # locations = relationship("SampleLocation")
+
+
+class GroupLocation(Base, AutoBaseMixin):
+    group_id = Column(Integer, ForeignKey("group.id"), nullable=False)
+    location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
 
 
 # class Spring(Base):

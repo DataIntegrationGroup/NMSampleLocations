@@ -13,23 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base
+from pydantic import BaseModel, ConfigDict
 
 
-sqlalchemy_engine = create_async_engine(
-    "sqlite+aiosqlite:///./development.db",
-    echo=True,
-)
-sqlalchemy_sessionmaker = async_sessionmaker(sqlalchemy_engine, expire_on_commit=False)
-
-
-async def get_db():
-    session = sqlalchemy_sessionmaker()
-    yield session
-    await session.close()
-
-
-Base = declarative_base()
-
+class ORMBaseModel(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+    )
 # ============= EOF =============================================

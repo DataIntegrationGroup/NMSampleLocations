@@ -4,11 +4,13 @@ from main import app
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 sync_engine = create_engine(
     "sqlite:///./development.db",
     echo=True,
 )
 from models import Base
+
 Base.metadata.drop_all(sync_engine)
 Base.metadata.create_all(sync_engine)
 
@@ -19,9 +21,11 @@ def test_get_wells():
     response = client.get("/base/well")
     assert response.status_code == 200
 
+
 def test_get_locations():
     response = client.get("/base/location")
     assert response.status_code == 200
+
 
 def test_get_groups():
     response = client.get("/base/group")

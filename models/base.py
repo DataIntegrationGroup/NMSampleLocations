@@ -46,9 +46,12 @@ class AutoBaseMixin:
 
     @declared_attr
     def updated_at(self):
-        return Column(DateTime, nullable=False,
-                      server_default=func.now(),
-                      server_onupdate=func.now())
+        return Column(
+            DateTime,
+            nullable=False,
+            server_default=func.now(),
+            server_onupdate=func.now(),
+        )
 
 
 class SampleLocation(Base, AutoBaseMixin):

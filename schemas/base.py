@@ -22,6 +22,7 @@ class CreateLocation(ORMBaseModel):
     """
     Schema for creating a sample location.
     """
+
     name: str
     description: str | None = None
 
@@ -30,6 +31,7 @@ class CreateWell(ORMBaseModel):
     """
     Schema for creating a well.
     """
+
     location_id: int
 
 
@@ -37,6 +39,7 @@ class CreateGroup(ORMBaseModel):
     """
     Schema for creating a group.
     """
+
     name: str
 
 
@@ -44,6 +47,7 @@ class BaseRecord(ORMBaseModel):
     """
     Base schema for records that have an ID.
     """
+
     id: int
     created_at: datetime
 
@@ -52,6 +56,7 @@ class GetLocation(BaseRecord):
     """
     Schema for a sample location.
     """
+
     name: str | None = None
     description: str | None = None
 
@@ -60,6 +65,7 @@ class GetWell(BaseRecord):
     """
     Schema for a well.
     """
+
     id: int
 
 
@@ -67,8 +73,10 @@ class GetGroup(BaseRecord):
     """
     Schema for a group.
     """
+
     id: int
     # name: str | None = None
     # description: str | None = None
+
 
 # ============= EOF =============================================

@@ -15,6 +15,7 @@
 # ===============================================================================
 from schemas import ORMBaseModel
 
+
 class SampleLocationResponse(ORMBaseModel):
     """
     Response schema for sample location details.
@@ -24,6 +25,7 @@ class SampleLocationResponse(ORMBaseModel):
     name: str
     description: str | None = None
     # point: str  # Assuming point is a string representation of a point (e.g., "POINT(0 0)")
+
 
 class WellResponse(ORMBaseModel):
     """
@@ -55,6 +57,7 @@ class OwnerResponse(ORMBaseModel):
     # email: str | None = None
     # phone: str | None = None
 
+
 class ContactResponse(ORMBaseModel):
     """
     Response schema for contact details.
@@ -85,4 +88,6 @@ class GroupLocationResponse(ORMBaseModel):
     id: int
     group_id: int
     location_id: int
+
+
 # ============= EOF =============================================

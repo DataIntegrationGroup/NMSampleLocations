@@ -188,6 +188,7 @@ def test_item_get_group_locations():
     assert data["group_id"] == 1
     assert data["location_id"] == 1
 
+
 def test_item_get_contact():
     response = client.get("/base/contact/1")
     assert response.status_code == 200

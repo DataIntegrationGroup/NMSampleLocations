@@ -40,8 +40,15 @@ from schemas.base import (
     CreateContact,
     CreateScreenWell,
 )
-from schemas.base_responses import OwnerResponse, SampleLocationResponse, WellResponse, GroupResponse, ContactResponse, \
-    WellScreenResponse, GroupLocationResponse
+from schemas.base_responses import (
+    OwnerResponse,
+    SampleLocationResponse,
+    WellResponse,
+    GroupResponse,
+    ContactResponse,
+    WellScreenResponse,
+    GroupLocationResponse,
+)
 
 router = APIRouter(
     prefix="/base",
@@ -118,9 +125,11 @@ async def create_contact(contact_data: CreateContact, db: Session = Depends(get_
 
 
 # ==== Get ============================================
-@router.get("/location",
-            response_model=List[SampleLocationResponse],
-            summary="Get all locations")
+@router.get(
+    "/location",
+    response_model=List[SampleLocationResponse],
+    summary="Get all locations",
+)
 async def get_location(session: Session = Depends(get_db)):
     """
     Retrieve all wells from the database.
@@ -132,9 +141,8 @@ async def get_location(session: Session = Depends(get_db)):
     # return result
     return simple_all_getter(session, SampleLocation)
 
-@router.get("/well",
-            response_model=List[WellResponse],
-            summary="Get all wells")
+
+@router.get("/well", response_model=List[WellResponse], summary="Get all wells")
 async def get_wells(session: Session = Depends(get_db)):
     """
     Retrieve all wells from the database.
@@ -146,9 +154,8 @@ async def get_wells(session: Session = Depends(get_db)):
     # return result
     return simple_all_getter(session, Well)
 
-@router.get("/group",
-            response_model=List[GroupResponse],
-            summary="Get groups")
+
+@router.get("/group", response_model=List[GroupResponse], summary="Get groups")
 async def get_groups(session: Session = Depends(get_db)):
     """
     Retrieve all groups from the database.
@@ -159,8 +166,7 @@ async def get_groups(session: Session = Depends(get_db)):
     return simple_all_getter(session, Group)
 
 
-@router.get("/owner",
-            response_model=List[OwnerResponse], summary="Get owners")
+@router.get("/owner", response_model=List[OwnerResponse], summary="Get owners")
 async def get_owners(session: Session = Depends(get_db)):
     """
     Retrieve all owners from the database.
@@ -169,9 +175,8 @@ async def get_owners(session: Session = Depends(get_db)):
     # result = db.execute(sql)
     # return result.all()
 
-@router.get("/contact",
-            response_model=List[ContactResponse],
-            summary="Get contacts")
+
+@router.get("/contact", response_model=List[ContactResponse], summary="Get contacts")
 async def get_contacts(session: Session = Depends(get_db)):
     """
     Retrieve all contacts from the database.
@@ -181,28 +186,32 @@ async def get_contacts(session: Session = Depends(get_db)):
     return simple_all_getter(session, Contact)
 
 
-@router.get("/wellscreen",
-            response_model=List[WellScreenResponse],
-            summary="Get well screens")
+@router.get(
+    "/wellscreen", response_model=List[WellScreenResponse], summary="Get well screens"
+)
 async def get_well_screens(session: Session = Depends(get_db)):
     """
     Retrieve all well screens from the database.
     """
     return simple_all_getter(session, WellScreen)
 
-@router.get("/group_location",
-            response_model=List[GroupLocationResponse],
-            summary="Get group locations")
+
+@router.get(
+    "/group_location",
+    response_model=List[GroupLocationResponse],
+    summary="Get group locations",
+)
 async def get_group_locations(session: Session = Depends(get_db)):
     """
     Retrieve all group locations from the database.
     """
     return simple_all_getter(session, GroupLocation)
 
+
 # ============= Get by ID ============================================
-@router.get("/owner/{owner_id}",
-            response_model=OwnerResponse,
-            summary="Get owner by ID")
+@router.get(
+    "/owner/{owner_id}", response_model=OwnerResponse, summary="Get owner by ID"
+)
 async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db)):
     """
     Retrieve an owner by ID from the database.
@@ -212,9 +221,12 @@ async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db)):
         return {"message": "Owner not found"}
     return owner
 
-@router.get("/location/{location_id}",
-            response_model=SampleLocationResponse,
-            summary="Get location by ID")
+
+@router.get(
+    "/location/{location_id}",
+    response_model=SampleLocationResponse,
+    summary="Get location by ID",
+)
 async def get_location_by_id(location_id: int, session: Session = Depends(get_db)):
     """
     Retrieve a sample location by ID from the database.
@@ -224,9 +236,8 @@ async def get_location_by_id(location_id: int, session: Session = Depends(get_db
         return {"message": "Location not found"}
     return location
 
-@router.get("/well/{well_id}",
-            response_model=WellResponse,
-            summary="Get well by ID")
+
+@router.get("/well/{well_id}", response_model=WellResponse, summary="Get well by ID")
 async def get_well_by_id(well_id: int, session: Session = Depends(get_db)):
     """
     Retrieve a well by ID from the database.
@@ -236,7 +247,10 @@ async def get_well_by_id(well_id: int, session: Session = Depends(get_db)):
         return {"message": "Well not found"}
     return well
 
-@router.get('/wellscreen/{wellscreen_id}',)
+
+@router.get(
+    "/wellscreen/{wellscreen_id}",
+)
 async def get_well_screen_by_id(wellscreen_id: int, session: Session = Depends(get_db)):
     """
     Retrieve a well screen by ID from the database.
@@ -246,9 +260,10 @@ async def get_well_screen_by_id(wellscreen_id: int, session: Session = Depends(g
         return {"message": "Well screen not found"}
     return well_screen
 
-@router.get("/group/{group_id}",
-            response_model=GroupResponse,
-            summary="Get group by ID")
+
+@router.get(
+    "/group/{group_id}", response_model=GroupResponse, summary="Get group by ID"
+)
 async def get_group_by_id(group_id: int, session: Session = Depends(get_db)):
     """
     Retrieve a group by ID from the database.
@@ -258,10 +273,15 @@ async def get_group_by_id(group_id: int, session: Session = Depends(get_db)):
         return {"message": "Group not found"}
     return group
 
-@router.get("/group_location/{group_location_id}",
-            response_model=GroupLocationResponse,
-            summary="Get group location by ID")
-async def get_group_location_by_id(group_location_id: int, session: Session = Depends(get_db)):
+
+@router.get(
+    "/group_location/{group_location_id}",
+    response_model=GroupLocationResponse,
+    summary="Get group location by ID",
+)
+async def get_group_location_by_id(
+    group_location_id: int, session: Session = Depends(get_db)
+):
     """
     Retrieve a group location by ID from the database.
     """
@@ -270,9 +290,10 @@ async def get_group_location_by_id(group_location_id: int, session: Session = De
         return {"message": "Group location not found"}
     return group_location
 
-@router.get("/contact/{contact_id}",
-            response_model=ContactResponse,
-            summary="Get contact by ID")
+
+@router.get(
+    "/contact/{contact_id}", response_model=ContactResponse, summary="Get contact by ID"
+)
 async def get_contact_by_id(contact_id: int, session: Session = Depends(get_db)):
     """
     Retrieve a contact by ID from the database.
@@ -281,6 +302,7 @@ async def get_contact_by_id(contact_id: int, session: Session = Depends(get_db))
     if not contact:
         return {"message": "Contact not found"}
     return contact
+
 
 def simple_get_by_id(session, table, item_id):
     """
@@ -298,4 +320,6 @@ def simple_all_getter(session, table):
     sql = select(table)
     result = session.execute(sql)
     return result.scalars().all()
+
+
 # ============= EOF =============================================

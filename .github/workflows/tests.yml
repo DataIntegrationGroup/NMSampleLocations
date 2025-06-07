@@ -38,6 +38,8 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -46,8 +48,7 @@ jobs:
 
     - name: Install the project
       run: uv sync --locked --all-extras --dev
-      with:
-        enable-cache: true
+
     - name: Locate and set SpatiaLite library path
       run: |
         find /usr -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;

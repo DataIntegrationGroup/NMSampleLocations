@@ -60,7 +60,7 @@ jobs:
 #        echo "SpatiaLite library path: $(find /usr/ -name mod_spatialite.so)"
     - name: Run tests
       env:
-        SPATIALITE_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu/mod_spatialite.so
+        SPATIALITE_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu/libspatialite
 #        SPATIALITE_LIBRARY_PATH: ${{ env.SPATIALITE_LIBRARY_PATH }}
       # For example, using `pytest`
       run: uv run pytest -vv --durations=20 --junitxml=junit.xml

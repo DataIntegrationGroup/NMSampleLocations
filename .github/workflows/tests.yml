@@ -49,9 +49,10 @@ jobs:
 
     - name: Locate and set SpatiaLite library path
       run: |
-        export SPATIALITE_LIBRARY_PATH=$(find / -name mod_spatialite.* )
-        echo "SPATIALITE_LIBRARY_PATH=$SPATIALITE_LIBRARY_PATH" >> $GITHUB_ENV
-        echo "SpatiaLite library path: $SPATIALITE_LIBRARY_PATH"
+        find /usr -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;
+#        export SPATIALITE_LIBRARY_PATH=$(find /usr -name *spatialite.* )
+#        echo "SPATIALITE_LIBRARY_PATH=$SPATIALITE_LIBRARY_PATH" >> $GITHUB_ENV
+#        echo "SpatiaLite library path: $SPATIALITE_LIBRARY_PATH"
 #    - name: locate mod_spatialite.so
 #      run:  |
 #        echo "SpatiaLite library path: $(find /usr/ -name mod_spatialite.so)"

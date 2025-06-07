@@ -35,16 +35,22 @@ jobs:
       run: |
           sudo apt-get update
           sudo apt-get install -y libspatialite-dev
+
     - name: Install uv
       uses: astral-sh/setup-uv@v5
 
-    - name: "Set up Python"
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version-file: "pyproject.toml"
 
     - name: Install the project
       run: uv sync --locked --all-extras --dev
+
+
+    - name: locate mod_spatialite.so
+      run:  |
+        echo "SpatiaLite library path: $(find /usr/lib -name mod_spatialite.so)"
     - name: Run tests
       env:
         SPATIALITE_LIBRARY_PATH: "/usr/lib/x86_64-linux-gnu/mod_spatialite.so"

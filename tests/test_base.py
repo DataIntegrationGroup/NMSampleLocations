@@ -22,19 +22,30 @@ def test_add_location():
 
 
 def test_add_well():
-    response = client.post("/base/well", json={"location_id": 1,
-                                               'api_id': '1001-0001',
-                                               'ose_pod_id': 'RA-0001',})
+    response = client.post(
+        "/base/well",
+        json={
+            "location_id": 1,
+            "api_id": "1001-0001",
+            "ose_pod_id": "RA-0001",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
 
-    response = client.post("/base/well", json={"location_id": 2,
-                                               'api_id': '1001-0002',
-                                               'ose_pod_id': 'RA-0002',})
+    response = client.post(
+        "/base/well",
+        json={
+            "location_id": 2,
+            "api_id": "1001-0002",
+            "ose_pod_id": "RA-0002",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
     assert "id" in data
+
 
 def test_add_spring():
     response = client.post("/base/spring", json={"location_id": 1})
@@ -104,6 +115,7 @@ def test_get_springs():
     assert response.status_code == 200
     assert len(response.json()) > 0
 
+
 def test_get_wells():
     response = client.get("/base/well")
     assert response.status_code == 200
@@ -145,15 +157,17 @@ def test_get_group_locations():
     assert response.status_code == 200
     assert len(response.json()) > 0
 
+
 # test item retrieval via filter ===========================================
 def test_item_get_well_filter():
-    response = client.get("/base/well", params={"api_id": '1001-0002'})
+    response = client.get("/base/well", params={"api_id": "1001-0002"})
     assert response.status_code == 200
     data = response.json()
-    assert len(data) ==1
+    assert len(data) == 1
     item = data[0]
-    assert 'api_id' in item
-    assert item["api_id"] == '1001-0002'
+    assert "api_id" in item
+    assert item["api_id"] == "1001-0002"
+
 
 # Test item retrieval ======================================================
 def test_item_get_spring():
@@ -162,6 +176,7 @@ def test_item_get_spring():
     data = response.json()
     assert data["id"] == 1
     assert data["location_id"] == 1
+
 
 def test_item_get_owner():
     response = client.get("/base/owner/1")

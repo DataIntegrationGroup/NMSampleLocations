@@ -92,6 +92,7 @@ class GroupLocationResponse(ORMBaseModel):
     group_id: int
     location_id: int
 
+
 class SpringResponse(ORMBaseModel):
     """
     Response schema for spring details.
@@ -100,5 +101,6 @@ class SpringResponse(ORMBaseModel):
     id: int
     location_id: int
     description: str | None = None
+
 
 # ============= EOF =============================================

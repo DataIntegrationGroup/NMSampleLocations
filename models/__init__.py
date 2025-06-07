@@ -21,8 +21,8 @@ from sqlalchemy.event import listen
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# if os.environ.get("SPATIALITE_LIBRARY_PATH") is None:
-#     os.environ["SPATIALITE_LIBRARY_PATH"] = "/opt/homebrew/lib/mod_spatialite.dylib"
+if os.environ.get("SPATIALITE_LIBRARY_PATH") is None:
+    os.environ["SPATIALITE_LIBRARY_PATH"] = "/opt/homebrew/lib/mod_spatialite.dylib"
 
 # engine = create_async_engine(
 #     "sqlite+aiosqlite:///./development.db",

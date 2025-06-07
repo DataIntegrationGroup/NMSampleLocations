@@ -19,21 +19,7 @@ Base.metadata.create_all(engine)
 client = TestClient(app)
 
 
-def test_get_wells():
-    response = client.get("/base/well")
-    assert response.status_code == 200
-
-
-def test_get_locations():
-    response = client.get("/base/location")
-    assert response.status_code == 200
-
-
-def test_get_groups():
-    response = client.get("/base/group")
-    assert response.status_code == 200
-
-
+#  ADD tests ======================================================
 def test_add_location():
     response = client.post("/base/location", json={"name": "Test Location"})
     assert response.status_code == 200
@@ -106,3 +92,107 @@ def test_add_contact():
     assert "id" in data
     assert data["name"] == "Test Contact"
     assert data["email"] == "fasdfasdf"
+
+
+# GET tests ======================================================
+def test_get_wells():
+    response = client.get("/base/well")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_locations():
+    response = client.get("/base/location")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_groups():
+    response = client.get("/base/group")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_owners():
+    response = client.get("/base/owner")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_contacts():
+    response = client.get("/base/contact")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_well_screens():
+    response = client.get("/base/wellscreen")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+def test_get_group_locations():
+    response = client.get("/base/group_location")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+
+
+# Test item retrieval ======================================================
+def test_item_get_owner():
+    response = client.get("/base/owner/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["name"] == "Test Owner"
+
+
+def test_item_get_location():
+    response = client.get("/base/location/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["name"] == "Test Location"
+
+
+def test_item_get_group():
+    response = client.get("/base/group/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["name"] == "Test Group"
+
+
+def test_item_get_wells():
+    response = client.get("/base/well/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["location_id"] == 1
+
+
+def test_item_get_well_screens():
+    response = client.get("/base/wellscreen/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["well_id"] == 1
+    assert data["screen_depth_top"] == 10.0
+    assert data["screen_depth_bottom"] == 20.0
+
+
+def test_item_get_group_locations():
+    response = client.get("/base/group_location/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["group_id"] == 1
+    assert data["location_id"] == 1
+
+def test_item_get_contact():
+    response = client.get("/base/contact/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == 1
+    assert data["name"] == "Test Contact"
+    assert data["email"] == "fasdfasdf"
+    assert data["phone"] == "1234567890"

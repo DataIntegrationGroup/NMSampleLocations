@@ -47,7 +47,7 @@ jobs:
     - name: Install the project
       run: uv sync --locked --all-extras --dev
 
-    - name: Locate and set SpatiaLite library path
+#    - name: Locate and set SpatiaLite library path
 #      run: |
 #        find /opt -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;
 #        export SPATIALITE_LIBRARY_PATH=$(find /usr -name *spatialite.* )

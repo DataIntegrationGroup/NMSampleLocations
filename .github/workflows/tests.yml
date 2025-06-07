@@ -34,7 +34,7 @@ jobs:
     - name: Install SpatiaLite
       run: |
           sudo apt-get update
-          sudo apt-get install -y libspatialite-dev
+          sudo apt-get install -y libspatialite-dev spatialite-bin
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -46,10 +46,11 @@ jobs:
 
     - name: Install the project
       run: uv sync --locked --all-extras --dev
-
-#    - name: Locate and set SpatiaLite library path
-#      run: |
-#        find /opt -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;
+      with:
+        enable-cache: true
+    - name: Locate and set SpatiaLite library path
+      run: |
+        find /usr -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;
 #        export SPATIALITE_LIBRARY_PATH=$(find /usr -name *spatialite.* )
 #        echo "SPATIALITE_LIBRARY_PATH=$SPATIALITE_LIBRARY_PATH" >> $GITHUB_ENV
 #        echo "SpatiaLite library path: $SPATIALITE_LIBRARY_PATH"

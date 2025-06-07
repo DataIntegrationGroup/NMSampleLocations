@@ -28,14 +28,33 @@ from models.base import (
     Owner,
     Contact,
     WellScreen,
-    Spring, Equipment,
+    Spring,
+    Equipment,
 )
-from schemas.base_get import GetWell,GetLocation, GetGroup
-from schemas.base_create import (CreateWell, CreateLocation, CreateGroup, CreateGroupLocation, CreateOwner,
-                                 CreateContact, CreateScreenWell, CreateSpring, CreateEquipment)
+from schemas.base_get import GetWell, GetLocation, GetGroup
+from schemas.base_create import (
+    CreateWell,
+    CreateLocation,
+    CreateGroup,
+    CreateGroupLocation,
+    CreateOwner,
+    CreateContact,
+    CreateScreenWell,
+    CreateSpring,
+    CreateEquipment,
+)
 
-from schemas.base_responses import OwnerResponse, SampleLocationResponse, WellResponse, GroupResponse, ContactResponse, \
-    WellScreenResponse, GroupLocationResponse, SpringResponse, EquipmentResponse
+from schemas.base_responses import (
+    OwnerResponse,
+    SampleLocationResponse,
+    WellResponse,
+    GroupResponse,
+    ContactResponse,
+    WellScreenResponse,
+    GroupLocationResponse,
+    SpringResponse,
+    EquipmentResponse,
+)
 
 router = APIRouter(
     prefix="/base",
@@ -55,7 +74,9 @@ async def adder(session, table, model):
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
 )
-async def create_location(location_data: CreateLocation, session: Session = Depends(get_db)):
+async def create_location(
+    location_data: CreateLocation, session: Session = Depends(get_db)
+):
     """
     Create a new sample location in the database.
     """
@@ -107,7 +128,9 @@ async def create_owner(owner_data: CreateOwner, session: Session = Depends(get_d
 
 
 @router.post("/contact", summary="Create a new contact")
-async def create_contact(contact_data: CreateContact, session: Session = Depends(get_db)):
+async def create_contact(
+    contact_data: CreateContact, session: Session = Depends(get_db)
+):
     return await adder(session, Contact, contact_data)
 
 
@@ -118,14 +141,18 @@ async def create_spring(spring_data: CreateSpring, session: Session = Depends(ge
     """
     return await adder(session, Spring, spring_data)
 
+
 @router.post("/equipment", summary="Create a new equipment")
-async def create_equipment(equipment_data: CreateEquipment, session: Session = Depends(get_db)):
+async def create_equipment(
+    equipment_data: CreateEquipment, session: Session = Depends(get_db)
+):
     """
     Create a new equipment in the database.
     """
     # Placeholder for actual equipment creation logic
     # return {"message": "This endpoint will create a new equipment."}
     return await adder(session, Equipment, equipment_data)
+
 
 # ==== Get ============================================
 @router.get(
@@ -163,7 +190,6 @@ async def get_wells(
 
     result = session.execute(sql)
     return result.scalars().all()
-
 
 
 @router.get("/group", response_model=List[GroupResponse], summary="Get groups")
@@ -230,7 +256,9 @@ async def get_springs(session: Session = Depends(get_db)):
     return simple_all_getter(session, Spring)
 
 
-@router.get("/equipment", response_model=List[EquipmentResponse], summary="Get equipment")
+@router.get(
+    "/equipment", response_model=List[EquipmentResponse], summary="Get equipment"
+)
 async def get_equipment(session: Session = Depends(get_db)):
     """
     Retrieve all equipment from the database.
@@ -239,7 +267,11 @@ async def get_equipment(session: Session = Depends(get_db)):
 
 
 # ============= Get by ID ============================================
-@router.get("/equipment/{equipment_id}", response_model=EquipmentResponse, summary="Get equipment by ID")
+@router.get(
+    "/equipment/{equipment_id}",
+    response_model=EquipmentResponse,
+    summary="Get equipment by ID",
+)
 async def get_equipment_by_id(equipment_id: int, session: Session = Depends(get_db)):
     """
     Retrieve an equipment by ID from the database.

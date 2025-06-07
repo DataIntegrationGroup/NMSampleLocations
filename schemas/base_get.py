@@ -42,4 +42,5 @@ class GetGroup(BaseRecord):
     # name: str | None = None
     # description: str | None = None
 
+
 # ============= EOF =============================================

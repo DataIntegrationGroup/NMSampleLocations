@@ -113,8 +113,6 @@ class Well(Base, AutoBaseMixin):
     location = relationship("SampleLocation")
 
 
-
-
 class WellScreen(Base, AutoBaseMixin):
     well_id = Column(Integer, ForeignKey("well.id"), nullable=False)
     screen_depth_top = Column(Float, nullable=False)

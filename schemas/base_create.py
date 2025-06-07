@@ -105,6 +105,7 @@ class CreateSpring(ORMBaseModel):
 
     location_id: int
 
+
 class CreateEquipment(ORMBaseModel):
     """
     Schema for creating equipment.
@@ -119,4 +120,6 @@ class CreateEquipment(ORMBaseModel):
     date_removed: datetime | None = None  # ISO format date string
     recording_interval: int | None = None  # in seconds
     equipment_notes: str | None = None
+
+
 # ============= EOF =============================================

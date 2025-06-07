@@ -46,6 +46,7 @@ def test_add_well():
     data = response.json()
     assert "id" in data
 
+
 def test_add_equipment():
     response = client.post(
         "/base/equipment",

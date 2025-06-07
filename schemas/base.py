@@ -20,8 +20,6 @@ from pydantic import field_validator, model_validator
 from schemas import ORMBaseModel
 
 
-
-
 class BaseRecord(ORMBaseModel):
     """
     Base schema for records that have an ID.
@@ -29,8 +27,6 @@ class BaseRecord(ORMBaseModel):
 
     id: int
     created_at: datetime
-
-
 
 
 # ============= EOF =============================================

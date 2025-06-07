@@ -118,6 +118,14 @@ class WellScreen(Base, AutoBaseMixin):
     well = relationship("Well")
 
 
+class Spring(Base, AutoBaseMixin):
+    description = Column(String(255), nullable=True)
+    location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
+
+    # Define a relationship to samplelocations if needed
+    location = relationship("SampleLocation")
+
+
 class Group(Base, AutoBaseMixin):
     name = Column(String(100), nullable=False, unique=True)
     description = Column(String(255), nullable=True)

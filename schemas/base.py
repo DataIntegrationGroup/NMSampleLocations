@@ -96,6 +96,14 @@ class CreateContact(ORMBaseModel):
     phone: str | None = None
 
 
+class CreateSpring(ORMBaseModel):
+    """
+    Schema for creating a spring.
+    """
+
+    location_id: int
+
+
 class BaseRecord(ORMBaseModel):
     """
     Base schema for records that have an ID.

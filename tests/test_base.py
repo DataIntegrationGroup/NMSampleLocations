@@ -1,16 +1,5 @@
-from unittest import TestCase
 from fastapi.testclient import TestClient
-from geoalchemy2 import load_spatialite
-from sqlalchemy.event import listen
-
 from main import app
-
-# from sqlalchemy import create_engine
-
-# engine = create_engine(
-#     "sqlite:///./development.db",
-#     echo=True)
-
 from models import Base, engine
 
 Base.metadata.drop_all(engine)
@@ -38,6 +27,12 @@ def test_add_well():
     data = response.json()
     assert "id" in data
 
+
+def test_add_spring():
+    response = client.post("/base/spring", json={"location_id": 1})
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
 
 def test_add_well_screen():
     response = client.post(

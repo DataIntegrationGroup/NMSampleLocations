@@ -46,6 +46,25 @@ def test_add_well():
     data = response.json()
     assert "id" in data
 
+def test_add_equipment():
+    response = client.post(
+        "/base/equipment",
+        json={
+            "equipment_type": "Pump",
+            "model": "Model X",
+            "serial_no": "123456",
+            "date_installed": "2023-01-01T00:00:00",
+            "date_removed": None,
+            "recording_interval": 60,
+            "equipment_notes": "Test equipment",
+            "location_id": 2,
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["location_id"] == 2
+
 
 def test_add_spring():
     response = client.post("/base/spring", json={"location_id": 1})
@@ -167,6 +186,23 @@ def test_item_get_well_filter():
     item = data[0]
     assert "api_id" in item
     assert item["api_id"] == "1001-0002"
+
+
+def test_item_get_well_filter_nonexistent():
+    response = client.get("/base/well", params={"api_id": "9999-9999"})
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 0
+
+
+def test_item_get_well_filter_pod_id():
+    response = client.get("/base/well", params={"ose_pod_id": "RA-0001"})
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    item = data[0]
+    assert "ose_pod_id" in item
+    assert item["ose_pod_id"] == "RA-0001"
 
 
 # Test item retrieval ======================================================

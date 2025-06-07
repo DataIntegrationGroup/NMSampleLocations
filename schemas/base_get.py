@@ -13,24 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
-
-from pydantic import field_validator, model_validator
-
-from schemas import ORMBaseModel
+from schemas.base import BaseRecord
 
 
-
-
-class BaseRecord(ORMBaseModel):
+class GetLocation(BaseRecord):
     """
-    Base schema for records that have an ID.
+    Schema for a sample location.
+    """
+
+    name: str | None = None
+    description: str | None = None
+
+
+class GetWell(BaseRecord):
+    """
+    Schema for a well.
     """
 
     id: int
-    created_at: datetime
 
 
+class GetGroup(BaseRecord):
+    """
+    Schema for a group.
+    """
 
+    id: int
+    # name: str | None = None
+    # description: str | None = None
 
 # ============= EOF =============================================

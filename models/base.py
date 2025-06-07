@@ -98,6 +98,11 @@ class Contact(Base, AutoBaseMixin):
 
 class Well(Base, AutoBaseMixin):
     location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
+
+    ose_pod_id = Column(String(50), nullable=True)
+    api_id = Column(String(50), nullable=True)  # API well number
+    usgs_id = Column(String(50), nullable=True)  # USGS well number
+
     well_depth = Column(Float, nullable=True)
     hole_depth = Column(Float, nullable=True)
     well_type = Column(
@@ -107,9 +112,7 @@ class Well(Base, AutoBaseMixin):
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")
 
-    ose_pod_id = Column(String(50), nullable=True)
-    api_id = Column(String(50), nullable=True)  # API well number
-    usgs_id = Column(String(50), nullable=True)  # USGS well number
+
 
 
 class WellScreen(Base, AutoBaseMixin):
@@ -120,6 +123,19 @@ class WellScreen(Base, AutoBaseMixin):
 
     # Define a relationship to well if needed
     well = relationship("Well")
+
+
+class Equipment(Base, AutoBaseMixin):
+    equipment_type = Column(String(50))
+    model = Column(String(50))
+    serial_no = Column(String(50))
+    date_installed = Column(DateTime)
+    date_removed = Column(DateTime)
+    recording_interval = Column(Integer)
+    equipment_notes = Column(String(50))
+    location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
+
+    location = relationship("SampleLocation")
 
 
 class Spring(Base, AutoBaseMixin):

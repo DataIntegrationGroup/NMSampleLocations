@@ -36,6 +36,8 @@ class CreateWell(ORMBaseModel):
     """
 
     location_id: int
+    api_id: str | None = None
+    ose_pod_id: str | None = None
 
 
 class CreateScreenWell(ORMBaseModel):

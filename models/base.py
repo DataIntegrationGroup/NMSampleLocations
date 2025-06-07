@@ -107,6 +107,10 @@ class Well(Base, AutoBaseMixin):
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")
 
+    ose_pod_id = Column(String(50), nullable=True)
+    api_id = Column(String(50), nullable=True)  # API well number
+    usgs_id = Column(String(50), nullable=True)  # USGS well number
+
 
 class WellScreen(Base, AutoBaseMixin):
     well_id = Column(Integer, ForeignKey("well.id"), nullable=False)

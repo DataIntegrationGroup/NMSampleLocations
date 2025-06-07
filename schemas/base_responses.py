@@ -34,6 +34,9 @@ class WellResponse(ORMBaseModel):
 
     id: int
     location_id: int
+    api_id: str | None = None
+    ose_pod_id: str | None = None
+    usgs_id: str | None = None
     # Additional fields can be added as needed
 
 
@@ -89,5 +92,13 @@ class GroupLocationResponse(ORMBaseModel):
     group_id: int
     location_id: int
 
+class SpringResponse(ORMBaseModel):
+    """
+    Response schema for spring details.
+    """
+
+    id: int
+    location_id: int
+    description: str | None = None
 
 # ============= EOF =============================================

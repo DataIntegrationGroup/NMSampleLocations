@@ -34,7 +34,7 @@ jobs:
     - name: Install SpatiaLite
       run: |
           sudo apt-get update
-          sudo apt-get install -y libspatialite-dev spatialite-bin
+          sudo apt-get install -y libsqlite3-mod-spatialite libspatialite-dev
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -49,9 +49,9 @@ jobs:
     - name: Install the project
       run: uv sync --locked --all-extras --dev
 
-    - name: Locate and set SpatiaLite library path
-      run: |
-        find /opt -name mod_spatialite.so -exec echo "Found SpatiaLite library: {}" \;
+#    - name: Locate and set SpatiaLite library path
+#      run: |
+#        find /opt -name mod_spatialite.so -exec echo "Found SpatiaLite library: {}" \;
 #        export SPATIALITE_LIBRARY_PATH=$(find /usr -name *spatialite.* )
 #        echo "SPATIALITE_LIBRARY_PATH=$SPATIALITE_LIBRARY_PATH" >> $GITHUB_ENV
 #        echo "SpatiaLite library path: $SPATIALITE_LIBRARY_PATH"
@@ -60,7 +60,7 @@ jobs:
 #        echo "SpatiaLite library path: $(find /usr/ -name mod_spatialite.so)"
     - name: Run tests
       env:
-        SPATIALITE_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu/libspatialite
+        SPATIALITE_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu/mod_spatialite.so
 #        SPATIALITE_LIBRARY_PATH: ${{ env.SPATIALITE_LIBRARY_PATH }}
       # For example, using `pytest`
       run: uv run pytest -vv --durations=20 --junitxml=junit.xml

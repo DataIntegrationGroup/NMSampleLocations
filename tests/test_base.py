@@ -34,6 +34,7 @@ def test_add_spring():
     data = response.json()
     assert "id" in data
 
+
 def test_add_well_screen():
     response = client.post(
         "/base/wellscreen",

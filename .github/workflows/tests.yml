@@ -48,8 +48,8 @@ jobs:
       run: uv sync --locked --all-extras --dev
 
     - name: Locate and set SpatiaLite library path
-      run: |
-        find /usr -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;
+#      run: |
+#        find /opt -name *spatialite.* -exec echo "Found SpatiaLite library: {}" \;
 #        export SPATIALITE_LIBRARY_PATH=$(find /usr -name *spatialite.* )
 #        echo "SPATIALITE_LIBRARY_PATH=$SPATIALITE_LIBRARY_PATH" >> $GITHUB_ENV
 #        echo "SpatiaLite library path: $SPATIALITE_LIBRARY_PATH"
@@ -58,7 +58,8 @@ jobs:
 #        echo "SpatiaLite library path: $(find /usr/ -name mod_spatialite.so)"
     - name: Run tests
       env:
-        SPATIALITE_LIBRARY_PATH: ${{ env.SPATIALITE_LIBRARY_PATH }}
+        SPATIALITE_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu/libspatialite.so
+#        SPATIALITE_LIBRARY_PATH: ${{ env.SPATIALITE_LIBRARY_PATH }}
       # For example, using `pytest`
       run: uv run pytest -vv --durations=20 --junitxml=junit.xml
 

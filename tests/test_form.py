@@ -19,25 +19,22 @@ from tests import client
 
 def test_well_form():
     payload = {
-        "location": {"point": 'POINT(-105.0 40.0)'},
+        "location": {"point": "POINT(-105.0 40.0)"},
         "owner": {
             "name": "John Doe",
             "contact": [
-                {
-                    "name": "John Doe",
-                    "phone": "123-456-7890",
-                    "email": "foo@gmail.com"
-                },
+                {"name": "John Doe", "phone": "123-456-7890", "email": "foo@gmail.com"},
                 {
                     "name": "Jane Doe",
                     "phone": "913-356-7890",
-                    "email": "jane@gmail.com"
+                    "email": "jane@gmail.com",
                 },
-            ]
-        }
+            ],
+        },
     }
 
-    response = client.post('/form/well', json=payload)
+    response = client.post("/form/well", json=payload)
     assert response.status_code == 201
+
 
 # ============= EOF =============================================

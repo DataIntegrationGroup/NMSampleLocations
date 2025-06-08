@@ -9,6 +9,7 @@
 
 from tests import client
 
+
 #  ADD tests ======================================================
 def test_add_location():
     response = client.post(

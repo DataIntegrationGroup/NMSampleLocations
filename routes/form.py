@@ -21,7 +21,8 @@ from models import get_db
 from models.base import SampleLocation, Owner, Contact
 from schemas.form import WellForm
 
-router = APIRouter(prefix='/form')
+router = APIRouter(prefix="/form")
+
 
 @router.post("/well")
 async def well_form(form_data: WellForm, session=Depends(get_db)):
@@ -50,6 +51,9 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
 
     session.commit()
 
-    return JSONResponse(status_code=201, content={"message": "Well form submitted successfully."})
+    return JSONResponse(
+        status_code=201, content={"message": "Well form submitted successfully."}
+    )
+
 
 # ============= EOF =============================================

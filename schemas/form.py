@@ -21,33 +21,42 @@ class Location(BaseModel):
     A class representing a geographic location.
     This class is used to validate and process location data.
     """
+
     point: str  # Assuming point is a string representation of a geographic point (e.g., 'POINT(-105.0 40.0)')
     # You can add more fields as necessary, such as latitude, longitude, etc.
+
 
 class Contact(BaseModel):
     """
     A class representing a contact information.
     This class is used to validate and process contact data.
     """
+
     name: str
     phone: str  # Assuming phone is a string representation of a phone number
     email: str  # Assuming email is a string representation of an email address
     # You can add more fields as necessary, such as address, etc.
+
 
 class Owner(BaseModel):
     """
     A class representing an owner of a well.
     This class is used to validate and process owner data.
     """
+
     name: str
-    contact: list[Contact]  # Assuming contact is a list of dictionaries with phone and email information
+    contact: list[
+        Contact
+    ]  # Assuming contact is a list of dictionaries with phone and email information
     # You can add more fields as necessary, such as address, etc.
+
 
 class WellForm(BaseModel):
     """
     A class representing a form for well data submission.
     This class is used to validate and process well data submissions.
     """
+
     location: Location
     owner: Owner
     # Define the fields for the well form
@@ -63,5 +72,6 @@ class WellForm(BaseModel):
     # measured_by: str
     # site_notes: str = None  # Optional field
     # public_release: bool = True  # Default to True
+
 
 # ============= EOF =============================================

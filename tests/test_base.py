@@ -10,17 +10,24 @@ client = TestClient(app)
 
 #  ADD tests ======================================================
 def test_add_location():
-    response = client.post("/base/location",
-                           json={"name": "Test Location",
-                                 'point': 'POINT(10.1 10.1)',
-                                 })
+    response = client.post(
+        "/base/location",
+        json={
+            "name": "Test Location",
+            "point": "POINT(10.1 10.1)",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == 1
 
-    response = client.post("/base/location",
-                           json={"name": "Test Location 2",
-                                 'point': 'POINT(50.0 50.0)', })
+    response = client.post(
+        "/base/location",
+        json={
+            "name": "Test Location 2",
+            "point": "POINT(50.0 50.0)",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == 2
@@ -164,6 +171,7 @@ def test_add_contact():
 
 # GET tests ======================================================
 
+
 def test_get_within_locations():
     response = client.get(
         "/base/location",
@@ -186,7 +194,6 @@ def test_get_nearby_locations():
         params={
             "nearby_point": "POINT(50.0 50.0)",  # Example coordinates
             "nearby_distance_km": 10,  # 10 km
-
         },
     )
     data = response.json()

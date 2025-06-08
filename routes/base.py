@@ -148,35 +148,30 @@ def create_equipment(
     response_model=CustomPage[SampleLocationResponse],
     summary="Get all locations",
 )
-async def get_location(nearby_point: str=None,
-                       nearby_distance_km: float = 1,
-                       within: str = None,
-                       session: Session = Depends(get_db)):
+async def get_location(
+    nearby_point: str = None,
+    nearby_distance_km: float = 1,
+    within: str = None,
+    session: Session = Depends(get_db),
+):
     """
     Retrieve all wells from the database.
     """
     if nearby_point:
         nearby_point = func.ST_GeomFromText(nearby_point)
         sql = select(SampleLocation).where(
-            func.ST_Distance(
-                SampleLocation.point,
-                nearby_point
-            ) <= nearby_distance_km
+            func.ST_Distance(SampleLocation.point, nearby_point) <= nearby_distance_km
         )
     elif within:
         within = func.ST_GeomFromText(within)
-        sql = select(SampleLocation).where(
-            func.ST_Within(SampleLocation.point, within)
-        )
+        sql = select(SampleLocation).where(func.ST_Within(SampleLocation.point, within))
     else:
         sql = select(SampleLocation)
 
     return paginate(query=sql, conn=session)
 
 
-
-@router.get("/well",
-            response_model=CustomPage[WellResponse], summary="Get all wells")
+@router.get("/well", response_model=CustomPage[WellResponse], summary="Get all wells")
 async def get_wells(
     api_id: str = None, ose_pod_id: str = None, session: Session = Depends(get_db)
 ):
@@ -192,8 +187,8 @@ async def get_wells(
         sql = select(Well)
 
     return paginate(query=sql, conn=session)
-        # If no parameters, return all wells
-        # return simple_all_getter(session, Well)
+    # If no parameters, return all wells
+    # return simple_all_getter(session, Well)
 
     # result = session.execute(sql)
     # return result.scalars().all()

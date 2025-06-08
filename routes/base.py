@@ -16,7 +16,8 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from models import get_db, adder
@@ -31,6 +32,7 @@ from models.base import (
     Spring,
     Equipment,
 )
+from routes.pagination import CustomPage
 from schemas.base_get import GetWell, GetLocation, GetGroup
 from schemas.base_create import (
     CreateWell,
@@ -143,22 +145,38 @@ def create_equipment(
 # ==== Get ============================================
 @router.get(
     "/location",
-    response_model=List[SampleLocationResponse],
+    response_model=CustomPage[SampleLocationResponse],
     summary="Get all locations",
 )
-async def get_location(session: Session = Depends(get_db)):
+async def get_location(nearby_point: str=None,
+                       nearby_distance_km: float = 1,
+                       within: str = None,
+                       session: Session = Depends(get_db)):
     """
     Retrieve all wells from the database.
     """
-    # Placeholder for actual database retrieval logic
-    # return {"message": "This endpoint will return all wells."}
-    # sql = select(SampleLocation)
-    # result = db.execute(sql)
-    # return result
-    return simple_all_getter(session, SampleLocation)
+    if nearby_point:
+        nearby_point = func.ST_GeomFromText(nearby_point)
+        sql = select(SampleLocation).where(
+            func.ST_Distance(
+                SampleLocation.point,
+                nearby_point
+            ) <= nearby_distance_km
+        )
+    elif within:
+        within = func.ST_GeomFromText(within)
+        sql = select(SampleLocation).where(
+            func.ST_Within(SampleLocation.point, within)
+        )
+    else:
+        sql = select(SampleLocation)
+
+    return paginate(query=sql, conn=session)
 
 
-@router.get("/well", response_model=List[WellResponse], summary="Get all wells")
+
+@router.get("/well",
+            response_model=CustomPage[WellResponse], summary="Get all wells")
 async def get_wells(
     api_id: str = None, ose_pod_id: str = None, session: Session = Depends(get_db)
 ):
@@ -171,11 +189,14 @@ async def get_wells(
     elif ose_pod_id:
         sql = select(Well).where(Well.ose_pod_id == ose_pod_id)
     else:
-        # If no parameters, return all wells
-        return simple_all_getter(session, Well)
+        sql = select(Well)
 
-    result = session.execute(sql)
-    return result.scalars().all()
+    return paginate(query=sql, conn=session)
+        # If no parameters, return all wells
+        # return simple_all_getter(session, Well)
+
+    # result = session.execute(sql)
+    # return result.scalars().all()
 
 
 @router.get("/group", response_model=List[GroupResponse], summary="Get groups")

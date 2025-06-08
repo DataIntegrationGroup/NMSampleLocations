@@ -54,7 +54,4 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-from fastadmin import fastapi_app as admin_app
-
-app.mount("/admin", admin_app)
 # ============= EOF =============================================

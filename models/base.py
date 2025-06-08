@@ -116,8 +116,7 @@ class Well(Base, AutoBaseMixin):
     casing_depth = Column(Float)
     casing_description = Column(String(50))
     construction_motes = Column(String(250))
-    formation_zone = Column(String(50),
-                            ForeignKey(LU_Formation_Zone.name))
+    formation_zone = Column(String(50), ForeignKey(LU_Formation_Zone.name))
 
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")

@@ -61,14 +61,10 @@ router = APIRouter(
 )
 
 
-
-
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
 )
-def create_location(
-    location_data: CreateLocation, session: Session = Depends(get_db)
-):
+def create_location(location_data: CreateLocation, session: Session = Depends(get_db)):
     """
     Create a new sample location in the database.
     """
@@ -120,9 +116,7 @@ def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db)):
 
 
 @router.post("/contact", summary="Create a new contact")
-def create_contact(
-    contact_data: CreateContact, session: Session = Depends(get_db)
-):
+def create_contact(contact_data: CreateContact, session: Session = Depends(get_db)):
     return adder(session, Contact, contact_data)
 
 

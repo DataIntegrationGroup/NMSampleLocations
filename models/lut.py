@@ -47,4 +47,6 @@ class LU_Formation_Zone(Base):
 
     def __repr__(self):
         return f"<LUT_Formation_Zone(name={self.name}, description={self.description})>"
+
+
 # ============= EOF =============================================

@@ -48,6 +48,7 @@ def test_add_formation_zone():
     assert "id" in data
     assert data["name"] == "Test Formation Zone"
 
+
 def test_add_well():
     response = client.post(
         "/base/well",

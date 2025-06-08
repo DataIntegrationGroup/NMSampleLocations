@@ -26,4 +26,6 @@ class FormationZoneResponse(ORMBaseModel):
     id: int
     name: str
     description: str | None = None
+
+
 # ============= EOF =============================================

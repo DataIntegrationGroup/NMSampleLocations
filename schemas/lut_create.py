@@ -20,6 +20,7 @@ class CreateWellType(BaseModel):
     """
     Schema for creating a new well type.
     """
+
     name: str
     description: str | None = None
 
@@ -28,6 +29,9 @@ class CreateFormationZone(BaseModel):
     """
     Schema for creating a new formation zone.
     """
+
     name: str
     description: str | None = None
+
+
 # ============= EOF =============================================

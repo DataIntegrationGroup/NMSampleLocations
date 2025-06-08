@@ -19,7 +19,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from models import get_db
+from models import get_db, adder
 from models.base import (
     Well,
     SampleLocation,
@@ -61,89 +61,81 @@ router = APIRouter(
 )
 
 
-async def adder(session, table, model):
-    """
-    Helper function to add a new record to the database.
-    """
-    obj = table(**model.model_dump())
-    session.add(obj)
-    session.commit()
-    return obj
 
 
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
 )
-async def create_location(
+def create_location(
     location_data: CreateLocation, session: Session = Depends(get_db)
 ):
     """
     Create a new sample location in the database.
     """
-    return await adder(session, SampleLocation, location_data)
+    return adder(session, SampleLocation, location_data)
 
 
 @router.post("/well", response_model=GetWell, summary="Create a new well")
-async def create_well(well_data: CreateWell, session: Session = Depends(get_db)):
+def create_well(well_data: CreateWell, session: Session = Depends(get_db)):
     """
     Create a new well in the database.
     """
-    return await adder(session, Well, well_data)
+    return adder(session, Well, well_data)
 
 
 @router.post("/wellscreen", summary="Create a new well screen")
-async def create_wellscreen(
+def create_wellscreen(
     well_screen_data: CreateScreenWell, session: Session = Depends(get_db)
 ):
     """
     Create a new well screen in the database.
     """
-    return await adder(session, WellScreen, well_screen_data)
+    return adder(session, WellScreen, well_screen_data)
 
 
 @router.post("/group", summary="Create a new group")
-async def create_group(group_data: CreateGroup, session: Session = Depends(get_db)):
+def create_group(group_data: CreateGroup, session: Session = Depends(get_db)):
     """
     Create a new group in the database.
     """
-    return await adder(session, Group, group_data)
+    return adder(session, Group, group_data)
 
 
 @router.post("/group_location", summary="Create a new group location")
-async def create_group_location(
+def create_group_location(
     group_location_data: CreateGroupLocation, session: Session = Depends(get_db)
 ):
     """
     Create a new group location association in the database.
     """
-    return await adder(session, GroupLocation, group_location_data)
+    return adder(session, GroupLocation, group_location_data)
 
 
 @router.post("/owner", summary="Create a new owner")
-async def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db)):
+def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db)):
     """
     Create a new owner in the database.
     """
-    return await adder(session, Owner, owner_data)
+    return adder(session, Owner, owner_data)
 
 
 @router.post("/contact", summary="Create a new contact")
-async def create_contact(
+def create_contact(
     contact_data: CreateContact, session: Session = Depends(get_db)
 ):
-    return await adder(session, Contact, contact_data)
+    return adder(session, Contact, contact_data)
 
 
 @router.post("/spring", summary="Create a new spring")
-async def create_spring(spring_data: CreateSpring, session: Session = Depends(get_db)):
+def create_spring(spring_data: CreateSpring, session: Session = Depends(get_db)):
     """
     Create a new spring in the database.
     """
-    return await adder(session, Spring, spring_data)
+    return adder(session, Spring, spring_data)
 
 
 @router.post("/equipment", summary="Create a new equipment")
-async def create_equipment(
+def create_equipment(
     equipment_data: CreateEquipment, session: Session = Depends(get_db)
 ):
     """
@@ -151,7 +143,7 @@ async def create_equipment(
     """
     # Placeholder for actual equipment creation logic
     # return {"message": "This endpoint will create a new equipment."}
-    return await adder(session, Equipment, equipment_data)
+    return adder(session, Equipment, equipment_data)
 
 
 # ==== Get ============================================

@@ -8,10 +8,11 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app import app
 
-from routes.base import router
+from routes.base import router as base_router
+from routes.lut import router as lut_router
 
-app.include_router(router)
-
+app.include_router(base_router)
+app.include_router(lut_router)
 
 app.add_middleware(
     CORSMiddleware,

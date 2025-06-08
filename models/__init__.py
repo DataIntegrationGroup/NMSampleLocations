@@ -50,4 +50,14 @@ async def get_db():
 
 Base = declarative_base()
 
+
+
+def adder(session, table, model):
+    """
+    Helper function to add a new record to the database.
+    """
+    obj = table(**model.model_dump())
+    session.add(obj)
+    session.commit()
+    return obj
 # ============= EOF =============================================

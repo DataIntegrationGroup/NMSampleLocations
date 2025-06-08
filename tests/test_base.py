@@ -21,6 +21,33 @@ def test_add_location():
     assert data["id"] == 2
 
 
+def test_add_well_type():
+    response = client.post(
+        "/lut/well_type",
+        json={
+            "name": "Test Well Type",
+            "description": "A test well type for unit testing.",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["name"] == "Test Well Type"
+
+
+def test_add_formation_zone():
+    response = client.post(
+        "/lut/formation_zone",
+        json={
+            "name": "Test Formation Zone",
+            "description": "A test formation zone for unit testing.",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert data["name"] == "Test Formation Zone"
+
 def test_add_well():
     response = client.post(
         "/base/well",

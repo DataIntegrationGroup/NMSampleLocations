@@ -1,12 +1,13 @@
-from fastapi.testclient import TestClient
-from main import app
-from models import Base, engine
+# from fastapi.testclient import TestClient
+# from main import app
+# from models import Base, engine
 
-Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
+# Base.metadata.drop_all(engine)
+# Base.metadata.create_all(engine)
 
-client = TestClient(app)
+# client = TestClient(app)
 
+from tests import client
 
 #  ADD tests ======================================================
 def test_add_location():

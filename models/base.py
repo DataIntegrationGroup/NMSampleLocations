@@ -56,7 +56,7 @@ class AutoBaseMixin:
 
 
 class SampleLocation(Base, AutoBaseMixin):
-    name = Column(String(100), nullable=False, unique=True)
+    name = Column(String(100), nullable=True)
     description = Column(String(255), nullable=True)
     visible = Column(Boolean, default=True, nullable=False)
 

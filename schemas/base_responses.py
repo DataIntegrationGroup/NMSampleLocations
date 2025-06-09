@@ -26,6 +26,7 @@ class SampleLocationResponse(ORMBaseModel):
     """
     Response schema for sample location details.
     """
+
     model_config = ConfigDict(
         from_attributes=True,
         populate_by_name=True,
@@ -91,9 +92,6 @@ class OwnerResponse(ORMBaseModel):
     contacts: List[ContactResponse] = []  # List of contacts associated with the owner
     # email: str | None = None
     # phone: str | None = None
-
-
-
 
 
 class WellScreenResponse(ORMBaseModel):

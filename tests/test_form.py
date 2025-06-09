@@ -38,7 +38,7 @@ def test_well_form():
     data = response.json()
     location = data.get("location", None)
     assert location is not None
-    assert location.get("point") == 'POINT(-105.0 40.0)'
+    assert location.get("point") == "POINT(-105.0 40.0)"
 
     owner = data.get("owner", None)
     assert owner is not None

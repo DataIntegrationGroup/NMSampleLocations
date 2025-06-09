@@ -24,8 +24,10 @@ from schemas.form import WellForm, WellFormResponse
 router = APIRouter(prefix="/form")
 
 
-@router.post("/well",
-             response_model=WellFormResponse,)
+@router.post(
+    "/well",
+    response_model=WellFormResponse,
+)
 async def well_form(form_data: WellForm, session=Depends(get_db)):
     """
     Endpoint to handle well form submissions.
@@ -51,10 +53,10 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
         session.add(contact)
 
     session.commit()
-    print('owner', owner, owner.contacts)
-    response_data = {'location': location,
-                     'owner': owner}
+    print("owner", owner, owner.contacts)
+    response_data = {"location": location, "owner": owner}
     return response_data
     # return JSONResponse(status_code=201, content={"data": data})
+
 
 # ============= EOF =============================================

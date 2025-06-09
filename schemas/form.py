@@ -27,6 +27,7 @@ class WFLocation(BaseModel):
     point: str  # Assuming point is a string representation of a geographic point (e.g., 'POINT(-105.0 40.0)')
     # You can add more fields as necessary, such as latitude, longitude, etc.
 
+
 class WFContact(BaseModel):
     """
     A class representing a contact information.
@@ -38,6 +39,7 @@ class WFContact(BaseModel):
     email: str  # Assuming email is a string representation of an email address
     # You can add more fields as necessary, such as address, etc.
 
+
 class WFOwner(BaseModel):
     """
     A class representing an owner of a well.
@@ -45,7 +47,9 @@ class WFOwner(BaseModel):
     """
 
     name: str
-    contact: list[WFContact]  # Assuming contact is a list of dictionaries with phone and email information
+    contact: list[
+        WFContact
+    ]  # Assuming contact is a list of dictionaries with phone and email information
     # You can add more fields as necessary, such as address, etc.
 
 
@@ -54,6 +58,7 @@ class WellForm(BaseModel):
     A class representing a form for well data submission.
     This class is used to validate and process well data submissions.
     """
+
     location: WFLocation
     owner: WFOwner
     # Define the fields for the well form
@@ -70,12 +75,16 @@ class WellForm(BaseModel):
     # site_notes: str = None  # Optional field
     # public_release: bool = True  # Default to True
 
+
 class WellFormResponse(BaseModel):
     """
     A class representing the response for a well form submission.
     This class is used to structure the response data after a successful submission.
     """
+
     location: SampleLocationResponse
     owner: OwnerResponse
     # You can add more fields to the response as necessary, such as status messages, etc.
+
+
 # ============= EOF =============================================

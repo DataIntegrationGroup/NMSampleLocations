@@ -55,8 +55,7 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
 
     session.commit()
 
-    response_data = {'location': location,
-                     'owner': owner}
+    response_data = {"location": location, "owner": owner}
     return response_data
 
 

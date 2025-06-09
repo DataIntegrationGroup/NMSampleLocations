@@ -13,6 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+from typing import Annotated, List
+
+from geoalchemy2 import WKBElement
+from geoalchemy2.shape import to_shape
+from pydantic import ConfigDict, computed_field, field_validator
+
 from schemas import ORMBaseModel
 
 
@@ -20,11 +26,25 @@ class SampleLocationResponse(ORMBaseModel):
     """
     Response schema for sample location details.
     """
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+    )
 
     id: int
-    name: str
+    name: str | None = None
     description: str | None = None
-    # point: str  # Assuming point is a string representation of a point (e.g., "POINT(0 0)")
+    point: str
+
+    @field_validator("point", mode="before")
+    def point_to_wkt(cls, value):
+        if isinstance(value, WKBElement):
+            return to_shape(value).wkt
+
+        # If the value is a string, assume it's already in WKT format
+        if isinstance(value, str):
+            return value
 
 
 class WellResponse(ORMBaseModel):
@@ -50,17 +70,6 @@ class GroupResponse(ORMBaseModel):
     description: str | None = None
 
 
-class OwnerResponse(ORMBaseModel):
-    """
-    Response schema for owner details.
-    """
-
-    id: int
-    name: str
-    # email: str | None = None
-    # phone: str | None = None
-
-
 class ContactResponse(ORMBaseModel):
     """
     Response schema for contact details.
@@ -70,6 +79,21 @@ class ContactResponse(ORMBaseModel):
     name: str
     email: str | None = None
     phone: str | None = None
+
+
+class OwnerResponse(ORMBaseModel):
+    """
+    Response schema for owner details.
+    """
+
+    id: int
+    name: str
+    contacts: List[ContactResponse] = []  # List of contacts associated with the owner
+    # email: str | None = None
+    # phone: str | None = None
+
+
+
 
 
 class WellScreenResponse(ORMBaseModel):

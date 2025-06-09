@@ -34,7 +34,24 @@ def test_well_form():
     }
 
     response = client.post("/form/well", json=payload)
-    assert response.status_code == 201
+    assert response.status_code == 200
+    data = response.json()
+    location = data.get("location", None)
+    assert location is not None
+    assert location.get("point") == 'POINT(-105.0 40.0)'
+
+    owner = data.get("owner", None)
+    assert owner is not None
+    assert owner.get("name") == "John Doe"
+
+    contacts = owner.get("contacts", [])
+    assert len(contacts) == 2
+    assert contacts[0].get("name") == "John Doe"
+    assert contacts[0].get("phone") == "123-456-7890"
+
+    # Ensure the second contact is also correct
+    assert contacts[1].get("name") == "Jane Doe"
+    assert contacts[1].get("phone") == "913-356-7890"
 
 
 # ============= EOF =============================================

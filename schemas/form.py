@@ -15,8 +15,10 @@
 # ===============================================================================
 from pydantic import BaseModel
 
+from schemas.base_responses import SampleLocationResponse, OwnerResponse
 
-class Location(BaseModel):
+
+class WFLocation(BaseModel):
     """
     A class representing a geographic location.
     This class is used to validate and process location data.
@@ -25,8 +27,7 @@ class Location(BaseModel):
     point: str  # Assuming point is a string representation of a geographic point (e.g., 'POINT(-105.0 40.0)')
     # You can add more fields as necessary, such as latitude, longitude, etc.
 
-
-class Contact(BaseModel):
+class WFContact(BaseModel):
     """
     A class representing a contact information.
     This class is used to validate and process contact data.
@@ -37,17 +38,14 @@ class Contact(BaseModel):
     email: str  # Assuming email is a string representation of an email address
     # You can add more fields as necessary, such as address, etc.
 
-
-class Owner(BaseModel):
+class WFOwner(BaseModel):
     """
     A class representing an owner of a well.
     This class is used to validate and process owner data.
     """
 
     name: str
-    contact: list[
-        Contact
-    ]  # Assuming contact is a list of dictionaries with phone and email information
+    contact: list[WFContact]  # Assuming contact is a list of dictionaries with phone and email information
     # You can add more fields as necessary, such as address, etc.
 
 
@@ -56,9 +54,8 @@ class WellForm(BaseModel):
     A class representing a form for well data submission.
     This class is used to validate and process well data submissions.
     """
-
-    location: Location
-    owner: Owner
+    location: WFLocation
+    owner: WFOwner
     # Define the fields for the well form
     # site_id: str
     # depth_to_water_ftbgs: float
@@ -73,5 +70,12 @@ class WellForm(BaseModel):
     # site_notes: str = None  # Optional field
     # public_release: bool = True  # Default to True
 
-
+class WellFormResponse(BaseModel):
+    """
+    A class representing the response for a well form submission.
+    This class is used to structure the response data after a successful submission.
+    """
+    location: SampleLocationResponse
+    owner: OwnerResponse
+    # You can add more fields to the response as necessary, such as status messages, etc.
 # ============= EOF =============================================

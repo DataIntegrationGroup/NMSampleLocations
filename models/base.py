@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geometry, WKBElement
 from sqlalchemy import (
     Column,
     Integer,
@@ -60,7 +60,10 @@ class SampleLocation(Base, AutoBaseMixin):
     description = Column(String(255), nullable=True)
     visible = Column(Boolean, default=True, nullable=False)
 
-    point = Column(Geometry("POINT", srid=4326))
+    point: Mapped[WKBElement] = mapped_column(
+        Geometry(geometry_type="POINT", srid=4326, spatial_index=True)
+    )
+
     owner_id = Column(Integer, ForeignKey("owner.id"), nullable=True)
 
 

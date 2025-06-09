@@ -19,12 +19,13 @@ from fastapi.responses import JSONResponse
 
 from models import get_db
 from models.base import SampleLocation, Owner, Contact
-from schemas.form import WellForm
+from schemas.form import WellForm, WellFormResponse
 
 router = APIRouter(prefix="/form")
 
 
-@router.post("/well")
+@router.post("/well",
+             response_model=WellFormResponse,)
 async def well_form(form_data: WellForm, session=Depends(get_db)):
     """
     Endpoint to handle well form submissions.
@@ -50,10 +51,10 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
         session.add(contact)
 
     session.commit()
-
-    return JSONResponse(
-        status_code=201, content={"message": "Well form submitted successfully."}
-    )
-
+    print('owner', owner, owner.contacts)
+    response_data = {'location': location,
+                     'owner': owner}
+    return response_data
+    # return JSONResponse(status_code=201, content={"data": data})
 
 # ============= EOF =============================================

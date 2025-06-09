@@ -14,6 +14,7 @@ dependencies = [
     "geoalchemy2>=0.17.1",
     "greenlet>=3.2.2",
     "httpx>=0.28.1",
+    "shapely>=2.1.1",
     "uvicorn>=0.34.3",
 ]
 [tool.alembic]

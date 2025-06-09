@@ -27,10 +27,12 @@ def test_well_form():
             "type": "Production",
             "status": "Active",
         },
-        "groups": [{
-            "name": "Test Group 2",
-            "description": "This is a test group for well management.",
-        }],
+        "groups": [
+            {
+                "name": "Test Group 2",
+                "description": "This is a test group for well management.",
+            }
+        ],
         "owner": {
             "name": "Test Owner",
             "contact": [

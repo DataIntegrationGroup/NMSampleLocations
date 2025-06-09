@@ -41,7 +41,6 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
     location = SampleLocation(**location_data)
     session.add(location)
 
-
     groups = data.get("groups", None)
     for group_data in groups:
         if group_data:
@@ -49,7 +48,6 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
             session.add(group)
 
             group.locations.append(location)
-
 
     contact_data = owner_data.pop("contact", None)
 
@@ -70,9 +68,7 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
 
     session.commit()
 
-    response_data = {'location': location,
-                     'owner': owner,
-                     'well': well}
+    response_data = {"location": location, "owner": owner, "well": well}
     return response_data
 
 

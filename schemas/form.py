@@ -72,6 +72,7 @@ class WFGroup(BaseModel):
     name: str
     description: str | None = None
 
+
 class WellForm(BaseModel):
     """
     A class representing a form for well data submission.

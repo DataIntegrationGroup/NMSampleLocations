@@ -171,6 +171,7 @@ class GroupLocation(Base, AutoBaseMixin):
     # group = relationship("Group")
     # location = relationship("SampleLocation")
 
+
 # class Spring(Base):
 #     __tablename__ = 'Spring'
 #

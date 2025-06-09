@@ -18,7 +18,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 from models import get_db
-from models.base import SampleLocation, Owner, Contact
+from models.base import SampleLocation, Owner, Contact, Well, Group, GroupLocation
 from routes.base import simple_get_by_id, simple_get_by_name
 from schemas.form import WellForm, WellFormResponse
 
@@ -41,6 +41,16 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
     location = SampleLocation(**location_data)
     session.add(location)
 
+
+    groups = data.get("groups", None)
+    for group_data in groups:
+        if group_data:
+            group = Group(**group_data)
+            session.add(group)
+
+            group.locations.append(location)
+
+
     contact_data = owner_data.pop("contact", None)
 
     owner = Owner(**owner_data)
@@ -53,9 +63,16 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
     cs = [Contact(**contact) for contact in contact_data if contact is not None]
     owner.contacts.extend(cs)
 
+    well_data = data.get("well", None)
+    well = Well(**well_data)
+    well.location = location
+    session.add(well)
+
     session.commit()
 
-    response_data = {"location": location, "owner": owner}
+    response_data = {'location': location,
+                     'owner': owner,
+                     'well': well}
     return response_data
 
 

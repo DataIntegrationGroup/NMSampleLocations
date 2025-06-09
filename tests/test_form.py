@@ -20,6 +20,17 @@ from tests import client
 def test_well_form():
     payload = {
         "location": {"point": "POINT(-105.0 40.0)"},
+        "well": {
+            "name": "Test Well",
+            "depth": 1000,
+            "diameter": 10,
+            "type": "Production",
+            "status": "Active",
+        },
+        "groups": [{
+            "name": "Test Group 2",
+            "description": "This is a test group for well management.",
+        }],
         "owner": {
             "name": "Test Owner",
             "contact": [

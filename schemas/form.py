@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+from typing import List
+
 from pydantic import BaseModel
 
 from schemas.base_responses import SampleLocationResponse, OwnerResponse
@@ -53,6 +55,23 @@ class WFOwner(BaseModel):
     # You can add more fields as necessary, such as address, etc.
 
 
+class WFWell(BaseModel):
+    ose_pod_id: str | None = None  # OSE POD well number, optional
+    api_id: str | None = None  # API well number, optional
+    usgs_id: str | None = None  # USGS well number, optional
+
+    well_depth: float | None = None  # Depth of the well in feet, optional
+    hole_depth: float | None = None  # Depth of the hole in feet, optional
+    casing_diameter: float | None = None  # Diameter of the casing in inches, optional
+    casing_depth: float | None = None  # Depth of the casing in feet, optional
+    casing_description: str | None = None  # Description of the casing, optional
+    construction_motes: str | None = None  # Construction notes, optional
+
+
+class WFGroup(BaseModel):
+    name: str
+    description: str | None = None
+
 class WellForm(BaseModel):
     """
     A class representing a form for well data submission.
@@ -61,6 +80,9 @@ class WellForm(BaseModel):
 
     location: WFLocation
     owner: WFOwner
+    well: WFWell
+    groups: List[WFGroup] | None = None  # Optional group field
+
     # Define the fields for the well form
     # site_id: str
     # depth_to_water_ftbgs: float

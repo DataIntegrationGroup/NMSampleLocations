@@ -161,13 +161,15 @@ class Group(Base, AutoBaseMixin):
     description = Column(String(255), nullable=True)
 
     # Define a relationship to samplelocations if needed
-    # locations = relationship("SampleLocation")
+    locations = relationship("SampleLocation", secondary="grouplocation")
 
 
 class GroupLocation(Base, AutoBaseMixin):
     group_id = Column(Integer, ForeignKey("group.id"), nullable=False)
     location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
 
+    # group = relationship("Group")
+    # location = relationship("SampleLocation")
 
 # class Spring(Base):
 #     __tablename__ = 'Spring'

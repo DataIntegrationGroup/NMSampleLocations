@@ -21,7 +21,7 @@ def test_well_form():
     payload = {
         "location": {"point": "POINT(-105.0 40.0)"},
         "owner": {
-            "name": "John Doe",
+            "name": "Test Owner",
             "contact": [
                 {"name": "John Doe", "phone": "123-456-7890", "email": "foo@gmail.com"},
                 {
@@ -42,16 +42,16 @@ def test_well_form():
 
     owner = data.get("owner", None)
     assert owner is not None
-    assert owner.get("name") == "John Doe"
+    assert owner.get("name") == "Test Owner"
 
     contacts = owner.get("contacts", [])
-    assert len(contacts) == 2
-    assert contacts[0].get("name") == "John Doe"
-    assert contacts[0].get("phone") == "123-456-7890"
+    assert len(contacts) == 3
+    assert contacts[0].get("name") == "Test Contact"
+    assert contacts[0].get("phone") == "999-999-9999"
 
     # Ensure the second contact is also correct
-    assert contacts[1].get("name") == "Jane Doe"
-    assert contacts[1].get("phone") == "913-356-7890"
+    assert contacts[2].get("name") == "Jane Doe"
+    assert contacts[2].get("phone") == "913-356-7890"
 
 
 # ============= EOF =============================================

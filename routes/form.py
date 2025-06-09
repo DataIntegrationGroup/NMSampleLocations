@@ -19,6 +19,7 @@ from fastapi.responses import JSONResponse
 
 from models import get_db
 from models.base import SampleLocation, Owner, Contact
+from routes.base import simple_get_by_id, simple_get_by_name
 from schemas.form import WellForm, WellFormResponse
 
 router = APIRouter(prefix="/form")
@@ -39,24 +40,24 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
 
     location = SampleLocation(**location_data)
     session.add(location)
-    # session.commit()
 
     contact_data = owner_data.pop("contact", None)
 
     owner = Owner(**owner_data)
-    session.add(owner)
-    # session.commit()
+    existing_owner = simple_get_by_name(session, Owner, owner.name)
+    if existing_owner is None:
+        session.add(owner)
+    else:
+        owner = existing_owner
 
-    for contact_info in contact_data:
-        contact = Contact(**contact_info)
-        contact.owner = owner
-        session.add(contact)
+    cs = [Contact(**contact) for contact in contact_data if contact is not None]
+    owner.contacts.extend(cs)
 
     session.commit()
-    print("owner", owner, owner.contacts)
-    response_data = {"location": location, "owner": owner}
+
+    response_data = {'location': location,
+                     'owner': owner}
     return response_data
-    # return JSONResponse(status_code=201, content={"data": data})
 
 
 # ============= EOF =============================================

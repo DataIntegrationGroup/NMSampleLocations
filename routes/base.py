@@ -392,6 +392,15 @@ async def get_contact_by_id(contact_id: int, session: Session = Depends(get_db))
     return contact
 
 
+def simple_get_by_name(session, table, name):
+    """
+    Helper function to get a record by name from the database.
+    """
+    sql = select(table).where(table.name == name)
+    result = session.execute(sql)
+    return result.scalar_one_or_none()
+
+
 def simple_get_by_id(session, table, item_id):
     """
     Helper function to get a record by ID from the database.

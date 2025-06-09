@@ -161,7 +161,7 @@ def test_add_contact():
             "owner_id": 1,
             "name": "Test Contact",
             "email": "fasdfasdf",
-            "phone": "1234567890",
+            "phone": "999-999-9999",
         },
     )
     assert response.status_code == 200
@@ -351,4 +351,4 @@ def test_item_get_contact():
     assert data["id"] == 1
     assert data["name"] == "Test Contact"
     assert data["email"] == "fasdfasdf"
-    assert data["phone"] == "1234567890"
+    assert data["phone"] == "999-999-9999"

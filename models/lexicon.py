@@ -24,10 +24,13 @@ class LexiconTerm(Base, AutoBaseMixin):
     Lexicon model for storing terms and their definitions.
     This model can be extended to include additional fields as needed.
     """
+
     term = mapped_column(String(100), unique=True, nullable=False)
     definition = mapped_column(String(255), nullable=False)
     category = mapped_column(String(255), nullable=True)
 
     def __repr__(self):
         return f"<LexiconTerm(category={self.category}, term={self.term}, definition={self.definition})>"
+
+
 # ============= EOF =============================================

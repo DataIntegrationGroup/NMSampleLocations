@@ -37,7 +37,10 @@ class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
     )
 
     equipment_id = mapped_column(
-        "equipment_id", Integer, ForeignKey("equipment.id", ondelete="SET NULL"), nullable=True
+        "equipment_id",
+        Integer,
+        ForeignKey("equipment.id", ondelete="SET NULL"),
+        nullable=True,
     )
 
 

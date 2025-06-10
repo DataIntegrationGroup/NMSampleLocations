@@ -35,7 +35,6 @@ def test_add_location():
     assert data["id"] == 2
 
 
-
 def test_add_well():
     response = client.post(
         "/base/well",

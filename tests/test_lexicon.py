@@ -35,5 +35,4 @@ def test_add_lexicon_term():
     assert data["category"] == category
 
 
-
 # ============= EOF =============================================

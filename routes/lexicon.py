@@ -23,9 +23,13 @@ router = APIRouter(
     prefix="/lexicon",
 )
 
-@router.post("/add", summary="Add term",
-             response_model=LexiconTermResponse,)
-def add_term(term_data: CreateLexiconTerm, session = Depends(get_db_session)):
+
+@router.post(
+    "/add",
+    summary="Add term",
+    response_model=LexiconTermResponse,
+)
+def add_term(term_data: CreateLexiconTerm, session=Depends(get_db_session)):
     """
     Endpoint to add a term to the lexicon.
     """

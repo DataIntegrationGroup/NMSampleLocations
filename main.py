@@ -13,6 +13,7 @@ from app import app
 from fastadmin import fastapi_app as admin_app
 
 from routes.base import router as base_router
+
 # from routes.lut import router as lut_router
 from routes.form import router as form_router
 from routes.timeseries import router as timeseries_router

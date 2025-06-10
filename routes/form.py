@@ -20,7 +20,12 @@ from fastapi.responses import JSONResponse
 from models import get_db_session
 from models.base import SampleLocation, Owner, Contact, Well, Group, GroupLocation
 from routes.base import simple_get_by_id, simple_get_by_name
-from schemas.form import WellForm, WellFormResponse, GroundwaterLevelFormResponse, GroundwaterLevelForm
+from schemas.form import (
+    WellForm,
+    WellFormResponse,
+    GroundwaterLevelFormResponse,
+    GroundwaterLevelForm,
+)
 
 router = APIRouter(prefix="/form")
 
@@ -74,8 +79,10 @@ async def well_form(form_data: WellForm, session=Depends(get_db_session)):
     return response_data
 
 
-@router.post('/groundwaterlevel', response_model=GroundwaterLevelFormResponse)
-async def groundwater_level_form(gwl_data: GroundwaterLevelForm, session=Depends(get_db_session)):
+@router.post("/groundwaterlevel", response_model=GroundwaterLevelFormResponse)
+async def groundwater_level_form(
+    gwl_data: GroundwaterLevelForm, session=Depends(get_db_session)
+):
     """
     Endpoint to handle groundwater level form submissions.
     """

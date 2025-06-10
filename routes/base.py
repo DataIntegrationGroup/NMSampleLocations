@@ -66,7 +66,9 @@ router = APIRouter(
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
 )
-def create_location(location_data: CreateLocation, session: Session = Depends(get_db_session)):
+def create_location(
+    location_data: CreateLocation, session: Session = Depends(get_db_session)
+):
     """
     Create a new sample location in the database.
     """
@@ -118,12 +120,16 @@ def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db_sess
 
 
 @router.post("/contact", summary="Create a new contact")
-def create_contact(contact_data: CreateContact, session: Session = Depends(get_db_session)):
+def create_contact(
+    contact_data: CreateContact, session: Session = Depends(get_db_session)
+):
     return adder(session, Contact, contact_data)
 
 
 @router.post("/spring", summary="Create a new spring")
-def create_spring(spring_data: CreateSpring, session: Session = Depends(get_db_session)):
+def create_spring(
+    spring_data: CreateSpring, session: Session = Depends(get_db_session)
+):
     """
     Create a new spring in the database.
     """
@@ -173,7 +179,9 @@ async def get_location(
 
 @router.get("/well", response_model=CustomPage[WellResponse], summary="Get all wells")
 async def get_wells(
-    api_id: str = None, ose_pod_id: str = None, session: Session = Depends(get_db_session)
+    api_id: str = None,
+    ose_pod_id: str = None,
+    session: Session = Depends(get_db_session),
 ):
     """
     Retrieve all wells from the database.
@@ -274,7 +282,9 @@ async def get_equipment(session: Session = Depends(get_db_session)):
     response_model=EquipmentResponse,
     summary="Get equipment by ID",
 )
-async def get_equipment_by_id(equipment_id: int, session: Session = Depends(get_db_session)):
+async def get_equipment_by_id(
+    equipment_id: int, session: Session = Depends(get_db_session)
+):
     """
     Retrieve an equipment by ID from the database.
     """
@@ -315,7 +325,9 @@ async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db_sessi
     response_model=SampleLocationResponse,
     summary="Get location by ID",
 )
-async def get_location_by_id(location_id: int, session: Session = Depends(get_db_session)):
+async def get_location_by_id(
+    location_id: int, session: Session = Depends(get_db_session)
+):
     """
     Retrieve a sample location by ID from the database.
     """
@@ -339,7 +351,9 @@ async def get_well_by_id(well_id: int, session: Session = Depends(get_db_session
 @router.get(
     "/wellscreen/{wellscreen_id}",
 )
-async def get_well_screen_by_id(wellscreen_id: int, session: Session = Depends(get_db_session)):
+async def get_well_screen_by_id(
+    wellscreen_id: int, session: Session = Depends(get_db_session)
+):
     """
     Retrieve a well screen by ID from the database.
     """
@@ -382,7 +396,9 @@ async def get_group_location_by_id(
 @router.get(
     "/contact/{contact_id}", response_model=ContactResponse, summary="Get contact by ID"
 )
-async def get_contact_by_id(contact_id: int, session: Session = Depends(get_db_session)):
+async def get_contact_by_id(
+    contact_id: int, session: Session = Depends(get_db_session)
+):
     """
     Retrieve a contact by ID from the database.
     """

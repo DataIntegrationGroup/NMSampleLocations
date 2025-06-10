@@ -20,6 +20,7 @@ from sqlalchemy.testing.schema import mapped_column
 
 from models import AutoBaseMixin, Base, PropertiesMixin
 
+
 class TimeseriesMixin:
     @declared_attr
     def name(self):
@@ -28,7 +29,6 @@ class TimeseriesMixin:
     @declared_attr
     def description(self):
         return mapped_column(String(255), nullable=True)
-
 
 
 class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
@@ -42,13 +42,14 @@ class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin):
     Base class for time series observations.
     This class can be extended to create specific types of observations.
     """
+
     # Define common fields for observations here
     timestamp = mapped_column(DateTime, nullable=False)
     value = mapped_column(Float, nullable=False)
     description = mapped_column(String(255), nullable=True)
 
-
-
     def __repr__(self):
         return f"<Observation(id={self.id}, timestamp={self.timestamp}, value={self.value})>"
+
+
 # ============= EOF =============================================

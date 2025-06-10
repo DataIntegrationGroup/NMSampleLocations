@@ -32,7 +32,9 @@ router = APIRouter(
 
 # Adders
 @router.post("/well_type", response_model=WellTypeResponse)
-def add_well_type(well_type: CreateWellType, session: Session = Depends(get_db_session)):
+def add_well_type(
+    well_type: CreateWellType, session: Session = Depends(get_db_session)
+):
     """
     Add a new well type to the database.
     """

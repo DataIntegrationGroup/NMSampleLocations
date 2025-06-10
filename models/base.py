@@ -32,8 +32,6 @@ from models import Base, AutoBaseMixin
 from models.lut import LUT_Well_Type, LU_Formation_Zone
 
 
-
-
 class SampleLocation(Base, AutoBaseMixin):
     name = Column(String(100), nullable=True)
     description = Column(String(255), nullable=True)

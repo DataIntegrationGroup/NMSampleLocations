@@ -16,12 +16,17 @@
 
 from tests import client
 
+
 def test_add_well_timeseries():
-    response = client.post('/timeseries/well', json={
-        "name": "Test Well Timeseries",
-        "description": "A test timeseries for well data.",
-        "well_id": 1
-    })
+    response = client.post(
+        "/timeseries/well",
+        json={
+            "name": "Test Well Timeseries",
+            "description": "A test timeseries for well data.",
+            "well_id": 1,
+        },
+    )
     assert response.status_code == 200
+
 
 # ============= EOF =============================================

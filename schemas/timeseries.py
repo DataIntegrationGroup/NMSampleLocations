@@ -29,4 +29,5 @@ class WellTimeseriesResponse(ORMBaseModel):
     description: str | None = None
     well_id: int
 
+
 # ============= EOF =============================================

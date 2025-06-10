@@ -133,4 +133,6 @@ class GroundwaterLevelFormResponse(BaseModel):
     depth_to_water_bgs: float  # Depth to water below ground surface
     measurement_date: date  # ISO format date string
     notes: str | None = None  # Optional notes field
+
+
 # ============= EOF =============================================

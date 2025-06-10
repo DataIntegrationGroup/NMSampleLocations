@@ -23,10 +23,13 @@ router = APIRouter(
     prefix="/timeseries",
 )
 
-@router.post("/well",
-            response_model=WellTimeseriesResponse,
-            summary="Add Well Timeseries")
-def add_well_timeseries(well_timeseries_data: CreateWellTimeseries, session=Depends(get_db_session)):
+
+@router.post(
+    "/well", response_model=WellTimeseriesResponse, summary="Add Well Timeseries"
+)
+def add_well_timeseries(
+    well_timeseries_data: CreateWellTimeseries, session=Depends(get_db_session)
+):
     """
     Endpoint to add a well timeseries.
     """
@@ -36,4 +39,6 @@ def add_well_timeseries(well_timeseries_data: CreateWellTimeseries, session=Depe
     session.commit()
 
     return ts
+
+
 # ============= EOF =============================================

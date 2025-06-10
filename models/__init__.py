@@ -52,11 +52,15 @@ async def get_db_session():
 Base = declarative_base()
 
 
-def adder(session, table, model):
+def adder(session, table, model, **kwargs):
     """
     Helper function to add a new record to the database.
     """
-    obj = table(**model.model_dump())
+    md = model.model_dump()
+    if kwargs:
+        md.update(kwargs)
+
+    obj = table(**md)
     session.add(obj)
     session.commit()
     return obj

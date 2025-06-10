@@ -13,16 +13,18 @@ from app import app
 from fastadmin import fastapi_app as admin_app
 
 from routes.base import router as base_router
-from routes.lut import router as lut_router
+# from routes.lut import router as lut_router
 from routes.form import router as form_router
 from routes.timeseries import router as timeseries_router
+from routes.lexicon import router as lexicon_router
 
 app.mount("/admin", admin_app)
 
 app.include_router(base_router)
-app.include_router(lut_router)
+# app.include_router(lut_router)
 app.include_router(form_router)
 app.include_router(timeseries_router)
+app.include_router(lexicon_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -29,7 +29,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, declared_attr, Mapped, mapped_column
 
 from models import Base, AutoBaseMixin
-from models.lut import LUT_Well_Type, LU_Formation_Zone
+from models.lexicon import LexiconTerm
 
 
 class SampleLocation(Base, AutoBaseMixin):
@@ -88,7 +88,7 @@ class Well(Base, AutoBaseMixin):
     hole_depth = Column(Float, nullable=True)
     well_type = Column(
         String(50),
-        ForeignKey(LUT_Well_Type.name),
+        ForeignKey(LexiconTerm.term),
         nullable=True,
     )  # e.g., "Production", "Observation", etc.
 
@@ -96,7 +96,7 @@ class Well(Base, AutoBaseMixin):
     casing_depth = Column(Float)
     casing_description = Column(String(50))
     construction_motes = Column(String(250))
-    formation_zone = Column(String(50), ForeignKey(LU_Formation_Zone.name))
+    formation_zone = Column(String(50), ForeignKey(LexiconTerm.term))
 
     # Define a relationship to samplelocations if needed
     location = relationship("SampleLocation")

@@ -36,6 +36,10 @@ class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
         "well_id", Integer, ForeignKey("well.id", ondelete="CASCADE"), nullable=False
     )
 
+    equipment_id = mapped_column(
+        "equipment_id", Integer, ForeignKey("equipment.id", ondelete="SET NULL"), nullable=True
+    )
+
 
 class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin):
     """

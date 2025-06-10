@@ -16,10 +16,11 @@
 import os
 
 from geoalchemy2 import load_spatialite
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, Integer, DateTime, func, JSON
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.event import listen
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker, declared_attr
 
 if os.environ.get("SPATIALITE_LIBRARY_PATH") is None:
     os.environ["SPATIALITE_LIBRARY_PATH"] = "/opt/homebrew/lib/mod_spatialite.dylib"
@@ -42,7 +43,7 @@ listen(engine, "connect", load_spatialite)
 sqlalchemy_sessionmaker = sessionmaker(engine, expire_on_commit=False)
 
 
-async def get_db():
+async def get_db_session():
     session = sqlalchemy_sessionmaker()
     yield session
     session.close()
@@ -59,6 +60,40 @@ def adder(session, table, model):
     session.add(obj)
     session.commit()
     return obj
+
+
+class AutoBaseMixin:
+    @declared_attr
+    def __tablename__(self):
+        return self.__name__.lower()
+
+    @declared_attr
+    def id(self):
+        return Column(Integer, primary_key=True, autoincrement=True)
+
+    @declared_attr
+    def created_at(self):
+        return Column(DateTime, nullable=False, server_default=func.now())
+
+    @declared_attr
+    def updated_at(self):
+        return Column(
+            DateTime,
+            nullable=False,
+            server_default=func.now(),
+            server_onupdate=func.now(),
+        )
+
+
+class PropertiesMixin:
+    @declared_attr
+    def properties(self):
+        return Column(
+            "properties",
+            JSON,
+            nullable=True,
+            comment="JSONB column for storing additional properties",
+        )
 
 
 # ============= EOF =============================================

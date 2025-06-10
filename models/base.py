@@ -28,31 +28,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship, declared_attr, Mapped, mapped_column
 
-from models import Base
+from models import Base, AutoBaseMixin
 from models.lut import LUT_Well_Type, LU_Formation_Zone
 
 
-class AutoBaseMixin:
-    @declared_attr
-    def __tablename__(self):
-        return self.__name__.lower()
-
-    @declared_attr
-    def id(self):
-        return Column(Integer, primary_key=True, autoincrement=True)
-
-    @declared_attr
-    def created_at(self):
-        return Column(DateTime, nullable=False, server_default=func.now())
-
-    @declared_attr
-    def updated_at(self):
-        return Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            server_onupdate=func.now(),
-        )
 
 
 class SampleLocation(Base, AutoBaseMixin):

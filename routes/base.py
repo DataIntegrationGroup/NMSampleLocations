@@ -20,7 +20,7 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from models import get_db, adder
+from models import get_db_session, adder
 from models.base import (
     Well,
     SampleLocation,
@@ -66,7 +66,7 @@ router = APIRouter(
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
 )
-def create_location(location_data: CreateLocation, session: Session = Depends(get_db)):
+def create_location(location_data: CreateLocation, session: Session = Depends(get_db_session)):
     """
     Create a new sample location in the database.
     """
@@ -74,7 +74,7 @@ def create_location(location_data: CreateLocation, session: Session = Depends(ge
 
 
 @router.post("/well", response_model=GetWell, summary="Create a new well")
-def create_well(well_data: CreateWell, session: Session = Depends(get_db)):
+def create_well(well_data: CreateWell, session: Session = Depends(get_db_session)):
     """
     Create a new well in the database.
     """
@@ -83,7 +83,7 @@ def create_well(well_data: CreateWell, session: Session = Depends(get_db)):
 
 @router.post("/wellscreen", summary="Create a new well screen")
 def create_wellscreen(
-    well_screen_data: CreateScreenWell, session: Session = Depends(get_db)
+    well_screen_data: CreateScreenWell, session: Session = Depends(get_db_session)
 ):
     """
     Create a new well screen in the database.
@@ -92,7 +92,7 @@ def create_wellscreen(
 
 
 @router.post("/group", summary="Create a new group")
-def create_group(group_data: CreateGroup, session: Session = Depends(get_db)):
+def create_group(group_data: CreateGroup, session: Session = Depends(get_db_session)):
     """
     Create a new group in the database.
     """
@@ -101,7 +101,7 @@ def create_group(group_data: CreateGroup, session: Session = Depends(get_db)):
 
 @router.post("/group_location", summary="Create a new group location")
 def create_group_location(
-    group_location_data: CreateGroupLocation, session: Session = Depends(get_db)
+    group_location_data: CreateGroupLocation, session: Session = Depends(get_db_session)
 ):
     """
     Create a new group location association in the database.
@@ -110,7 +110,7 @@ def create_group_location(
 
 
 @router.post("/owner", summary="Create a new owner")
-def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db)):
+def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db_session)):
     """
     Create a new owner in the database.
     """
@@ -118,12 +118,12 @@ def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db)):
 
 
 @router.post("/contact", summary="Create a new contact")
-def create_contact(contact_data: CreateContact, session: Session = Depends(get_db)):
+def create_contact(contact_data: CreateContact, session: Session = Depends(get_db_session)):
     return adder(session, Contact, contact_data)
 
 
 @router.post("/spring", summary="Create a new spring")
-def create_spring(spring_data: CreateSpring, session: Session = Depends(get_db)):
+def create_spring(spring_data: CreateSpring, session: Session = Depends(get_db_session)):
     """
     Create a new spring in the database.
     """
@@ -132,7 +132,7 @@ def create_spring(spring_data: CreateSpring, session: Session = Depends(get_db))
 
 @router.post("/equipment", summary="Create a new equipment")
 def create_equipment(
-    equipment_data: CreateEquipment, session: Session = Depends(get_db)
+    equipment_data: CreateEquipment, session: Session = Depends(get_db_session)
 ):
     """
     Create a new equipment in the database.
@@ -152,7 +152,7 @@ async def get_location(
     nearby_point: str = None,
     nearby_distance_km: float = 1,
     within: str = None,
-    session: Session = Depends(get_db),
+    session: Session = Depends(get_db_session),
 ):
     """
     Retrieve all wells from the database.
@@ -173,7 +173,7 @@ async def get_location(
 
 @router.get("/well", response_model=CustomPage[WellResponse], summary="Get all wells")
 async def get_wells(
-    api_id: str = None, ose_pod_id: str = None, session: Session = Depends(get_db)
+    api_id: str = None, ose_pod_id: str = None, session: Session = Depends(get_db_session)
 ):
     """
     Retrieve all wells from the database.
@@ -195,7 +195,7 @@ async def get_wells(
 
 
 @router.get("/group", response_model=List[GroupResponse], summary="Get groups")
-async def get_groups(session: Session = Depends(get_db)):
+async def get_groups(session: Session = Depends(get_db_session)):
     """
     Retrieve all groups from the database.
     """
@@ -206,7 +206,7 @@ async def get_groups(session: Session = Depends(get_db)):
 
 
 @router.get("/owner", response_model=List[OwnerResponse], summary="Get owners")
-async def get_owners(session: Session = Depends(get_db)):
+async def get_owners(session: Session = Depends(get_db_session)):
     """
     Retrieve all owners from the database.
     """
@@ -216,7 +216,7 @@ async def get_owners(session: Session = Depends(get_db)):
 
 
 @router.get("/contact", response_model=List[ContactResponse], summary="Get contacts")
-async def get_contacts(session: Session = Depends(get_db)):
+async def get_contacts(session: Session = Depends(get_db_session)):
     """
     Retrieve all contacts from the database.
     :param session:
@@ -228,7 +228,7 @@ async def get_contacts(session: Session = Depends(get_db)):
 @router.get(
     "/wellscreen", response_model=List[WellScreenResponse], summary="Get well screens"
 )
-async def get_well_screens(session: Session = Depends(get_db)):
+async def get_well_screens(session: Session = Depends(get_db_session)):
     """
     Retrieve all well screens from the database.
     """
@@ -240,7 +240,7 @@ async def get_well_screens(session: Session = Depends(get_db)):
     response_model=List[GroupLocationResponse],
     summary="Get group locations",
 )
-async def get_group_locations(session: Session = Depends(get_db)):
+async def get_group_locations(session: Session = Depends(get_db_session)):
     """
     Retrieve all group locations from the database.
     """
@@ -251,7 +251,7 @@ async def get_group_locations(session: Session = Depends(get_db)):
     "/spring",
     response_model=List[SpringResponse],
 )
-async def get_springs(session: Session = Depends(get_db)):
+async def get_springs(session: Session = Depends(get_db_session)):
     """
     Retrieve all springs from the database.
     """
@@ -261,7 +261,7 @@ async def get_springs(session: Session = Depends(get_db)):
 @router.get(
     "/equipment", response_model=List[EquipmentResponse], summary="Get equipment"
 )
-async def get_equipment(session: Session = Depends(get_db)):
+async def get_equipment(session: Session = Depends(get_db_session)):
     """
     Retrieve all equipment from the database.
     """
@@ -274,7 +274,7 @@ async def get_equipment(session: Session = Depends(get_db)):
     response_model=EquipmentResponse,
     summary="Get equipment by ID",
 )
-async def get_equipment_by_id(equipment_id: int, session: Session = Depends(get_db)):
+async def get_equipment_by_id(equipment_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve an equipment by ID from the database.
     """
@@ -287,7 +287,7 @@ async def get_equipment_by_id(equipment_id: int, session: Session = Depends(get_
 @router.get(
     "/spring/{spring_id}", response_model=SpringResponse, summary="Get spring by ID"
 )
-async def get_spring_by_id(spring_id: int, session: Session = Depends(get_db)):
+async def get_spring_by_id(spring_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve a spring by ID from the database.
     """
@@ -300,7 +300,7 @@ async def get_spring_by_id(spring_id: int, session: Session = Depends(get_db)):
 @router.get(
     "/owner/{owner_id}", response_model=OwnerResponse, summary="Get owner by ID"
 )
-async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db)):
+async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve an owner by ID from the database.
     """
@@ -315,7 +315,7 @@ async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db)):
     response_model=SampleLocationResponse,
     summary="Get location by ID",
 )
-async def get_location_by_id(location_id: int, session: Session = Depends(get_db)):
+async def get_location_by_id(location_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve a sample location by ID from the database.
     """
@@ -326,7 +326,7 @@ async def get_location_by_id(location_id: int, session: Session = Depends(get_db
 
 
 @router.get("/well/{well_id}", response_model=WellResponse, summary="Get well by ID")
-async def get_well_by_id(well_id: int, session: Session = Depends(get_db)):
+async def get_well_by_id(well_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve a well by ID from the database.
     """
@@ -339,7 +339,7 @@ async def get_well_by_id(well_id: int, session: Session = Depends(get_db)):
 @router.get(
     "/wellscreen/{wellscreen_id}",
 )
-async def get_well_screen_by_id(wellscreen_id: int, session: Session = Depends(get_db)):
+async def get_well_screen_by_id(wellscreen_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve a well screen by ID from the database.
     """
@@ -352,7 +352,7 @@ async def get_well_screen_by_id(wellscreen_id: int, session: Session = Depends(g
 @router.get(
     "/group/{group_id}", response_model=GroupResponse, summary="Get group by ID"
 )
-async def get_group_by_id(group_id: int, session: Session = Depends(get_db)):
+async def get_group_by_id(group_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve a group by ID from the database.
     """
@@ -368,7 +368,7 @@ async def get_group_by_id(group_id: int, session: Session = Depends(get_db)):
     summary="Get group location by ID",
 )
 async def get_group_location_by_id(
-    group_location_id: int, session: Session = Depends(get_db)
+    group_location_id: int, session: Session = Depends(get_db_session)
 ):
     """
     Retrieve a group location by ID from the database.
@@ -382,7 +382,7 @@ async def get_group_location_by_id(
 @router.get(
     "/contact/{contact_id}", response_model=ContactResponse, summary="Get contact by ID"
 )
-async def get_contact_by_id(contact_id: int, session: Session = Depends(get_db)):
+async def get_contact_by_id(contact_id: int, session: Session = Depends(get_db_session)):
     """
     Retrieve a contact by ID from the database.
     """

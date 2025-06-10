@@ -17,10 +17,10 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-from models import get_db
+from models import get_db_session
 from models.base import SampleLocation, Owner, Contact, Well, Group, GroupLocation
 from routes.base import simple_get_by_id, simple_get_by_name
-from schemas.form import WellForm, WellFormResponse
+from schemas.form import WellForm, WellFormResponse, GroundwaterLevelFormResponse, GroundwaterLevelForm
 
 router = APIRouter(prefix="/form")
 
@@ -29,7 +29,7 @@ router = APIRouter(prefix="/form")
     "/well",
     response_model=WellFormResponse,
 )
-async def well_form(form_data: WellForm, session=Depends(get_db)):
+async def well_form(form_data: WellForm, session=Depends(get_db_session)):
     """
     Endpoint to handle well form submissions.
     """
@@ -51,6 +51,7 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
 
     contact_data = owner_data.pop("contact", None)
 
+    # add owner to the database
     owner = Owner(**owner_data)
     existing_owner = simple_get_by_name(session, Owner, owner.name)
     if existing_owner is None:
@@ -61,6 +62,7 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
     cs = [Contact(**contact) for contact in contact_data if contact is not None]
     owner.contacts.extend(cs)
 
+    # add well to the database
     well_data = data.get("well", None)
     well = Well(**well_data)
     well.location = location
@@ -70,6 +72,14 @@ async def well_form(form_data: WellForm, session=Depends(get_db)):
 
     response_data = {"location": location, "owner": owner, "well": well}
     return response_data
+
+
+@router.post('/groundwaterlevel', response_model=GroundwaterLevelFormResponse)
+async def groundwater_level_form(gwl_data: GroundwaterLevelForm, session=Depends(get_db_session)):
+    """
+    Endpoint to handle groundwater level form submissions.
+    """
+    data = gwl_data.model_dump()
 
 
 # ============= EOF =============================================

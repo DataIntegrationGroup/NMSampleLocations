@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+from datetime import date
 from typing import List
 
 from pydantic import BaseModel
@@ -110,4 +111,26 @@ class WellFormResponse(BaseModel):
     # You can add more fields to the response as necessary, such as status messages, etc.
 
 
+class GroundwaterLevelForm(BaseModel):
+    """
+    A class representing a form for groundwater level data submission.
+    This class is used to validate and process groundwater level data submissions.
+    """
+
+    well_id: int  # ID of the well
+    depth_to_water_bgs: float  # Depth to water below ground surface
+    measurement_date: date  # ISO format date string
+    notes: str | None = None  # Optional notes field
+
+
+class GroundwaterLevelFormResponse(BaseModel):
+    """
+    A class representing the response for a groundwater level form submission.
+    This class is used to structure the response data after a successful submission.
+    """
+
+    well_id: int
+    depth_to_water_bgs: float  # Depth to water below ground surface
+    measurement_date: date  # ISO format date string
+    notes: str | None = None  # Optional notes field
 # ============= EOF =============================================

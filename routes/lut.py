@@ -18,7 +18,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from models import get_db, adder
+from models import get_db_session, adder
 from models.base import SampleLocation
 
 from models.lut import LUT_Well_Type, LU_Formation_Zone
@@ -32,7 +32,7 @@ router = APIRouter(
 
 # Adders
 @router.post("/well_type", response_model=WellTypeResponse)
-def add_well_type(well_type: CreateWellType, session: Session = Depends(get_db)):
+def add_well_type(well_type: CreateWellType, session: Session = Depends(get_db_session)):
     """
     Add a new well type to the database.
     """
@@ -41,7 +41,7 @@ def add_well_type(well_type: CreateWellType, session: Session = Depends(get_db))
 
 @router.post("/formation_zone", response_model=FormationZoneResponse)
 def add_formation_zone(
-    formation_zone: CreateFormationZone, session: Session = Depends(get_db)
+    formation_zone: CreateFormationZone, session: Session = Depends(get_db_session)
 ):
     """
     Add a new formation zone to the database.
@@ -51,7 +51,7 @@ def add_formation_zone(
 
 # Getters
 @router.get("/well_types", response_model=list[WellTypeResponse])
-def get_well_types(session: Session = Depends(get_db)):
+def get_well_types(session: Session = Depends(get_db_session)):
     """
     Retrieve all well types from the database.
     """

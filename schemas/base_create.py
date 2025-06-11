@@ -38,6 +38,7 @@ class CreateWell(ORMBaseModel):
     location_id: int
     api_id: str | None = None
     ose_pod_id: str | None = None
+    well_type: str | None = None
 
 
 class CreateScreenWell(ORMBaseModel):
@@ -48,6 +49,18 @@ class CreateScreenWell(ORMBaseModel):
     well_id: int
     screen_depth_bottom: float
     screen_depth_top: float
+    screen_type: str | None = None
+
+    @model_validator(mode="after")
+    def validate_screen_type(self):
+        if self.screen_type is not None:
+            valid_screen_types = ["PVC", ]  # todo: get valid screen types from database
+            if self.screen_type not in valid_screen_types:
+                raise ValueError(
+                    f"Invalid screen_type: {self.screen_type}. "
+                    f"Valid options are: {', '.join(valid_screen_types)}."
+                )
+        return self
 
     # validate that screen depth bottom is greater than top
     @model_validator(mode="after")

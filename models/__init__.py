@@ -37,7 +37,19 @@ engine = create_engine(
     plugins=["geoalchemy2"],
 )
 
-listen(engine, "connect", load_spatialite)
+def on_connect(dbapi_connection, connection_record):
+    """
+    Event listener to load SpatiaLite on connection.
+    """
+    load_spatialite(dbapi_connection)
+
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+
+
+listen(engine, "connect", on_connect)
+
 
 # sqlalchemy_sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
 sqlalchemy_sessionmaker = sessionmaker(engine, expire_on_commit=False)

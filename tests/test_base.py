@@ -36,12 +36,18 @@ def test_add_location():
 
 
 def test_add_well():
+    response = client.post('/lexicon/add', json={'term': 'Monitoring', 'definition': 'Monitoring Well'})
+    assert response.status_code == 200
+    response = client.post('/lexicon/add', json={'term': 'Production', 'definition': 'Production Well'})
+    assert response.status_code == 200
+
     response = client.post(
         "/base/well",
         json={
             "location_id": 1,
             "api_id": "1001-0001",
             "ose_pod_id": "RA-0001",
+            "well_type": "Monitoring",
         },
     )
     assert response.status_code == 200
@@ -54,6 +60,7 @@ def test_add_well():
             "location_id": 2,
             "api_id": "1001-0002",
             "ose_pod_id": "RA-0002",
+            "well_type": "Production",
         },
     )
     assert response.status_code == 200
@@ -90,10 +97,16 @@ def test_add_spring():
 
 def test_add_well_screen():
     response = client.post(
-        "/base/wellscreen",
-        json={"well_id": 1, "screen_depth_top": 10.0, "screen_depth_bottom": 20.0},
+        "/lexicon/add",
+        json={"term": "PVC", "definition": "PVC Well Screen"},
     )
     assert response.status_code == 200
+    response = client.post(
+        "/base/wellscreen",
+        json={"well_id": 1, "screen_depth_top": 10.0, "screen_depth_bottom": 20.0,
+              "screen_type": "PVC"}
+    )
+
     data = response.json()
     assert "id" in data
     assert data["well_id"] == 1

@@ -36,9 +36,13 @@ def test_add_location():
 
 
 def test_add_well():
-    response = client.post('/lexicon/add', json={'term': 'Monitoring', 'definition': 'Monitoring Well'})
+    response = client.post(
+        "/lexicon/add", json={"term": "Monitoring", "definition": "Monitoring Well"}
+    )
     assert response.status_code == 200
-    response = client.post('/lexicon/add', json={'term': 'Production', 'definition': 'Production Well'})
+    response = client.post(
+        "/lexicon/add", json={"term": "Production", "definition": "Production Well"}
+    )
     assert response.status_code == 200
 
     response = client.post(
@@ -103,8 +107,12 @@ def test_add_well_screen():
     assert response.status_code == 200
     response = client.post(
         "/base/wellscreen",
-        json={"well_id": 1, "screen_depth_top": 10.0, "screen_depth_bottom": 20.0,
-              "screen_type": "PVC"}
+        json={
+            "well_id": 1,
+            "screen_depth_top": 10.0,
+            "screen_depth_bottom": 20.0,
+            "screen_type": "PVC",
+        },
     )
 
     data = response.json()

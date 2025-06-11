@@ -37,6 +37,7 @@ engine = create_engine(
     plugins=["geoalchemy2"],
 )
 
+
 def on_connect(dbapi_connection, connection_record):
     """
     Event listener to load SpatiaLite on connection.

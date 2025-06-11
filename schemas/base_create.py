@@ -54,7 +54,9 @@ class CreateScreenWell(ORMBaseModel):
     @model_validator(mode="after")
     def validate_screen_type(self):
         if self.screen_type is not None:
-            valid_screen_types = ["PVC", ]  # todo: get valid screen types from database
+            valid_screen_types = [
+                "PVC",
+            ]  # todo: get valid screen types from database
             if self.screen_type not in valid_screen_types:
                 raise ValueError(
                     f"Invalid screen_type: {self.screen_type}. "

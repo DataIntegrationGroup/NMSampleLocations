@@ -17,6 +17,7 @@ def test_add_location():
         json={
             "name": "Test Location",
             "point": "POINT(10.1 10.1)",
+            "visible": True,
         },
     )
     assert response.status_code == 200
@@ -28,6 +29,7 @@ def test_add_location():
         json={
             "name": "Test Location 2",
             "point": "POINT(50.0 50.0)",
+            "visible": False,
         },
     )
     assert response.status_code == 200

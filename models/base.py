@@ -35,7 +35,7 @@ from models.lexicon import LexiconTerm
 class SampleLocation(Base, AutoBaseMixin):
     name = Column(String(100), nullable=True)
     description = Column(String(255), nullable=True)
-    visible = Column(Boolean, default=True, nullable=False)
+    visible = Column(Boolean, default=False, nullable=False)
 
     point: Mapped[WKBElement] = mapped_column(
         Geometry(geometry_type="POINT", srid=4326, spatial_index=True)

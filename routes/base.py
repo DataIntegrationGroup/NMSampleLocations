@@ -33,6 +33,7 @@ from models.base import (
     Equipment,
 )
 from routes.pagination import CustomPage
+from routes.regex import QUERY_REGEX
 from schemas.base_get import GetWell, GetLocation, GetGroup
 from schemas.base_create import (
     CreateWell,
@@ -62,7 +63,7 @@ router = APIRouter(
     prefix="/base",
 )
 
-
+# ============= Create ============================================
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
 )
@@ -158,21 +159,36 @@ async def get_location(
     nearby_point: str = None,
     nearby_distance_km: float = 1,
     within: str = None,
+    query: str = None,
     session: Session = Depends(get_db_session),
 ):
     """
     Retrieve all wells from the database.
     """
-    if nearby_point:
+    sql = select(SampleLocation)
+    if query:
+
+        match = QUERY_REGEX.match(query)
+        column = match.group('field')
+        value = match.group('value')
+        operator = match.group('operator')
+        if value.lower() == "true":
+            value = True
+        elif value.lower() == "false":
+            value = False
+
+        column = getattr(SampleLocation, column)
+        comp = getattr(column, f'__{operator}__')
+        sql = sql.where(comp(value))
+
+    elif nearby_point:
         nearby_point = func.ST_GeomFromText(nearby_point)
-        sql = select(SampleLocation).where(
+        sql = sql.where(
             func.ST_Distance(SampleLocation.point, nearby_point) <= nearby_distance_km
         )
     elif within:
         within = func.ST_GeomFromText(within)
-        sql = select(SampleLocation).where(func.ST_Within(SampleLocation.point, within))
-    else:
-        sql = select(SampleLocation)
+        sql = sql.where(func.ST_Within(SampleLocation.point, within))
 
     return paginate(query=sql, conn=session)
 

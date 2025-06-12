@@ -52,5 +52,4 @@ def test_query_regex_nested_between():
     assert match.group("operator") == "between"
 
 
-
 # ============= EOF =============================================

@@ -87,8 +87,77 @@ def test_query_nested_like():
     assert items[0]["name"] == "Test Location 1"
     assert items[1]["name"] == "Test Location 2"
 
-    # assert len(items) > 0  # Assuming there are locations with well names containing 'Test'
-    # assert all("Test" in item["well"]["name"] for item in items)  # Ensure all returned wells match the condition
+
+def test_query_nested_well_ose_pod_id_like():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "well.ose_pod_id like 'RA%'",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 2  # Assuming two wells match this pattern
+    assert items[0]["name"] == "Test Location 1"
+    assert items[1]["name"] == "Test Location 2"
 
 
+def test_query_nested_well_depth_between():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "well.well_depth between [50,1000]",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 1  # Assuming two wells fall within this depth range
+    # assert all(500 <= item["well"]["depth"] <= 1500 for item in items)
+
+
+def test_query_nested_well_depth_gt():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "well.well_depth gt 1000",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 1  # Assuming one well exceeds this depth
+    assert items[0]["name"] == "Test Location 2"  # Assuming this is the expected name
+    # assert all(item["well"]["depth"] > 500 for item in items)
+
+
+def test_query_nested_well_depth_lt():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "well.well_depth lt 200",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 1  # Assuming one well is below this depth
+    assert items[0]["name"] == "Test Location 1"
+    # assert all(item["well"]["depth"] < 1500 for item in items)
+
+
+def test_query_nested_well_depth_eq():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "well.well_depth eq 100",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 1  # Assuming one well is at or above this depth
+    assert items[0]["name"] == "Test Location 1"
+    # assert all(item["well"]["depth"] >= 500 for item in items)
 # ============= EOF =============================================

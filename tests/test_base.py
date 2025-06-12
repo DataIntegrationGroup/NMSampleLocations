@@ -54,6 +54,7 @@ def test_add_well():
             "api_id": "1001-0001",
             "ose_pod_id": "RA-0001",
             "well_type": "Monitoring",
+            "well_depth": 100.0,
         },
     )
     assert response.status_code == 200
@@ -67,6 +68,7 @@ def test_add_well():
             "api_id": "1001-0002",
             "ose_pod_id": "RA-0002",
             "well_type": "Production",
+            "well_depth": 1200.0,
         },
     )
     assert response.status_code == 200

@@ -43,4 +43,14 @@ def test_query_regex_nested():
     assert match.group("operator") == "eq"
 
 
+def test_query_regex_nested_between():
+    text = "well.well_depth between [500,1000]"
+    match = QUERY_REGEX.match(text)
+    assert match is not None
+    assert match.group("field") == "well.well_depth"
+    assert match.group("value") == "[500,1000]"
+    assert match.group("operator") == "between"
+
+
+
 # ============= EOF =============================================

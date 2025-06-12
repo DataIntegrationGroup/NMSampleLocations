@@ -189,10 +189,12 @@ async def get_location(
             related_model = rel.property.mapper.class_
             related_column = getattr(related_model, column_parts[1])
             if operator == "like":
-                comp = related_column.like
+                w = related_column.like(value)
+            elif operator == "between":
+                w = related_column.between(*map(float, value.strip("[]").split(",")))
             else:
-                comp = getattr(related_column, f"__{operator}__")
-            sql = sql.where(rel.any(comp(value)))
+                w = getattr(related_column, f"__{operator}__")(value)
+            sql = sql.where(rel.any(w))
         else:
             column = getattr(SampleLocation, column)
             comp = getattr(column, f"__{operator}__")

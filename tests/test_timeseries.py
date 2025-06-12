@@ -33,12 +33,13 @@ def test_add_well_timeseries():
 def test_add_well_observations():
     response = client.post(
         "/timeseries/well/groundwater_level/observations",
-        json=[{
-            "timestamp": datetime.datetime.now().isoformat(),
-            "value": 10.5,
-            "description": "Test observation for well.",
-            "timeseries_id": 1,
-        },
+        json=[
+            {
+                "timestamp": datetime.datetime.now().isoformat(),
+                "value": 10.5,
+                "description": "Test observation for well.",
+                "timeseries_id": 1,
+            },
             {
                 "timestamp": datetime.datetime.now().isoformat(),
                 "value": 11.5,
@@ -48,4 +49,6 @@ def test_add_well_observations():
         ],
     )
     assert response.status_code == 200
+
+
 # ============= EOF =============================================

@@ -33,7 +33,6 @@ class CreateGroundwaterLevelObservation(BaseModel):
     timeseries_id: int
 
 
-
 class WellTimeseriesResponse(ORMBaseModel):
     name: str
     description: str | None = None

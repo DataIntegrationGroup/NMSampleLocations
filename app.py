@@ -44,7 +44,7 @@ async def create_superuser():
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
-    if settings.get_enum("MODE") == 'production':
+    if settings.get_enum("MODE") == "production":
         pass
     else:
         await init_db()

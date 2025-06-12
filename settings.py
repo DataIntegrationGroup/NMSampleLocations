@@ -19,13 +19,14 @@ import os
 class Settings:
 
     def __init__(self):
-        self.mode = os.getenv('MODE', 'development')  # Default mode
+        self.mode = os.getenv("MODE", "development")  # Default mode
 
     def get_enum(self, name: str):
         if name == "MODE":
             return self.mode
         else:
             raise ValueError(f"Unknown setting: {name}")
+
 
 settings = Settings()
 # ============= EOF =============================================

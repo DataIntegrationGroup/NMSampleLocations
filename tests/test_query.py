@@ -56,6 +56,7 @@ def test_query_nested_eq():
     assert len(items) == 1
     assert items[0]["name"] == "Test Location 1"  # Assuming this is the expected name
 
+
 def test_query_nested_ne():
     response = client.get(
         "/base/location",
@@ -67,7 +68,9 @@ def test_query_nested_ne():
     data = response.json()
     items = data["items"]
     assert len(items) == 2  # Assuming there are two locations not matching the API ID
-    assert all(item["name"] != "Test Location 1" for item in items)  # Ensure none match the excluded ID
+    assert all(
+        item["name"] != "Test Location 1" for item in items
+    )  # Ensure none match the excluded ID
 
 
 def test_query_nested_like():
@@ -86,5 +89,6 @@ def test_query_nested_like():
 
     # assert len(items) > 0  # Assuming there are locations with well names containing 'Test'
     # assert all("Test" in item["well"]["name"] for item in items)  # Ensure all returned wells match the condition
+
 
 # ============= EOF =============================================

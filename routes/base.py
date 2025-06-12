@@ -182,10 +182,9 @@ async def get_location(
         elif value == "false":
             value = False
 
-
-        if '.' in column:
+        if "." in column:
             # Handle nested attributes
-            column_parts = column.split('.')
+            column_parts = column.split(".")
             rel = getattr(SampleLocation, column_parts[0])
             related_model = rel.property.mapper.class_
             related_column = getattr(related_model, column_parts[1])

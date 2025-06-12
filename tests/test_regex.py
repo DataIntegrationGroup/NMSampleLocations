@@ -17,21 +17,21 @@ from routes.regex import QUERY_REGEX
 
 
 def test_query_regex_eq():
-    text = 'visible eq true'
+    text = "visible eq true"
     match = QUERY_REGEX.match(text)
     assert match is not None
-    assert match.group('field') == 'visible'
-    assert match.group('value') == 'true'
-    assert match.group('operator') == 'eq'
+    assert match.group("field") == "visible"
+    assert match.group("value") == "true"
+    assert match.group("operator") == "eq"
+
 
 def test_query_regex_ne():
-    text = 'visible ne true'
+    text = "visible ne true"
     match = QUERY_REGEX.match(text)
     assert match is not None
-    assert match.group('field') == 'visible'
-    assert match.group('value') == 'true'
-    assert match.group('operator') == 'ne'
-
+    assert match.group("field") == "visible"
+    assert match.group("value") == "true"
+    assert match.group("operator") == "ne"
 
 
 # ============= EOF =============================================

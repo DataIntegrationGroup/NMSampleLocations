@@ -63,6 +63,7 @@ router = APIRouter(
     prefix="/base",
 )
 
+
 # ============= Create ============================================
 @router.post(
     "/location", response_model=GetLocation, summary="Create a new sample location"
@@ -169,16 +170,16 @@ async def get_location(
     if query:
 
         match = QUERY_REGEX.match(query)
-        column = match.group('field')
-        value = match.group('value')
-        operator = match.group('operator')
+        column = match.group("field")
+        value = match.group("value")
+        operator = match.group("operator")
         if value.lower() == "true":
             value = True
         elif value.lower() == "false":
             value = False
 
         column = getattr(SampleLocation, column)
-        comp = getattr(column, f'__{operator}__')
+        comp = getattr(column, f"__{operator}__")
         sql = sql.where(comp(value))
 
     elif nearby_point:

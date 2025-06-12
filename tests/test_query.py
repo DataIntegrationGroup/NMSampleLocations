@@ -18,23 +18,29 @@ from tests import client
 
 
 def test_query_eq_true():
-    response = client.get('/base/location',
-                          params={
-                              'query': 'visible eq true',
-                          })
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "visible eq true",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
-    items = data['items']
+    items = data["items"]
     assert len(items) == 1
 
+
 def test_query_eq_false():
-    response = client.get('/base/location',
-                          params={
-                              'query': 'visible eq false',
-                          })
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "visible eq false",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
-    items = data['items']
+    items = data["items"]
     assert len(items) == 2
+
 
 # ============= EOF =============================================

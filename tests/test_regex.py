@@ -33,5 +33,12 @@ def test_query_regex_ne():
     assert match.group("value") == "true"
     assert match.group("operator") == "ne"
 
+def test_query_regex_nested():
+    text = "well.api_id eq '1001-0001'"
+    match = QUERY_REGEX.match(text)
+    assert match is not None
+    assert match.group("field") == "well.api_id"
+    assert match.group("value") == "'1001-0001'"
+    assert match.group("operator") == "eq"
 
 # ============= EOF =============================================

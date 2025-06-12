@@ -15,7 +15,7 @@ def test_add_location():
     response = client.post(
         "/base/location",
         json={
-            "name": "Test Location",
+            "name": "Test Location 1",
             "point": "POINT(10.1 10.1)",
             "visible": True,
         },
@@ -301,7 +301,7 @@ def test_item_get_location():
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == 1
-    assert data["name"] == "Test Location"
+    assert data["name"] == "Test Location 1"
 
 
 def test_item_get_group():

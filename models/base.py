@@ -81,7 +81,7 @@ class Well(Base, AutoBaseMixin):
     location_id = Column(Integer, ForeignKey("samplelocation.id"), nullable=False)
 
     ose_pod_id = Column(String(50), nullable=True)
-    api_id = Column(String(50), nullable=True)  # API well number
+    api_id = Column(String(50), nullable=True, default='')  # API well number
     usgs_id = Column(String(50), nullable=True)  # USGS well number
 
     well_depth = Column(Float, nullable=True)
@@ -98,8 +98,7 @@ class Well(Base, AutoBaseMixin):
     construction_motes = Column(String(250))
     formation_zone = Column(String(100), ForeignKey("lexiconterm.term"), nullable=True)
 
-    # Define a relationship to samplelocations if needed
-    location = relationship("SampleLocation")
+    location = relationship("SampleLocation", backref='well', uselist=False)
 
 
 class WellScreen(Base, AutoBaseMixin):

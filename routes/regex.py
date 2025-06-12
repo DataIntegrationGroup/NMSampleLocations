@@ -25,10 +25,8 @@ import re
 
 
 QUERY_REGEX = re.compile(
-    (
-        r"(?P<field>[a-zA-Z0-9_-]+)\s+"
-        r"(?P<operator>eq|ne|gt|lt|ge|le)\s+"
-        r'(?P<value>(true|false|\d+|"[^"]*"))'
-    )
+    r"(?P<field>[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)?)\s+"
+    r"(?P<operator>eq|ne|gt|lt|ge|le|like)\s+"
+    r"(?P<value>'[^']*'|true|false|\d+(\.\d+)?)"
 )
 # ============= EOF =============================================

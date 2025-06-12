@@ -173,14 +173,31 @@ async def get_location(
         column = match.group("field")
         value = match.group("value")
         operator = match.group("operator")
-        if value.lower() == "true":
+        value = value.lower()
+        if value.startswith("'") and value.endswith("'"):
+            value = value[1:-1]
+
+        if value == "true":
             value = True
-        elif value.lower() == "false":
+        elif value == "false":
             value = False
 
-        column = getattr(SampleLocation, column)
-        comp = getattr(column, f"__{operator}__")
-        sql = sql.where(comp(value))
+
+        if '.' in column:
+            # Handle nested attributes
+            column_parts = column.split('.')
+            rel = getattr(SampleLocation, column_parts[0])
+            related_model = rel.property.mapper.class_
+            related_column = getattr(related_model, column_parts[1])
+            if operator == "like":
+                comp = related_column.like
+            else:
+                comp = getattr(related_column, f"__{operator}__")
+            sql = sql.where(rel.any(comp(value)))
+        else:
+            column = getattr(SampleLocation, column)
+            comp = getattr(column, f"__{operator}__")
+            sql = sql.where(comp(value))
 
     elif nearby_point:
         nearby_point = func.ST_GeomFromText(nearby_point)

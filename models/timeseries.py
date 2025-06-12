@@ -55,6 +55,13 @@ class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin):
     value = mapped_column(Float, nullable=False)
     description = mapped_column(String(255), nullable=True)
 
+    timeseries_id = mapped_column(
+        "timeseries_id",
+        Integer,
+        ForeignKey("welltimeseries.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
     def __repr__(self):
         return f"<Observation(id={self.id}, timestamp={self.timestamp}, value={self.value})>"
 

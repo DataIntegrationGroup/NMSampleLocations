@@ -19,6 +19,7 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 
 from models import sqlalchemy_sessionmaker, engine, Base
+from settings import settings
 
 
 async def init_db():
@@ -42,8 +43,12 @@ async def create_superuser():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    await init_db()
-    await create_superuser()
+
+    if settings.get_enum("MODE") == 'production':
+        pass
+    else:
+        await init_db()
+        await create_superuser()
     yield
 
 

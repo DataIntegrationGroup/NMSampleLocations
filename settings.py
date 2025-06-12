@@ -13,31 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
-
-from pydantic import BaseModel
-
-from schemas import ORMBaseModel
+import os
 
 
-class CreateWellTimeseries(BaseModel):
-    name: str
-    description: str | None = None
-    well_id: int
+class Settings:
 
+    def __init__(self):
+        self.mode = os.getenv('MODE', 'development')  # Default mode
 
-class CreateGroundwaterLevelObservation(BaseModel):
-    timestamp: datetime  # ISO 8601 format
-    value: float
-    description: str | None = None
-    timeseries_id: int
+    def get_enum(self, name: str):
+        if name == "MODE":
+            return self.mode
+        else:
+            raise ValueError(f"Unknown setting: {name}")
 
-
-
-class WellTimeseriesResponse(ORMBaseModel):
-    name: str
-    description: str | None = None
-    well_id: int
-
-
+settings = Settings()
 # ============= EOF =============================================

@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+from typing import List
+
 from fastapi import APIRouter, Depends
 
 from models import get_db_session
-from models.timeseries import WellTimeseries
-from schemas.timeseries import CreateWellTimeseries, WellTimeseriesResponse
+from models.timeseries import WellTimeseries, GroundwaterLevelObservation
+from schemas.timeseries import CreateWellTimeseries, WellTimeseriesResponse, \
+    CreateGroundwaterLevelObservation
 
 router = APIRouter(
     prefix="/timeseries",
@@ -40,5 +43,20 @@ def add_well_timeseries(
 
     return ts
 
+@router.post(
+    "/well/groundwater_level/observations",
+    summary="Add groundwater level observation",)
+def add_well_observations(
+    observations: List[CreateGroundwaterLevelObservation],
+    session=Depends(get_db_session),
+):
+    """
+    Endpoint to add observations to a well timeseries.
+    """
+    for observation in observations:
+            ts = GroundwaterLevelObservation(**observation.model_dump())
+            session.add(ts)
 
+    session.commit()
+    return {"message": "Observations added successfully."}
 # ============= EOF =============================================

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+import datetime
 
 from tests import client
 
@@ -29,4 +30,22 @@ def test_add_well_timeseries():
     assert response.status_code == 200
 
 
+def test_add_well_observations():
+    response = client.post(
+        "/timeseries/well/groundwater_level/observations",
+        json=[{
+            "timestamp": datetime.datetime.now().isoformat(),
+            "value": 10.5,
+            "description": "Test observation for well.",
+            "timeseries_id": 1,
+        },
+            {
+                "timestamp": datetime.datetime.now().isoformat(),
+                "value": 11.5,
+                "description": "Test observation for well.",
+                "timeseries_id": 1,
+            },
+        ],
+    )
+    assert response.status_code == 200
 # ============= EOF =============================================

@@ -182,23 +182,27 @@ async def get_location(
         elif value == "false":
             value = False
 
+        def make_where(col, op, v):
+            if op == "like":
+                return col.like(v)
+            elif op == "between":
+                return col.between(*map(float, v.strip("[]").split(",")))
+            else:
+                return getattr(col, f"__{op}__")(v)
+
         if "." in column:
             # Handle nested attributes
             column_parts = column.split(".")
             rel = getattr(SampleLocation, column_parts[0])
             related_model = rel.property.mapper.class_
             related_column = getattr(related_model, column_parts[1])
-            if operator == "like":
-                w = related_column.like(value)
-            elif operator == "between":
-                w = related_column.between(*map(float, value.strip("[]").split(",")))
-            else:
-                w = getattr(related_column, f"__{operator}__")(value)
-            sql = sql.where(rel.any(w))
+            w = make_where(related_column, operator, value)
+            w = rel.any(w)
         else:
             column = getattr(SampleLocation, column)
-            comp = getattr(column, f"__{operator}__")
-            sql = sql.where(comp(value))
+            w = make_where(column, operator, value)
+
+        sql = sql.where(w)
 
     elif nearby_point:
         nearby_point = func.ST_GeomFromText(nearby_point)

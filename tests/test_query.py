@@ -42,6 +42,18 @@ def test_query_eq_false():
     items = data["items"]
     assert len(items) == 2
 
+def test_query_like():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "name like 'Test%'",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 2  # Assuming there are three locations starting with 'Test'
+    assert all(item["name"].startswith("Test") for item in items)
 
 def test_query_nested_eq():
     response = client.get(

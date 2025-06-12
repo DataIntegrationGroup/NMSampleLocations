@@ -17,8 +17,12 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from fastapi_pagination.ext.sqlalchemy import paginate
+from geoalchemy2.shape import to_shape
+from geoalchemy2 import functions as geofunc
+
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
+from starlette.responses import FileResponse
 
 from models import get_db_session, adder
 from models.base import (
@@ -32,6 +36,7 @@ from models.base import (
     Spring,
     Equipment,
 )
+from routes.geospatial_helper import create_shapefile
 from routes.pagination import CustomPage
 from routes.regex import QUERY_REGEX
 from schemas.base_get import GetWell, GetLocation, GetGroup
@@ -188,6 +193,53 @@ def make_query(table, query):
 
 
 # ==== Get ============================================
+@router.get('/location/shapefile', summary="Get location as shapefile")
+async def get_location_shapefile(query: str = None, session: Session = Depends(get_db_session)):
+    """
+    Retrieve all sample locations as a shapefile.
+    """
+    sql = select(SampleLocation)
+    if query:
+        sql = sql.where(make_query(SampleLocation, query))
+
+    result = session.execute(sql)
+    locations = result.scalars().all()
+    # create a shapefile from the locations
+
+    create_shapefile(locations, "locations.shp")
+    # Return the shapefile as a zip (optional: zip the .shp, .shx, .dbf files)
+    import zipfile
+    with zipfile.ZipFile("locations.zip", "w") as zf:
+        for ext in ["shp", "shx", "dbf"]:
+            zf.write(f"locations.{ext}")
+    return FileResponse("locations.zip", media_type="application/zip", filename="locations.zip")
+
+
+@router.get('/location/feature_collection', summary="Get location feature collection")
+async def get_location_feature_collection(query: str = None, session: Session = Depends(get_db_session)):
+    """
+    Retrieve all sample locations as a GeoJSON FeatureCollection.
+    """
+    sql = select(SampleLocation, geofunc.ST_AsGeoJSON(SampleLocation.point).label("geojson"))
+    if query:
+        sql = sql.where(make_query(SampleLocation, query))
+
+    result = session.execute(sql)
+    locations = result.all()
+
+    features = []
+    for location, geojson in locations:
+        feature = {
+            "type": "Feature",
+            "geometry": geojson,
+        }
+        features.append(feature)
+
+    return {
+        "type": "FeatureCollection",
+        "features": features,
+    }
+
 @router.get(
     "/location",
     response_model=CustomPage[SampleLocationResponse],

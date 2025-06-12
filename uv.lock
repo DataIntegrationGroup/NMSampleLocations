@@ -327,6 +327,7 @@ dependencies = [
     { name = "geoalchemy2" },
     { name = "greenlet" },
     { name = "httpx" },
+    { name = "pyshp" },
     { name = "shapely" },
     { name = "uvicorn" },
 ]
@@ -347,6 +348,7 @@ requires-dist = [
     { name = "geoalchemy2", specifier = ">=0.17.1" },
     { name = "greenlet", specifier = ">=3.2.2" },
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "pyshp", specifier = ">=2.3.1" },
     { name = "shapely", specifier = ">=2.1.1" },
     { name = "uvicorn", specifier = ">=0.34.3" },
 ]
@@ -461,6 +463,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e7/46/bd74733ff231675599650d3e47f361794b22ef3e3770998dda30d3b63726/pyjwt-2.10.1.tar.gz", hash = "sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953", size = 87785, upload-time = "2024-11-28T03:43:29.933Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/61/ad/689f02752eeec26aed679477e80e632ef1b682313be70793d798c1d5fc8f/PyJWT-2.10.1-py3-none-any.whl", hash = "sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb", size = 22997, upload-time = "2024-11-28T03:43:27.893Z" },
+]
+
+[[package]]
+name = "pyshp"
+version = "2.3.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/63/9f/0dd21250c60375a532c35e89fad8d5e8a3f1a2e3f7c389ccc5a60b05263e/pyshp-2.3.1.tar.gz", hash = "sha256:4caec82fd8dd096feba8217858068bacb2a3b5950f43c048c6dc32a3489d5af1", size = 1731544, upload-time = "2022-07-27T19:51:28.409Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/2f/68116db5b36b895c0450e3072b8cb6c2fac0359279b182ea97014d3c8ac0/pyshp-2.3.1-py2.py3-none-any.whl", hash = "sha256:67024c0ccdc352ba5db777c4e968483782dfa78f8e200672a90d2d30fd8b7b49", size = 46537, upload-time = "2022-07-27T19:51:26.34Z" },
 ]
 
 [[package]]

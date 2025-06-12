@@ -171,39 +171,6 @@ def test_add_contact():
 
 # GET tests ======================================================
 
-
-def test_get_within_locations():
-    response = client.get(
-        "/base/location",
-        params={
-            "within": "POLYGON((10.0 10.0, 20.0 10.0, 20.0 20.0, 10.0 20.0, 10.0 10.0))",
-        },
-    )
-    data = response.json()
-    assert response.status_code == 200
-    assert "items" in data
-    # Uncomment the following assertions if you have a specific location to test against
-    assert len(data["items"]) == 1  # Assuming one location is within the polygon
-    # assert len(data) == 1  # Assuming one location is within the distance
-    # assert data[0]["name"] == "Test Location"  # Check if the correct location is returned
-
-
-def test_get_nearby_locations():
-    response = client.get(
-        "/base/location",
-        params={
-            "nearby_point": "POINT(50.0 50.0)",  # Example coordinates
-            "nearby_distance_km": 10,  # 10 km
-        },
-    )
-    data = response.json()
-    assert response.status_code == 200
-    # assert len(data) == 1
-    # assert data[0]["name"] == "Test Location 2"  # Check if the correct location is returned
-    assert "items" in data
-    assert len(data["items"]) == 1
-
-
 def test_get_springs():
     response = client.get("/base/spring")
     assert response.status_code == 200

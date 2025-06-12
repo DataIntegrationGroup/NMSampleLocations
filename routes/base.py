@@ -149,6 +149,7 @@ def create_equipment(
     # return {"message": "This endpoint will create a new equipment."}
     return adder(session, Equipment, equipment_data)
 
+
 def make_query(table, query):
     match = QUERY_REGEX.match(query)
     column = match.group("field")
@@ -184,6 +185,7 @@ def make_query(table, query):
         w = make_where(column, operator, value)
 
     return w
+
 
 # ==== Get ============================================
 @router.get(

@@ -16,6 +16,7 @@
 
 from tests import client
 
+
 def test_query_nested_string_search():
     response = client.get(
         "/base/location",
@@ -29,6 +30,7 @@ def test_query_nested_string_search():
     assert len(items) == 1  # Assuming there are two locations starting with 'Test'
     # assert all(item["name"].startswith("Test") for item in items)
 
+
 def test_query_string_search():
     response = client.get(
         "/base/well",
@@ -41,6 +43,7 @@ def test_query_string_search():
     items = data["items"]
     assert len(items) == 1  # Assuming there are two locations starting with 'Test'
     # assert all(item["name"].startswith("Test") for item in items)
+
 
 def test_query_eq_true():
     response = client.get(

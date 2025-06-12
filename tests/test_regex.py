@@ -59,4 +59,6 @@ def test_query_regex_like():
     assert match.group("field") == "construction_notes"
     assert match.group("value") == "'%test%'"
     assert match.group("operator") == "like"
+
+
 # ============= EOF =============================================

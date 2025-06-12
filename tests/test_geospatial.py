@@ -15,6 +15,7 @@
 # ===============================================================================
 from tests import client
 
+
 def test_get_geojson():
     response = client.get("/base/location/feature_collection")
     assert response.status_code == 200
@@ -23,14 +24,20 @@ def test_get_geojson():
     assert data["type"] == "FeatureCollection"
     assert "features" in data
     assert len(data["features"]) > 0  # Assuming there are features in the collection
-    assert data["features"][0]["geometry"] == '{"type":"Point","coordinates":[10.1,10.1]}'  # Adjust based on your
+    assert (
+        data["features"][0]["geometry"] == '{"type":"Point","coordinates":[10.1,10.1]}'
+    )  # Adjust based on your
+
 
 def test_get_shapefile():
     response = client.get("/base/location/shapefile")
     assert response.status_code == 200
     assert response.headers["Content-Type"] == "application/zip"
     assert "Content-Disposition" in response.headers
-    assert 'attachment; filename="locations.zip"' == response.headers["Content-Disposition"]
+    assert (
+        'attachment; filename="locations.zip"'
+        == response.headers["Content-Disposition"]
+    )
 
 
 def test_get_within_locations():

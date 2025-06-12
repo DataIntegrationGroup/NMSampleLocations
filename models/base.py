@@ -84,20 +84,22 @@ class Well(Base, AutoBaseMixin):
     api_id = Column(String(50), nullable=True, default="")  # API well number
     usgs_id = Column(String(50), nullable=True)  # USGS well number
 
-    well_depth = Column(Float, nullable=True,
-                        info={'unit': 'feet below ground surface'},)
-    hole_depth = Column(Float, nullable=True,
-                        info={'unit': 'feet below ground surface'})
+    well_depth = Column(
+        Float,
+        nullable=True,
+        info={"unit": "feet below ground surface"},
+    )
+    hole_depth = Column(
+        Float, nullable=True, info={"unit": "feet below ground surface"}
+    )
     well_type = Column(
         String(100),
         ForeignKey("lexiconterm.term"),
         nullable=True,
     )  # e.g., "Production", "Observation", etc.
 
-    casing_diameter = Column(Float,
-                             info={'unit': 'inches'})
-    casing_depth = Column(Float,
-                          info={'unit': 'feet below ground surface'})
+    casing_diameter = Column(Float, info={"unit": "inches"})
+    casing_depth = Column(Float, info={"unit": "feet below ground surface"})
     casing_description = Column(String(50))
     construction_notes = Column(String(250))
     formation_zone = Column(String(100), ForeignKey("lexiconterm.term"), nullable=True)
@@ -107,10 +109,12 @@ class Well(Base, AutoBaseMixin):
 
 class WellScreen(Base, AutoBaseMixin):
     well_id = Column(Integer, ForeignKey("well.id"), nullable=False)
-    screen_depth_top = Column(Float, nullable=False,
-                              info={'unit': 'feet below ground surface'})
-    screen_depth_bottom = Column(Float, nullable=False,
-                                 info={'unit': 'feet below ground surface'})
+    screen_depth_top = Column(
+        Float, nullable=False, info={"unit": "feet below ground surface"}
+    )
+    screen_depth_bottom = Column(
+        Float, nullable=False, info={"unit": "feet below ground surface"}
+    )
     screen_type = Column(
         String(100), ForeignKey("lexiconterm.term"), nullable=True
     )  # e.g., "PVC", "Steel", etc.

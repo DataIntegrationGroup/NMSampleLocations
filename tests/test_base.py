@@ -171,6 +171,7 @@ def test_add_contact():
 
 # GET tests ======================================================
 
+
 def test_get_springs():
     response = client.get("/base/spring")
     assert response.status_code == 200

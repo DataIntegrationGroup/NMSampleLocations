@@ -17,6 +17,7 @@ import shapefile
 from geoalchemy2.shape import to_shape
 from shapely.wkt import loads as wkt_loads
 
+
 def create_shapefile(locations, filename="locations.shp"):
     # Create a point shapefile
     with shapefile.Writer(filename, shapeType=shapefile.POINT) as shp:
@@ -29,4 +30,6 @@ def create_shapefile(locations, filename="locations.shp"):
                 geom = to_shape(loc.point)
             shp.point(geom.x, geom.y)
             shp.record(loc.name)
+
+
 # ============= EOF =============================================

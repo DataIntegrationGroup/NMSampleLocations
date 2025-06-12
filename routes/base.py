@@ -149,6 +149,41 @@ def create_equipment(
     # return {"message": "This endpoint will create a new equipment."}
     return adder(session, Equipment, equipment_data)
 
+def make_query(table, query):
+    match = QUERY_REGEX.match(query)
+    column = match.group("field")
+    value = match.group("value")
+    operator = match.group("operator")
+    value = value.lower()
+    if value.startswith("'") and value.endswith("'"):
+        value = value[1:-1]
+
+    if value == "true":
+        value = True
+    elif value == "false":
+        value = False
+
+    def make_where(col, op, v):
+        if op == "like":
+            return col.like(v)
+        elif op == "between":
+            return col.between(*map(float, v.strip("[]").split(",")))
+        else:
+            return getattr(col, f"__{op}__")(v)
+
+    if "." in column:
+        # Handle nested attributes
+        column_parts = column.split(".")
+        rel = getattr(table, column_parts[0])
+        related_model = rel.property.mapper.class_
+        related_column = getattr(related_model, column_parts[1])
+        w = make_where(related_column, operator, value)
+        w = rel.any(w)
+    else:
+        column = getattr(table, column)
+        w = make_where(column, operator, value)
+
+    return w
 
 # ==== Get ============================================
 @router.get(
@@ -168,42 +203,7 @@ async def get_location(
     """
     sql = select(SampleLocation)
     if query:
-
-        match = QUERY_REGEX.match(query)
-        column = match.group("field")
-        value = match.group("value")
-        operator = match.group("operator")
-        value = value.lower()
-        if value.startswith("'") and value.endswith("'"):
-            value = value[1:-1]
-
-        if value == "true":
-            value = True
-        elif value == "false":
-            value = False
-
-        def make_where(col, op, v):
-            if op == "like":
-                return col.like(v)
-            elif op == "between":
-                return col.between(*map(float, v.strip("[]").split(",")))
-            else:
-                return getattr(col, f"__{op}__")(v)
-
-        if "." in column:
-            # Handle nested attributes
-            column_parts = column.split(".")
-            rel = getattr(SampleLocation, column_parts[0])
-            related_model = rel.property.mapper.class_
-            related_column = getattr(related_model, column_parts[1])
-            w = make_where(related_column, operator, value)
-            w = rel.any(w)
-        else:
-            column = getattr(SampleLocation, column)
-            w = make_where(column, operator, value)
-
-        sql = sql.where(w)
-
+        sql = sql.where(make_query(SampleLocation, query))
     elif nearby_point:
         nearby_point = func.ST_GeomFromText(nearby_point)
         sql = sql.where(
@@ -220,6 +220,7 @@ async def get_location(
 async def get_wells(
     api_id: str = None,
     ose_pod_id: str = None,
+    query: str = None,
     session: Session = Depends(get_db_session),
 ):
     """
@@ -230,6 +231,8 @@ async def get_wells(
         sql = select(Well).where(Well.api_id == api_id)
     elif ose_pod_id:
         sql = select(Well).where(Well.ose_pod_id == ose_pod_id)
+    elif query:
+        sql = select(Well).where(make_query(Well, query))
     else:
         sql = select(Well)
 

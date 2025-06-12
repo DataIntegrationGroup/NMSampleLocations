@@ -52,4 +52,11 @@ def test_query_regex_nested_between():
     assert match.group("operator") == "between"
 
 
+def test_query_regex_like():
+    text = "construction_notes like '%test%'"
+    match = QUERY_REGEX.match(text)
+    assert match is not None
+    assert match.group("field") == "construction_notes"
+    assert match.group("value") == "'%test%'"
+    assert match.group("operator") == "like"
 # ============= EOF =============================================

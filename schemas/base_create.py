@@ -41,6 +41,7 @@ class CreateWell(ORMBaseModel):
     ose_pod_id: str | None = None
     well_type: str | None = None
     well_depth: float | None = None  # in feet
+    construction_notes: str | None = None
 
 
 class CreateScreenWell(ORMBaseModel):

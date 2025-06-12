@@ -66,7 +66,7 @@ class WFWell(BaseModel):
     casing_diameter: float | None = None  # Diameter of the casing in inches, optional
     casing_depth: float | None = None  # Depth of the casing in feet, optional
     casing_description: str | None = None  # Description of the casing, optional
-    construction_motes: str | None = None  # Construction notes, optional
+    construction_notes: str | None = None  # Construction notes, optional
 
 
 class WFGroup(BaseModel):

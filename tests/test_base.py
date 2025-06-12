@@ -55,6 +55,7 @@ def test_add_well():
             "ose_pod_id": "RA-0001",
             "well_type": "Monitoring",
             "well_depth": 100.0,
+            "construction_notes": "this is a test of notes",
         },
     )
     assert response.status_code == 200

@@ -16,6 +16,31 @@
 
 from tests import client
 
+def test_query_nested_string_search():
+    response = client.get(
+        "/base/location",
+        params={
+            "query": "well.construction_notes like '%test%'",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 1  # Assuming there are two locations starting with 'Test'
+    # assert all(item["name"].startswith("Test") for item in items)
+
+def test_query_string_search():
+    response = client.get(
+        "/base/well",
+        params={
+            "query": "construction_notes like '%test%'",
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    items = data["items"]
+    assert len(items) == 1  # Assuming there are two locations starting with 'Test'
+    # assert all(item["name"].startswith("Test") for item in items)
 
 def test_query_eq_true():
     response = client.get(

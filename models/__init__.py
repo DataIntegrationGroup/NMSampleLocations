@@ -33,7 +33,7 @@ if os.environ.get("SPATIALITE_LIBRARY_PATH") is None:
 
 engine = create_engine(
     "sqlite:///./development.db",
-    echo=True,
+    # echo=True,
     plugins=["geoalchemy2"],
 )
 

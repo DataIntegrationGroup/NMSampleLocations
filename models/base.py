@@ -95,7 +95,7 @@ class Well(Base, AutoBaseMixin):
     casing_diameter = Column(Float)
     casing_depth = Column(Float)
     casing_description = Column(String(50))
-    construction_motes = Column(String(250))
+    construction_notes = Column(String(250))
     formation_zone = Column(String(100), ForeignKey("lexiconterm.term"), nullable=True)
 
     location = relationship("SampleLocation", backref="well", uselist=False)

@@ -27,12 +27,6 @@ class SampleLocationResponse(ORMBaseModel):
     Response schema for sample location details.
     """
 
-    model_config = ConfigDict(
-        from_attributes=True,
-        populate_by_name=True,
-        arbitrary_types_allowed=True,
-    )
-
     id: int
     name: str | None = None
     description: str | None = None
@@ -61,6 +55,13 @@ class WellResponse(ORMBaseModel):
     construction_notes: str | None = None
 
     # Additional fields can be added as needed
+
+class SampleLocationWellResponse(SampleLocationResponse):
+    """
+    Response schema for sample location with well details.
+    """
+
+    well: List[WellResponse] = []  # List of wells associated with the sample location
 
 
 class GroupResponse(ORMBaseModel):

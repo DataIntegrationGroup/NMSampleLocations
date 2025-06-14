@@ -13,13 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from typing import List
+from typing import List, Union
 
 from fastapi import APIRouter, Depends
 from fastapi_pagination.ext.sqlalchemy import paginate
-from geoalchemy2.shape import to_shape
 from geoalchemy2 import functions as geofunc
-
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 from starlette.responses import FileResponse
@@ -39,7 +37,6 @@ from models.base import (
 from routes.geospatial_helper import create_shapefile
 from routes.pagination import CustomPage
 from routes.regex import QUERY_REGEX
-from schemas.base_get import GetWell, GetLocation, GetGroup
 from schemas.base_create import (
     CreateWell,
     CreateLocation,
@@ -51,7 +48,7 @@ from schemas.base_create import (
     CreateSpring,
     CreateEquipment,
 )
-
+from schemas.base_get import GetWell, GetLocation
 from schemas.base_responses import (
     OwnerResponse,
     SampleLocationResponse,
@@ -61,7 +58,7 @@ from schemas.base_responses import (
     WellScreenResponse,
     GroupLocationResponse,
     SpringResponse,
-    EquipmentResponse,
+    EquipmentResponse, SampleLocationWellResponse,
 )
 
 router = APIRouter(
@@ -252,7 +249,7 @@ async def get_location_feature_collection(
 
 @router.get(
     "/location",
-    response_model=CustomPage[SampleLocationResponse],
+    response_model=CustomPage[Union[SampleLocationResponse, SampleLocationWellResponse]],
     summary="Get all locations",
 )
 async def get_location(
@@ -260,12 +257,14 @@ async def get_location(
     nearby_distance_km: float = 1,
     within: str = None,
     query: str = None,
+    expand: str = None,
     session: Session = Depends(get_db_session),
 ):
     """
     Retrieve all wells from the database.
     """
     sql = select(SampleLocation)
+
     if query:
         sql = sql.where(make_query(SampleLocation, query))
     elif nearby_point:
@@ -277,7 +276,13 @@ async def get_location(
         within = func.ST_GeomFromText(within)
         sql = sql.where(func.ST_Within(SampleLocation.point, within))
 
-    return paginate(query=sql, conn=session)
+    def transformer(items):
+        if expand == "well":
+            return [SampleLocationWellResponse.model_validate(item) for item in items]
+        return [SampleLocationResponse.model_validate(item) for item in items]
+
+    return paginate(query=sql, conn=session, transformer=transformer)
+
 
 
 @router.get("/well", response_model=CustomPage[WellResponse], summary="Get all wells")
@@ -428,20 +433,30 @@ async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db_sessi
 
 @router.get(
     "/location/{location_id}",
-    response_model=SampleLocationResponse,
+    response_model=Union[SampleLocationResponse, SampleLocationWellResponse],
     summary="Get location by ID",
 )
 async def get_location_by_id(
-    location_id: int, session: Session = Depends(get_db_session)
+    location_id: int,
+    expand: str = None,
+    session: Session = Depends(get_db_session)
 ):
     """
     Retrieve a sample location by ID from the database.
     """
-    location = simple_get_by_id(session, SampleLocation, location_id)
+    sql = select(SampleLocation).where(SampleLocation.id == location_id)
+
+    result = session.execute(sql)
+    location = result.scalar_one_or_none()
+
     if not location:
         return {"message": "Location not found"}
-    return location
 
+    response_klass = SampleLocationResponse
+    if expand == "well":
+        response_klass = SampleLocationWellResponse
+
+    return response_klass.model_validate(location)
 
 @router.get("/well/{well_id}", response_model=WellResponse, summary="Get well by ID")
 async def get_well_by_id(well_id: int, session: Session = Depends(get_db_session)):

@@ -295,7 +295,7 @@ def test_item_get_location():
     data = response.json()
     assert data["id"] == 1
     assert data["name"] == "Test Location 1"
-    assert 'well' not in data
+    assert "well" not in data
 
 
 def test_item_get_group():

@@ -58,7 +58,8 @@ from schemas.base_responses import (
     WellScreenResponse,
     GroupLocationResponse,
     SpringResponse,
-    EquipmentResponse, SampleLocationWellResponse,
+    EquipmentResponse,
+    SampleLocationWellResponse,
 )
 
 router = APIRouter(
@@ -249,7 +250,9 @@ async def get_location_feature_collection(
 
 @router.get(
     "/location",
-    response_model=CustomPage[Union[SampleLocationResponse, SampleLocationWellResponse]],
+    response_model=CustomPage[
+        Union[SampleLocationResponse, SampleLocationWellResponse]
+    ],
     summary="Get all locations",
 )
 async def get_location(
@@ -282,7 +285,6 @@ async def get_location(
         return [SampleLocationResponse.model_validate(item) for item in items]
 
     return paginate(query=sql, conn=session, transformer=transformer)
-
 
 
 @router.get("/well", response_model=CustomPage[WellResponse], summary="Get all wells")
@@ -437,9 +439,7 @@ async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db_sessi
     summary="Get location by ID",
 )
 async def get_location_by_id(
-    location_id: int,
-    expand: str = None,
-    session: Session = Depends(get_db_session)
+    location_id: int, expand: str = None, session: Session = Depends(get_db_session)
 ):
     """
     Retrieve a sample location by ID from the database.
@@ -457,6 +457,7 @@ async def get_location_by_id(
         response_klass = SampleLocationWellResponse
 
     return response_klass.model_validate(location)
+
 
 @router.get("/well/{well_id}", response_model=WellResponse, summary="Get well by ID")
 async def get_well_by_id(well_id: int, session: Session = Depends(get_db_session)):

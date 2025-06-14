@@ -56,6 +56,7 @@ class WellResponse(ORMBaseModel):
 
     # Additional fields can be added as needed
 
+
 class SampleLocationWellResponse(SampleLocationResponse):
     """
     Response schema for sample location with well details.

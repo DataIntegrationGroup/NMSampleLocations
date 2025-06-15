@@ -279,6 +279,9 @@ async def get_location(
         within = func.ST_GeomFromText(within)
         sql = sql.where(func.ST_Within(SampleLocation.point, within))
 
+    if expand == "well":
+        sql = sql.outerjoin(Well)
+
     def transformer(items):
         if expand == "well":
             return [SampleLocationWellResponse.model_validate(item) for item in items]

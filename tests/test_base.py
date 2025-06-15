@@ -183,7 +183,7 @@ def test_get_locations_expand():
 
 
 def test_get_location_expand():
-    response = client.get("/base/location/1?expand=well")
+    response = client.get("/base/location/1", params={"expand": "well"})
     assert response.status_code == 200
     data = response.json()
     assert "id" in data

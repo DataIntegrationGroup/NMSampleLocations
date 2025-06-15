@@ -39,6 +39,16 @@ def test_get_shapefile():
         == response.headers["Content-Disposition"]
     )
 
+def test_get_locations_expand():
+    response = client.get("/base/location", params={"expand": "well",
+                                                    "within": "POLYGON((10.0 10.0, 20.0 10.0, 20.0 20.0, 10.0 20.0, 10.0 10.0))"})
+    assert response.status_code == 200
+    data = response.json()
+    assert "items" in data
+    assert len(data["items"]) == 1
+    item = data["items"][0]
+    assert "well" in item
+
 
 def test_get_within_locations():
     response = client.get(
@@ -51,7 +61,9 @@ def test_get_within_locations():
     assert response.status_code == 200
     assert "items" in data
     # Uncomment the following assertions if you have a specific location to test against
-    assert len(data["items"]) == 1  # Assuming one location is within the polygon
+    assert len(data["items"]) == 1
+    assert 'well' not in data["items"][0]
+    # Assuming one location is within the polygon
     # assert len(data) == 1  # Assuming one location is within the distance
     # assert data[0]["name"] == "Test Location"  # Check if the correct location is returned
 

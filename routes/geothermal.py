@@ -17,24 +17,42 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from models import get_db_session, adder
-from models.geothermal import GeothermalTemperatureProfile, GeothermalTemperatureProfileObservation
-from schemas.geothermal import CreateTemperatureProfile, CreateTemperatureProfileObservation
+from models.geothermal import (
+    GeothermalTemperatureProfile,
+    GeothermalTemperatureProfileObservation,
+)
+from schemas.geothermal import (
+    CreateTemperatureProfile,
+    CreateTemperatureProfileObservation,
+)
 
 router = APIRouter(prefix="/geothermal", tags=["geothermal"])
 
 
-@router.post('/temperature_profile')
-async def add_temperature_profile(temperature_profile_data: CreateTemperatureProfile, session: Session = Depends(get_db_session)):
+@router.post("/temperature_profile")
+async def add_temperature_profile(
+    temperature_profile_data: CreateTemperatureProfile,
+    session: Session = Depends(get_db_session),
+):
     """
     Add a new temperature profile.
     """
     return adder(session, GeothermalTemperatureProfile, temperature_profile_data)
 
 
-@router.post('/temperature_profile_observation')
-async def add_temperature_profile_observation(temperature_profile_observation_data: CreateTemperatureProfileObservation, session: Session = Depends(get_db_session)):
+@router.post("/temperature_profile_observation")
+async def add_temperature_profile_observation(
+    temperature_profile_observation_data: CreateTemperatureProfileObservation,
+    session: Session = Depends(get_db_session),
+):
     """
     Add a new temperature profile observation.
     """
-    return adder(session, GeothermalTemperatureProfileObservation, temperature_profile_observation_data)
+    return adder(
+        session,
+        GeothermalTemperatureProfileObservation,
+        temperature_profile_observation_data,
+    )
+
+
 # ============= EOF =============================================

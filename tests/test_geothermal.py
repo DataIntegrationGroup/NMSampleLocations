@@ -15,28 +15,31 @@
 # ===============================================================================
 from tests import client
 
+
 def test_geothermal_temperature_profile():
     """
     Test the geothermal temperature profile endpoint.
     This test should create a temperature profile and verify its creation.
     """
 
-
     # Create a sample temperature profile data
 
-
-    response = client.post("/geothermal/temperature_profile", json={
-        'well_id': 1,
-        # "name": "Test Profile",
-        # "description": "A test geothermal temperature profile",
-        # "depth": 1000,
-        # "temperature": 50.0
-    })
+    response = client.post(
+        "/geothermal/temperature_profile",
+        json={
+            "well_id": 1,
+            # "name": "Test Profile",
+            # "description": "A test geothermal temperature profile",
+            # "depth": 1000,
+            # "temperature": 50.0
+        },
+    )
 
     assert response.status_code == 200
     data = response.json()
-    assert data['well_id'] == 1
+    assert data["well_id"] == 1
     # assert response.json()["name"] == "Test Profile"
+
 
 def test_geothermal_temperature_profile_observation():
     """
@@ -45,15 +48,16 @@ def test_geothermal_temperature_profile_observation():
     """
 
     # Create a sample temperature profile observation data
-    response = client.post("/geothermal/temperature_profile_observation", json={
-        'temperature_profile_id': 1,
-        'depth': 100,
-        'temperature': 25.0
-    })
+    response = client.post(
+        "/geothermal/temperature_profile_observation",
+        json={"temperature_profile_id": 1, "depth": 100, "temperature": 25.0},
+    )
 
     assert response.status_code == 200
     data = response.json()
-    assert data['temperature_profile_id'] == 1
-    assert data['depth'] == 100
-    assert data['temperature'] == 25.0
+    assert data["temperature_profile_id"] == 1
+    assert data["depth"] == 100
+    assert data["temperature"] == 25.0
+
+
 # ============= EOF =============================================

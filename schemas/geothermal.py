@@ -34,4 +34,6 @@ class CreateTemperatureProfileObservation(BaseModel):
     temperature_profile_id: int
     depth: float
     temperature: float
+
+
 # ============= EOF =============================================

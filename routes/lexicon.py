@@ -16,7 +16,7 @@
 from fastapi import APIRouter, Depends
 
 from models import get_db_session
-from models.lexicon import LexiconTerm
+from models.lexicon import Lexicon
 from schemas.lexicon import CreateLexiconTerm, LexiconTermResponse
 
 router = APIRouter(
@@ -36,7 +36,7 @@ def add_term(term_data: CreateLexiconTerm, session=Depends(get_db_session)):
     # Implementation for adding a term goes here
 
     data = term_data.model_dump()
-    term = LexiconTerm(**data)
+    term = Lexicon(**data)
     session.add(term)
     session.commit()
     return term

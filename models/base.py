@@ -29,7 +29,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship, declared_attr, Mapped, mapped_column
 
 from models import Base, AutoBaseMixin
-from models.lexicon import LexiconTerm
+from models.lexicon import Lexicon
 
 
 class SampleLocation(Base, AutoBaseMixin):
@@ -94,7 +94,7 @@ class Well(Base, AutoBaseMixin):
     )
     well_type = Column(
         String(100),
-        ForeignKey("lexiconterm.term"),
+        ForeignKey("lexicon.term"),
         nullable=True,
     )  # e.g., "Production", "Observation", etc.
 
@@ -102,7 +102,7 @@ class Well(Base, AutoBaseMixin):
     casing_depth = Column(Float, info={"unit": "feet below ground surface"})
     casing_description = Column(String(50))
     construction_notes = Column(String(250))
-    formation_zone = Column(String(100), ForeignKey("lexiconterm.term"), nullable=True)
+    formation_zone = Column(String(100), ForeignKey("lexicon.term"), nullable=True)
 
     location = relationship("SampleLocation", backref="well", uselist=False)
 
@@ -116,7 +116,7 @@ class WellScreen(Base, AutoBaseMixin):
         Float, nullable=False, info={"unit": "feet below ground surface"}
     )
     screen_type = Column(
-        String(100), ForeignKey("lexiconterm.term"), nullable=True
+        String(100), ForeignKey("lexicon.term"), nullable=True
     )  # e.g., "PVC", "Steel", etc.
 
     # Define a relationship to well if needed

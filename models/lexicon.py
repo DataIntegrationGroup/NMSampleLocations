@@ -19,7 +19,7 @@ from sqlalchemy.orm import mapped_column
 from models import AutoBaseMixin, Base
 
 
-class LexiconTerm(Base, AutoBaseMixin):
+class Lexicon(Base, AutoBaseMixin):
     """
     Lexicon model for storing terms and their definitions.
     This model can be extended to include additional fields as needed.
@@ -30,7 +30,7 @@ class LexiconTerm(Base, AutoBaseMixin):
     category = mapped_column(String(255), nullable=True)
 
     def __repr__(self):
-        return f"<LexiconTerm(category={self.category}, term={self.term}, definition={self.definition})>"
+        return f"<Lexicon(category={self.category}, term={self.term}, definition={self.definition})>"
 
 
 # ============= EOF =============================================

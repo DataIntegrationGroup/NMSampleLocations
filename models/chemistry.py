@@ -33,9 +33,9 @@ class WaterChemistryAnalysis(Base, AutoBaseMixin):
         Integer, ForeignKey("water_chemistry_analysis_set.id")
     )
     value = mapped_column(Float)
-    unit = mapped_column(String(100), ForeignKey("lexiconterm.term"), nullable=True)
+    unit = mapped_column(String(100), ForeignKey("lexicon.term"), nullable=True)
     qualifier = mapped_column(String(100), nullable=True)
-    analyte = mapped_column(String(100), ForeignKey("lexiconterm.term"), nullable=False)
+    analyte = mapped_column(String(100), ForeignKey("lexicon.term"), nullable=False)
 
     # result = Column(Float)
     # timestamp = Column(DateTime)

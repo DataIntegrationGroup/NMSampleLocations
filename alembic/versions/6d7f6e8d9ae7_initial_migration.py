@@ -65,7 +65,7 @@ def upgrade() -> None:
         sa.UniqueConstraint("name"),
     )
     op.create_table(
-        "lexiconterm",
+        "lexicon",
         sa.Column("term", sa.String(length=100), nullable=False),
         sa.Column("definition", sa.String(length=255), nullable=False),
         sa.Column("category", sa.String(length=255), nullable=True),
@@ -320,7 +320,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["formation_zone"],
-            ["lexiconterm.term"],
+            ["lexicon.term"],
         ),
         sa.ForeignKeyConstraint(
             ["location_id"],
@@ -328,7 +328,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["well_type"],
-            ["lexiconterm.term"],
+            ["lexicon.term"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -353,7 +353,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["screen_type"],
-            ["lexiconterm.term"],
+            ["lexicon.term"],
         ),
         sa.ForeignKeyConstraint(
             ["well_id"],
@@ -380,7 +380,7 @@ def downgrade() -> None:
     op.drop_table("contact")
     op.drop_table("user")
     op.drop_table("owner")
-    op.drop_table("lexiconterm")
+    op.drop_table("lexicon")
     op.drop_table("group")
     op.drop_table("asset")
     # ### end Alembic commands ###

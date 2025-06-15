@@ -13,21 +13,21 @@ from app import app
 from fastadmin import fastapi_app as admin_app
 
 from routes.base import router as base_router
-
-# from routes.lut import router as lut_router
 from routes.form import router as form_router
 from routes.timeseries import router as timeseries_router
 from routes.lexicon import router as lexicon_router
-from routes.chemisty import router as chemisty_router
+from routes.chemisty import router as chemistry_router
+from routes.geothermal import router as geothermal_router
+
 
 app.mount("/admin", admin_app)
 
 app.include_router(base_router)
-# app.include_router(lut_router)
 app.include_router(form_router)
 app.include_router(timeseries_router)
 app.include_router(lexicon_router)
-app.include_router(chemisty_router)
+app.include_router(chemistry_router)
+app.include_router(geothermal_router)
 
 app.add_middleware(
     CORSMiddleware,

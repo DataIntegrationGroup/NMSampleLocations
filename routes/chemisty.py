@@ -24,6 +24,7 @@ router = APIRouter(
     prefix="/chemistry",
 )
 
+
 @router.get("/analysis", tags=["chemistry"])
 async def get_chemistry_analysis():
     """
@@ -35,8 +36,9 @@ async def get_chemistry_analysis():
 
 # ====== POST ===============
 @router.post("/analysis_set")
-async def add_chemistry_analysis_set(analysis_set_data: CreateAnalysisSet, session: Session = Depends(
-    get_db_session)):
+async def add_chemistry_analysis_set(
+    analysis_set_data: CreateAnalysisSet, session: Session = Depends(get_db_session)
+):
     """
     Add a set of new chemistry analyses.
     """
@@ -44,14 +46,18 @@ async def add_chemistry_analysis_set(analysis_set_data: CreateAnalysisSet, sessi
     # return {"message": "Chemistry analysis set added successfully.", "data": analysis_data}
     return adder(session, WaterChemistryAnalysisSet, analysis_set_data)
 
+
 @router.post("/analysis", tags=["chemistry"])
-async def add_chemistry_analysis(analysis_data: CreateWaterChemistryAnalysis, session: Session = Depends(
-    get_db_session)):
+async def add_chemistry_analysis(
+    analysis_data: CreateWaterChemistryAnalysis,
+    session: Session = Depends(get_db_session),
+):
     """
     Add a new chemistry analysis.
     """
     # Placeholder for actual implementation
     # return {"message": "Chemistry analysis added successfully.", "data": analysis_data}
     return adder(session, WaterChemistryAnalysis, analysis_data)
+
 
 # ============= EOF =============================================

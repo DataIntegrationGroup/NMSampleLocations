@@ -17,6 +17,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+
 class CreateAnalysisSet(BaseModel):
     well_id: int  # mapped_column(Integer, ForeignKey('well.id'))
     laboratory: str | None = None  # mapped_column(String(100), nullable=True)
@@ -27,8 +28,12 @@ class CreateAnalysisSet(BaseModel):
 
 class CreateWaterChemistryAnalysis(BaseModel):
     analysis_set_id: int
-    value: float #mapped_column(Float)
-    unit:  str #mapped_column(String)
-    qualifier: str | None = None  #mapped_column(String(100), nullable=True)
-    analyte: str #mapped_column(String(100), ForeignKey('lexicon.term'), nullable=False)
+    value: float  # mapped_column(Float)
+    unit: str  # mapped_column(String)
+    qualifier: str | None = None  # mapped_column(String(100), nullable=True)
+    analyte: (
+        str  # mapped_column(String(100), ForeignKey('lexicon.term'), nullable=False)
+    )
+
+
 # ============= EOF =============================================

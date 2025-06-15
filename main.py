@@ -19,6 +19,7 @@ from routes.form import router as form_router
 from routes.timeseries import router as timeseries_router
 from routes.lexicon import router as lexicon_router
 from routes.chemisty import router as chemisty_router
+
 app.mount("/admin", admin_app)
 
 app.include_router(base_router)

@@ -27,15 +27,15 @@ class WaterChemistryAnalysis(Base, AutoBaseMixin):
 
     __tablename__ = "water_chemistry_analysis"
 
-
     # Define your columns here, e.g.:
     # id = Column(Integer, primary_key=True)
-    analysis_set_id = mapped_column(Integer, ForeignKey('water_chemistry_analysis_set.id'))
+    analysis_set_id = mapped_column(
+        Integer, ForeignKey("water_chemistry_analysis_set.id")
+    )
     value = mapped_column(Float)
-    unit = mapped_column(String(100), ForeignKey('lexiconterm.term'), nullable=True)
+    unit = mapped_column(String(100), ForeignKey("lexiconterm.term"), nullable=True)
     qualifier = mapped_column(String(100), nullable=True)
-    analyte = mapped_column(String(100), ForeignKey('lexiconterm.term'), nullable=False)
-
+    analyte = mapped_column(String(100), ForeignKey("lexiconterm.term"), nullable=False)
 
     # result = Column(Float)
     # timestamp = Column(DateTime)
@@ -52,15 +52,23 @@ class WaterChemistryAnalysisSet(Base, AutoBaseMixin):
 
     __tablename__ = "water_chemistry_analysis_set"
 
-    well_id = mapped_column(Integer, ForeignKey('well.id'))
+    well_id = mapped_column(Integer, ForeignKey("well.id"))
     description = mapped_column(String(255), nullable=True)
 
-    collection_date = mapped_column(DateTime, nullable=True)  # Use appropriate type for date
-    analysis_date = mapped_column(DateTime, nullable=True)  # Use appropriate type for date
+    collection_date = mapped_column(
+        DateTime, nullable=True
+    )  # Use appropriate type for date
+    analysis_date = mapped_column(
+        DateTime, nullable=True
+    )  # Use appropriate type for date
 
-    laboratory = mapped_column(String(255), nullable=True)  # Name of the laboratory that performed the analysis
+    laboratory = mapped_column(
+        String(255), nullable=True
+    )  # Name of the laboratory that performed the analysis
 
     # Define relationships
     analyses = relationship("WaterChemistryAnalysis", backref="analysis_set")
     well = relationship("Well", backref="analysis_sets")
+
+
 # ============= EOF =============================================

@@ -53,9 +53,7 @@ class WaterChemistryAnalysisSet(Base, AutoBaseMixin):
     well_id = mapped_column(Integer, ForeignKey("well.id"))
     note = mapped_column(String(255), nullable=True)
 
-    collection_timestamp = mapped_column(
-        DateTime, nullable=False
-    )
+    collection_timestamp = mapped_column(DateTime, nullable=False)
 
     laboratory = mapped_column(
         String(255), nullable=True
@@ -63,13 +61,13 @@ class WaterChemistryAnalysisSet(Base, AutoBaseMixin):
 
     collection_method = mapped_column(
         String(100),
-        ForeignKey('lexicon.term'),
+        ForeignKey("lexicon.term"),
         nullable=True,
     )  # Method used for sample collection
 
     sample_type = mapped_column(
         String(100),
-        ForeignKey('lexicon.term'),
+        ForeignKey("lexicon.term"),
         nullable=True,
     )  # Type of sample collected (e.g., groundwater, surface water)
 

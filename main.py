@@ -18,7 +18,7 @@ from routes.timeseries import router as timeseries_router
 from routes.lexicon import router as lexicon_router
 from routes.chemisty import router as chemistry_router
 from routes.geothermal import router as geothermal_router
-
+from routes.collabnet import router as collabnet_router
 
 app.mount("/admin", admin_app)
 
@@ -28,6 +28,7 @@ app.include_router(timeseries_router)
 app.include_router(lexicon_router)
 app.include_router(chemistry_router)
 app.include_router(geothermal_router)
+app.include_router(collabnet_router)
 
 app.add_middleware(
     CORSMiddleware,

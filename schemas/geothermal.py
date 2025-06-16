@@ -33,7 +33,20 @@ class CreateTemperatureProfileObservation(BaseModel):
 
     temperature_profile_id: int
     depth: float
+    depth_unit: str = 'ft'  # Assuming depth unit is a string (e.g., 'm', 'ft')
     temperature: float
+    temperature_unit: str = 'F' # Assuming temperature unit is a string (e.g., 'C', 'F')
 
 
+class CreateBottomHoleTemperature(BaseModel):
+    """
+    Pydantic model for creating a bottom hole temperature observation.
+    This model can be extended to include additional fields as needed.
+    """
+
+    well_id: int
+    # depth: float
+    temperature: float
+    # depth_unit: str  # Assuming depth unit is a string (e.g., 'm', 'ft')
+    temperature_unit: str = 'F'  # Assuming temperature unit is a string (e.g., 'C', 'F')
 # ============= EOF =============================================

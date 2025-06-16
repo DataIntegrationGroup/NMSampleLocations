@@ -14,11 +14,15 @@
 # limitations under the License.
 # ===============================================================================
 from fastapi.testclient import TestClient
+
+from app import init_lexicon
 from main import app
 from models import Base, engine
 
 Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
+
+init_lexicon()
 
 client = TestClient(app)
 # ============= EOF =============================================

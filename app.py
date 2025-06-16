@@ -19,6 +19,7 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 
 from models import sqlalchemy_sessionmaker, engine, Base
+from models.lexicon import Lexicon
 from settings import settings
 
 
@@ -26,6 +27,41 @@ async def init_db():
     async with engine.begin() as c:
         await c.run_sync(Base.metadata.drop_all)
         await c.run_sync(Base.metadata.create_all)
+
+
+def init_lexicon():
+    default_lexicon = [
+        {
+            'term': 'ft',
+            'definition': 'feet',
+            'category': 'unit',
+        },
+        {
+            'term': 'F',
+            'definition': 'Fahrenheit',
+            'category': 'unit',
+        },
+        {
+            'term': 'mg/L',
+            'definition': 'Milligrams per Liter',
+            'category': 'unit',
+        },
+        {
+            'term': 'TDS',
+            'definition': 'Total Dissolved Solids',
+            'category': 'water_quality',
+        },
+        {'term': 'Monitoring', 'definition': 'Monitoring', 'category': 'well_type'},
+        {'term': 'Production', 'definition': 'Production', 'category': 'well_type'},
+        {'term': 'Injection', 'definition': 'Injection', 'category': 'well_type'},
+        {'term': 'PVC', 'definition': 'Polyvinyl Chloride', 'category': 'casing_material'},
+    ]
+
+    # populate lexicon
+    with sqlalchemy_sessionmaker() as s:
+        for term_dict in default_lexicon:
+            s.add(Lexicon(**term_dict))
+        s.commit()
 
 
 async def create_superuser():
@@ -49,6 +85,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     else:
         await init_db()
         await create_superuser()
+        await init_lexicon()
     yield
 
 

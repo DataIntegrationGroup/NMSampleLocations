@@ -60,4 +60,20 @@ def test_geothermal_temperature_profile_observation():
     assert data["temperature"] == 25.0
 
 
+def test_geothermal_bottom_hole_temperature():
+    """
+    Test the geothermal bottom hole temperature endpoint.
+    This test should create a bottom hole temperature record and verify its creation.
+    """
+
+    # Create a sample bottom hole temperature data
+    response = client.post(
+        "/geothermal/bottom_hole_temperature",
+        json={"well_id": 1, "temperature": 60.0, "temperature_unit": "F"},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["well_id"] == 1
+    assert data["temperature"] == 60.0
 # ============= EOF =============================================

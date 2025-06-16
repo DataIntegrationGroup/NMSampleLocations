@@ -32,25 +32,25 @@ def test_add_analysis_set():
 
 
 def test_add_analysis():
-    response = client.post(
-        "/lexicon/add",
-        json={
-            "term": "mg/L",
-            "definition": "Milligrams per Liter",
-            "category": "unit",
-        },
-    )
-    assert response.status_code == 200
-
-    response = client.post(
-        "/lexicon/add",
-        json={
-            "term": "TDS",
-            "definition": "Total Dissolved Solids",
-            "category": "water_quality",
-        },
-    )
-    assert response.status_code == 200
+    # response = client.post(
+    #     "/lexicon/add",
+    #     json={
+    #         "term": "mg/L",
+    #         "definition": "Milligrams per Liter",
+    #         "category": "unit",
+    #     },
+    # )
+    # assert response.status_code == 200
+    #
+    # response = client.post(
+    #     "/lexicon/add",
+    #     json={
+    #         "term": "TDS",
+    #         "definition": "Total Dissolved Solids",
+    #         "category": "water_quality",
+    #     },
+    # )
+    # assert response.status_code == 200
 
     response = client.post(
         "/chemistry/analysis",

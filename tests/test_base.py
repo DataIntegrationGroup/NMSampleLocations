@@ -38,14 +38,14 @@ def test_add_location():
 
 
 def test_add_well():
-    response = client.post(
-        "/lexicon/add", json={"term": "Monitoring", "definition": "Monitoring Well"}
-    )
-    assert response.status_code == 200
-    response = client.post(
-        "/lexicon/add", json={"term": "Production", "definition": "Production Well"}
-    )
-    assert response.status_code == 200
+    # response = client.post(
+    #     "/lexicon/add", json={"term": "Monitoring", "definition": "Monitoring Well"}
+    # )
+    # assert response.status_code == 200
+    # response = client.post(
+    #     "/lexicon/add", json={"term": "Production", "definition": "Production Well"}
+    # )
+    # assert response.status_code == 200
 
     response = client.post(
         "/base/well",
@@ -105,11 +105,11 @@ def test_add_spring():
 
 
 def test_add_well_screen():
-    response = client.post(
-        "/lexicon/add",
-        json={"term": "PVC", "definition": "PVC Well Screen"},
-    )
-    assert response.status_code == 200
+    # response = client.post(
+    #     "/lexicon/add",
+    #     json={"term": "PVC", "definition": "PVC Well Screen"},
+    # )
+    # assert response.status_code == 200
     response = client.post(
         "/base/wellscreen",
         json={

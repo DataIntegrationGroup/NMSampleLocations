@@ -30,36 +30,9 @@ async def init_db():
 
 
 def init_lexicon():
-    default_lexicon = [
-        {
-            "term": "ft",
-            "definition": "feet",
-            "category": "unit",
-        },
-        {
-            "term": "F",
-            "definition": "Fahrenheit",
-            "category": "unit",
-        },
-        {
-            "term": "mg/L",
-            "definition": "Milligrams per Liter",
-            "category": "unit",
-        },
-        {
-            "term": "TDS",
-            "definition": "Total Dissolved Solids",
-            "category": "water_quality",
-        },
-        {"term": "Monitoring", "definition": "Monitoring", "category": "well_type"},
-        {"term": "Production", "definition": "Production", "category": "well_type"},
-        {"term": "Injection", "definition": "Injection", "category": "well_type"},
-        {
-            "term": "PVC",
-            "definition": "Polyvinyl Chloride",
-            "category": "casing_material",
-        },
-    ]
+    with open("lexicon.json") as f:
+        import json
+        default_lexicon = json.load(f)
 
     # populate lexicon
     with sqlalchemy_sessionmaker() as s:

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from sqlalchemy import DateTime, Float, String, Integer, ForeignKey
+from sqlalchemy import DateTime, Float, String, Integer, ForeignKey, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declared_attr
 from sqlalchemy.testing.schema import mapped_column
@@ -31,6 +31,29 @@ class TimeseriesMixin:
         return mapped_column(String(255), nullable=True)
 
 
+class QCMixin:
+    @declared_attr
+    def quality_control_status(self):
+        return mapped_column(
+            String(100), ForeignKey("lexicon.term"),
+            default='Provisional'
+        )
+
+    @declared_attr
+    def quality_control_notes(self):
+        return mapped_column(Text)
+
+    @declared_attr
+    def quality_control_timestamp(self):
+        return mapped_column(DateTime, nullable=True, server_onupdate=func.now())
+
+    @declared_attr
+    def quality_control_user_id(self):
+        return mapped_column(
+            Integer, ForeignKey("user.id", ondelete="SET NULL"), nullable=True
+        )
+
+
 class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
     well_id = mapped_column(
         "well_id", Integer, ForeignKey("well.id", ondelete="CASCADE"), nullable=False
@@ -44,16 +67,17 @@ class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
     )
 
 
-class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin):
+class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin, QCMixin):
     """
-    Base class for time series observations.
-    This class can be extended to create specific types of observations.
     """
 
     # Define common fields for observations here
     timestamp = mapped_column(DateTime, nullable=False)
     value = mapped_column(Float, nullable=False)
-    description = mapped_column(String(255), nullable=True)
+    unit = mapped_column(String, nullable=False, default="ftbgs")  # Default unit is meters
+
+    data_quality = mapped_column(String(100), ForeignKey("lexicon.term"))
+    level_status = mapped_column(String(100), ForeignKey("lexicon.term"))
 
     timeseries_id = mapped_column(
         "timeseries_id",

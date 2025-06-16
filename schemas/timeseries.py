@@ -29,7 +29,6 @@ class CreateWellTimeseries(BaseModel):
 class CreateGroundwaterLevelObservation(BaseModel):
     timestamp: datetime  # ISO 8601 format
     value: float
-    description: str | None = None
     timeseries_id: int
 
 

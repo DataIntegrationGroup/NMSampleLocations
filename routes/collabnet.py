@@ -27,9 +27,10 @@ from schemas.collabnet import CreateCollaborativeNetworkWell
 
 router = APIRouter(prefix="/collabnet", tags=["collabnet"])
 
+
 @router.post("/add")
 def add_collabnet_well(
-        data: CreateCollaborativeNetworkWell,
+    data: CreateCollaborativeNetworkWell,
     session: Session = Depends(get_db_session),
 ):
     """
@@ -40,12 +41,10 @@ def add_collabnet_well(
 
 @router.get("/location_feature_collection")
 def get_location(session: Session = Depends(get_db_session)):
-    """
-    """
+    """ """
 
     sql = select(
-        SampleLocation,
-        geofunc.ST_AsGeoJSON(SampleLocation.point).label("geojson")
+        SampleLocation, geofunc.ST_AsGeoJSON(SampleLocation.point).label("geojson")
     )
     sql = sql.join(Well)
     sql = sql.join(CollaborativeNetworkWell)
@@ -65,7 +64,7 @@ def get_location(session: Session = Depends(get_db_session)):
                 "id": location.id,
                 "name": location.name,
                 "description": location.description,
-                "wells": [well.id for well in location.well]
+                "wells": [well.id for well in location.well],
             },
             "geometry": geojson,
         }

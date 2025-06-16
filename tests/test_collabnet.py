@@ -19,21 +19,23 @@ from tests import client
 
 def test_add_collabnet_well():
     response = client.post(
-        '/collabnet/add',
+        "/collabnet/add",
         json={
-            'well_id': 2,
-            'actively_monitored': True,
+            "well_id": 2,
+            "actively_monitored": True,
         },
     )
 
     assert response.status_code == 200
     data = response.json()
-    assert data['well_id'] == 2
-    assert data['actively_monitored'] is True
+    assert data["well_id"] == 2
+    assert data["actively_monitored"] is True
 
 
 def test_collabnet_wells():
-    response = client.get('/collabnet/location_feature_collection')
+    response = client.get("/collabnet/location_feature_collection")
     print(response.json())
     assert response.status_code == 200
+
+
 # ============= EOF =============================================

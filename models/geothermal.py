@@ -43,7 +43,9 @@ class GeothermalBottomHoleTemperature(Base, AutoBaseMixin):
     temperature = mapped_column(
         Float
     )  # Assuming temperature is stored as a float (e.g., in degrees Celsius)
-    temperature_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default='F')
+    temperature_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="F"
+    )
 
     def __repr__(self):
         return f"<GeothermalBottomHoleTemperature(well_id={self.well_id}, temperature={self.temperature})>"
@@ -57,15 +59,15 @@ class GeothermalTemperatureProfileObservation(Base, AutoBaseMixin):
     temperature_profile_id = mapped_column(
         Integer, ForeignKey("geothermal_temperature_profile.id")
     )
-    depth = mapped_column(
-        Float
-    )
-    depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default='ft')
+    depth = mapped_column(Float)
+    depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="ft")
 
     temperature = mapped_column(
         Float
     )  # Assuming temperature is stored as a float (e.g., in degrees Celsius)
-    temperature_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default='F')
+    temperature_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="F"
+    )
 
     def __repr__(self):
         return (

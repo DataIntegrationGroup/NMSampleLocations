@@ -19,11 +19,13 @@ from sqlalchemy.orm import Session
 from models import get_db_session, adder
 from models.geothermal import (
     GeothermalTemperatureProfile,
-    GeothermalTemperatureProfileObservation, GeothermalBottomHoleTemperature,
+    GeothermalTemperatureProfileObservation,
+    GeothermalBottomHoleTemperature,
 )
 from schemas.geothermal import (
     CreateTemperatureProfile,
-    CreateTemperatureProfileObservation, CreateBottomHoleTemperature,
+    CreateTemperatureProfileObservation,
+    CreateBottomHoleTemperature,
 )
 
 router = APIRouter(prefix="/geothermal", tags=["geothermal"])
@@ -54,7 +56,8 @@ async def add_temperature_profile_observation(
         temperature_profile_observation_data,
     )
 
-@router.post('/bottom_hole_temperature')
+
+@router.post("/bottom_hole_temperature")
 async def add_bottom_hole_temperature(
     bottom_hole_temperature_data: CreateBottomHoleTemperature,
     session: Session = Depends(get_db_session),
@@ -67,4 +70,6 @@ async def add_bottom_hole_temperature(
         GeothermalBottomHoleTemperature,  # Assuming this is the correct model
         bottom_hole_temperature_data,
     )
+
+
 # ============= EOF =============================================

@@ -76,4 +76,6 @@ def test_geothermal_bottom_hole_temperature():
     data = response.json()
     assert data["well_id"] == 1
     assert data["temperature"] == 60.0
+
+
 # ============= EOF =============================================

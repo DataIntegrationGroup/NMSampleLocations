@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from sqlalchemy import Integer, ForeignKey, Float, String, DateTime
+from sqlalchemy import Integer, ForeignKey, Float, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.testing.schema import mapped_column
 
@@ -27,21 +27,19 @@ class WaterChemistryAnalysis(Base, AutoBaseMixin):
 
     __tablename__ = "water_chemistry_analysis"
 
-    # Define your columns here, e.g.:
-    # id = Column(Integer, primary_key=True)
     analysis_set_id = mapped_column(
         Integer, ForeignKey("water_chemistry_analysis_set.id")
     )
     value = mapped_column(Float)
     unit = mapped_column(String(100), ForeignKey("lexicon.term"), nullable=True)
-    qualifier = mapped_column(String(100), nullable=True)
+    uncertainty = mapped_column(Float, nullable=True)
+    method = mapped_column(String(100), nullable=True)
     analyte = mapped_column(String(100), ForeignKey("lexicon.term"), nullable=False)
-
-    # result = Column(Float)
-    # timestamp = Column(DateTime)
+    analysis_timestamp = mapped_column(
+        DateTime
+    )  # Timestamp of when the analysis was performed
 
     # Add relationships if necessary
-    # well = relationship("Well", backref="analyses")
 
 
 class WaterChemistryAnalysisSet(Base, AutoBaseMixin):
@@ -53,19 +51,31 @@ class WaterChemistryAnalysisSet(Base, AutoBaseMixin):
     __tablename__ = "water_chemistry_analysis_set"
 
     well_id = mapped_column(Integer, ForeignKey("well.id"))
-    description = mapped_column(String(255), nullable=True)
+    note = mapped_column(String(255), nullable=True)
 
-    collection_date = mapped_column(
-        DateTime, nullable=True
-    )  # Use appropriate type for date
-    analysis_date = mapped_column(
-        DateTime, nullable=True
-    )  # Use appropriate type for date
+    collection_timestamp = mapped_column(
+        DateTime, nullable=False
+    )
 
     laboratory = mapped_column(
         String(255), nullable=True
     )  # Name of the laboratory that performed the analysis
 
+    collection_method = mapped_column(
+        String(100),
+        ForeignKey('lexicon.term'),
+        nullable=True,
+    )  # Method used for sample collection
+
+    sample_type = mapped_column(
+        String(100),
+        ForeignKey('lexicon.term'),
+        nullable=True,
+    )  # Type of sample collected (e.g., groundwater, surface water)
+
+    visible = mapped_column(
+        Boolean, default=False, nullable=False
+    )  # Visibility of the analysis set (1 for visible, 0 for hidden)
     # Define relationships
     analyses = relationship("WaterChemistryAnalysis", backref="analysis_set")
     well = relationship("Well", backref="analysis_sets")

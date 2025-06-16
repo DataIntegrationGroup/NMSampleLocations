@@ -22,6 +22,7 @@ def test_add_analysis_set():
         json={
             "well_id": 1,
             "laboratory": "Test Lab",
+            "collection_timestamp": "2025-01-01T12:00:00",
         },
     )
 
@@ -32,25 +33,6 @@ def test_add_analysis_set():
 
 
 def test_add_analysis():
-    # response = client.post(
-    #     "/lexicon/add",
-    #     json={
-    #         "term": "mg/L",
-    #         "definition": "Milligrams per Liter",
-    #         "category": "unit",
-    #     },
-    # )
-    # assert response.status_code == 200
-    #
-    # response = client.post(
-    #     "/lexicon/add",
-    #     json={
-    #         "term": "TDS",
-    #         "definition": "Total Dissolved Solids",
-    #         "category": "water_quality",
-    #     },
-    # )
-    # assert response.status_code == 200
 
     response = client.post(
         "/chemistry/analysis",
@@ -58,7 +40,6 @@ def test_add_analysis():
             "analysis_set_id": 1,
             "value": 7.0,
             "unit": "mg/L",
-            "qualifier": None,
             "analyte": "TDS",
         },
     )
@@ -67,7 +48,6 @@ def test_add_analysis():
     assert data["analysis_set_id"] == 1
     assert data["value"] == 7.0
     assert data["unit"] == "mg/L"
-    assert data["qualifier"] is None
     assert data["analyte"] == "TDS"
 
 

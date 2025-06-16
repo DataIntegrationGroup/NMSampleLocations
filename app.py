@@ -32,6 +32,7 @@ async def init_db():
 def init_lexicon():
     with open("lexicon.json") as f:
         import json
+
         default_lexicon = json.load(f)
 
     # populate lexicon

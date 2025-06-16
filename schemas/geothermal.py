@@ -35,7 +35,9 @@ class CreateTemperatureProfileObservation(BaseModel):
     depth: float
     depth_unit: str = "ft"  # Assuming depth unit is a string (e.g., 'm', 'ft')
     temperature: float
-    temperature_unit: str = "F"  # Assuming temperature unit is a string (e.g., 'C', 'F')
+    temperature_unit: str = (
+        "F"  # Assuming temperature unit is a string (e.g., 'C', 'F')
+    )
 
 
 class CreateBottomHoleTemperature(BaseModel):
@@ -48,8 +50,9 @@ class CreateBottomHoleTemperature(BaseModel):
     # depth: float
     temperature: float
     # depth_unit: str  # Assuming depth unit is a string (e.g., 'm', 'ft')
-    temperature_unit: str = "F"  # Assuming temperature unit is a string (e.g., 'C', 'F')
-
+    temperature_unit: str = (
+        "F"  # Assuming temperature unit is a string (e.g., 'C', 'F')
+    )
 
 
 # ============= EOF =============================================

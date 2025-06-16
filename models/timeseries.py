@@ -35,8 +35,7 @@ class QCMixin:
     @declared_attr
     def quality_control_status(self):
         return mapped_column(
-            String(100), ForeignKey("lexicon.term"),
-            default='Provisional'
+            String(100), ForeignKey("lexicon.term"), default="Provisional"
         )
 
     @declared_attr
@@ -68,13 +67,14 @@ class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
 
 
 class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin, QCMixin):
-    """
-    """
+    """ """
 
     # Define common fields for observations here
     timestamp = mapped_column(DateTime, nullable=False)
     value = mapped_column(Float, nullable=False)
-    unit = mapped_column(String, nullable=False, default="ftbgs")  # Default unit is meters
+    unit = mapped_column(
+        String, nullable=False, default="ftbgs"
+    )  # Default unit is meters
 
     data_quality = mapped_column(String(100), ForeignKey("lexicon.term"))
     level_status = mapped_column(String(100), ForeignKey("lexicon.term"))

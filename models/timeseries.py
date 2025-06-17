@@ -86,8 +86,7 @@ class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin, QCMixin)
         nullable=False,
     )
 
-    timeseries = relationship(
-        "WellTimeseries", backref="observations")
+    timeseries = relationship("WellTimeseries", backref="observations")
 
     def __repr__(self):
         return f"<Observation(id={self.id}, timestamp={self.timestamp}, value={self.value})>"

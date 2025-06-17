@@ -26,4 +26,6 @@ class CollaborativeNetworkWell(Base, AutoBaseMixin):
     well_id = mapped_column(Integer, ForeignKey("well.id"), nullable=False)
 
     well = relationship("Well")
+
+
 # ============= EOF =============================================

@@ -39,6 +39,7 @@ def add_collabnet_well(
     """
     return adder(session, CollaborativeNetworkWell, data)
 
+
 @router.get("/stats")
 def location_stats(session: Session = Depends(get_db_session)):
     """
@@ -63,9 +64,12 @@ def location_stats(session: Session = Depends(get_db_session)):
     wells = session.execute(sql).all()
     return {
         "total_wells": len(wells),
-        "actively_monitored_wells": sum(1 for well, collab in wells if collab.actively_monitored),
+        "actively_monitored_wells": sum(
+            1 for well, collab in wells if collab.actively_monitored
+        ),
         # "locations": [loc.name for  in stats],
     }
+
 
 @router.get("/location_feature_collection")
 def get_location(session: Session = Depends(get_db_session)):

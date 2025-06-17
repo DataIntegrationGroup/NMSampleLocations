@@ -23,6 +23,7 @@ from geoalchemy2 import functions as geofunc
 from models import get_db_session, adder
 from models.base import SampleLocation, Well
 from models.collabnet import CollaborativeNetworkWell
+from models.timeseries import GroundwaterLevelObservation, WellTimeseries
 from schemas.collabnet import CreateCollaborativeNetworkWell
 
 router = APIRouter(prefix="/collabnet", tags=["collabnet"])
@@ -38,6 +39,33 @@ def add_collabnet_well(
     """
     return adder(session, CollaborativeNetworkWell, data)
 
+@router.get("/stats")
+def location_stats(session: Session = Depends(get_db_session)):
+    """
+    Get statistics about the collaborative network wells.
+    """
+    # sql = select(GroundwaterLevelObservation)
+
+    # sql = sql.join(WellTimeseries)
+
+    # sql = sql.join(CollaborativeNetworkWell)
+    # sql = sql.join(Well)
+    # sql = sql.outerjoin(GroundwaterLevelObservation)
+    # sql = sql.join(WellTimeseries)
+    # sql = sql.join(GroundwaterLevelObservation)
+
+    # print(sql)
+    # stats = session.execute(sql).all()
+
+    sql = select(Well, CollaborativeNetworkWell)
+    sql = sql.join(CollaborativeNetworkWell)
+
+    wells = session.execute(sql).all()
+    return {
+        "total_wells": len(wells),
+        "actively_monitored_wells": sum(1 for well, collab in wells if collab.actively_monitored),
+        # "locations": [loc.name for  in stats],
+    }
 
 @router.get("/location_feature_collection")
 def get_location(session: Session = Depends(get_db_session)):

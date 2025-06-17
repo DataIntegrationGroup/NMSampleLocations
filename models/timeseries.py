@@ -15,7 +15,7 @@
 # ===============================================================================
 from sqlalchemy import DateTime, Float, String, Integer, ForeignKey, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import declared_attr
+from sqlalchemy.orm import declared_attr, relationship
 from sqlalchemy.testing.schema import mapped_column
 
 from models import AutoBaseMixin, Base, PropertiesMixin
@@ -85,6 +85,9 @@ class GroundwaterLevelObservation(Base, AutoBaseMixin, PropertiesMixin, QCMixin)
         ForeignKey("welltimeseries.id", ondelete="CASCADE"),
         nullable=False,
     )
+
+    timeseries = relationship(
+        "WellTimeseries", backref="observations")
 
     def __repr__(self):
         return f"<Observation(id={self.id}, timestamp={self.timestamp}, value={self.value})>"

@@ -14,7 +14,7 @@
 # limitations under the License.
 # ===============================================================================
 from sqlalchemy import Boolean, ForeignKey, Integer
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 
 from models import AutoBaseMixin, Base
 
@@ -25,5 +25,5 @@ class CollaborativeNetworkWell(Base, AutoBaseMixin):
     actively_monitored = mapped_column(Boolean, default=False, nullable=False)
     well_id = mapped_column(Integer, ForeignKey("well.id"), nullable=False)
 
-
+    well = relationship("Well")
 # ============= EOF =============================================

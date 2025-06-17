@@ -55,4 +55,47 @@ class CreateBottomHoleTemperature(BaseModel):
     )
 
 
+class CreateGeothermalInterval(BaseModel):
+    """
+    Pydantic model for creating a geothermal well interval.
+    This model can be extended to include additional fields as needed.
+    """
+
+    well_id: int
+    top_depth: float
+    bottom_depth: float
+    depth_unit: str = 'ft'
+
+
+class CreateThermalConductivity(BaseModel):
+    """
+    Pydantic model for creating a thermal conductivity observation.
+    This model can be extended to include additional fields as needed.
+    """
+
+    interval_id: int
+    conductivity: float
+    conductivity_unit: str = "W/m·K"  # Assuming unit is a string (e.g., 'W/m·K', 'mW/m·K')
+
+
+class CreateHeatFlow(BaseModel):
+    """
+    Pydantic model for creating a geothermal heat flow observation.
+    This model can be extended to include additional fields as needed.
+    """
+
+    interval_id: int
+    gradient: float
+    gradient_unit: str = "mW/m²"  # Assuming gradient unit is a string (e.g., 'mW/m²', 'W/m²')
+
+    ka: float  # Assuming ka is thermal diffusivity
+    ka_unit: str = "m²/s"  # Assuming ka unit is a string (e.g., 'm²/s', 'cm²/s')
+    kpr: float  # Assuming kpr is thermal conductivity
+    kpr_unit: str = "m²/s"  # Assuming kpr unit is a string (e.g., 'm²/s', 'cm²/s')
+    q: float  # Heat flow value
+    q_unit: str = "mW/m²"  # Assuming heat flow unit is a string (e.g., 'mW/m²', 'W/m²')
+    pm: float  # Assuming pm is power measurement
+    pm_unit: str = "mW/m²"  # Assuming pm unit is a string (e.g., 'mW/m²', 'W/m²')
+
+
 # ============= EOF =============================================

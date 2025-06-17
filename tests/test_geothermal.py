@@ -78,4 +78,78 @@ def test_geothermal_bottom_hole_temperature():
     assert data["temperature"] == 60.0
 
 
+def test_geothermal_interval():
+    """
+    Test the geothermal interval endpoint.
+    This test should create a geothermal interval and verify its creation.
+    """
+
+    # Create a sample geothermal interval data
+    response = client.post(
+        "/geothermal/interval",
+        json={
+            "well_id": 1,
+            "top_depth": 100,
+            "bottom_depth": 200,
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["well_id"] == 1
+    assert data["top_depth"] == 100
+    assert data["bottom_depth"] == 200
+
+def test_geothermal_thermal_conductivity():
+    """
+    Test the geothermal thermal conductivity endpoint.
+    This test should create a geothermal thermal conductivity record and verify its creation.
+    """
+
+    # Create a sample geothermal thermal conductivity data
+    response = client.post(
+        "/geothermal/thermal_conductivity",
+        json={
+            "interval_id": 1,
+            "conductivity": 2.5,
+            "conductivity_unit": "W/m·K",
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["interval_id"] == 1
+    assert data["conductivity"] == 2.5
+    assert data["conductivity_unit"] == "W/m·K"
+
+
+def test_geothermal_heatflow():
+    """
+    Test the geothermal heat flow endpoint.
+    This test should create a geothermal heat flow record and verify its creation.
+    """
+
+    # Create a sample geothermal heat flow data
+    response = client.post(
+        "/geothermal/heat_flow",
+        json={
+            "interval_id": 1,
+            "gradient": 0.01,
+            "gradient_unit": "mW/m²",
+
+            "ka": 0.001,
+            "ka_unit": "m²/s",  # Assuming ka is thermal diffusivity
+            "kpr": 0.002,
+            "kpr_unit": "m²/s",  # Assuming kpr is thermal conductivity
+            "q": 100.0,  # Heat flow value
+            "q_unit": "mW/m²",  # Assuming heat flow unit is mW/m²
+             "pm": 0.003,  # Assuming pm is some parameter related to heat flow
+            "pm_unit": "m²/s",  # Assuming pm is a unit related to heat flow
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["interval_id"] == 1
+    assert data["gradient"] == 0.01
 # ============= EOF =============================================

@@ -76,4 +76,75 @@ class GeothermalTemperatureProfileObservation(Base, AutoBaseMixin):
         )
 
 
+class GeothermalWellInterval(Base, AutoBaseMixin):
+    """ """
+
+    __tablename__ = "geothermal_well_interval"
+
+    well_id = mapped_column(Integer, ForeignKey("well.id"))
+    top_depth = mapped_column(Float)
+    bottom_depth = mapped_column(Float)
+    depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="ft")
+
+    def __repr__(self):
+        return (
+            f"<GeothermalWellInterval(well_id={self.well_id}, "
+            f"top_depth={self.top_depth}, bottom_depth={self.bottom_depth})>"
+        )
+
+
+class GeothermalThermalConductivity(Base, AutoBaseMixin):
+    """ """
+
+    __tablename__ = "geothermal_thermal_conductivity"
+
+    interval_id = mapped_column(Integer, ForeignKey("geothermal_well_interval.id"))
+    conductivity = mapped_column(Float)  # Assuming conductivity is stored as a float
+    conductivity_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="W/m·K"
+    )
+
+    def __repr__(self):
+        return (
+            f"<GeothermalThermalConductivity(interval_id={self.interval_id}, "
+            f"thermal_conductivity={self.conductivity})>"
+        )
+
+
+class GeothermalHeatFlow(Base, AutoBaseMixin):
+    """ """
+
+    __tablename__ = "geothermal_heat_flow"
+
+    interval_id = mapped_column(Integer, ForeignKey("geothermal_well_interval.id"))
+    gradient = mapped_column(Float)  # Assuming gradient is stored as a float
+    gradient_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="mW/m²"
+    )
+
+    ka = mapped_column(
+        Float
+    )  # Assuming ka is stored as a float (thermal diffusivity)
+    ka_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="m²/s"
+    )
+    kpr = mapped_column(
+        Float
+    )  # Assuming kpr is stored as a float (thermal conductivity)
+    kpr_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="W/m·K"
+    )
+    q = mapped_column(
+        Float
+    )  # Assuming q is stored as a float (heat flow)
+    q_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="mW/m²"
+    )
+
+    pm = mapped_column(
+        Float
+    )  # Assuming pm is stored as a float (thermal power)
+    pm_unit = mapped_column(
+        String(100), ForeignKey("lexicon.term"), default="W/m²"
+    )
 # ============= EOF =============================================

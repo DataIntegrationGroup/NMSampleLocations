@@ -23,10 +23,13 @@ from models.lexicon import Lexicon
 from settings import settings
 
 
-async def init_db():
-    async with engine.begin() as c:
-        await c.run_sync(Base.metadata.drop_all)
-        await c.run_sync(Base.metadata.create_all)
+def init_db():
+    """
+    Initialize the database by creating all tables.
+    This function is called during application startup.
+    """
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
 
 def init_lexicon():
@@ -42,28 +45,30 @@ def init_lexicon():
         s.commit()
 
 
-async def create_superuser():
+def create_superuser():
     from admin.user import User
 
-    async with sqlalchemy_sessionmaker() as s:
+    with sqlalchemy_sessionmaker() as s:
         user = User(
             username="admin",
             password="admin",
             is_superuser=True,
         )
         s.add(user)
-        await s.commit()
+        s.commit()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-
+    """
+    Application lifespan event handler to initialize the database and lexicon.
+    """
     if settings.get_enum("MODE") == "production":
         pass
     else:
-        await init_db()
-        await create_superuser()
-        await init_lexicon()
+        init_db()
+        create_superuser()
+        init_lexicon()
     yield
 
 

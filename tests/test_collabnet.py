@@ -41,7 +41,6 @@ def test_add_collabnet_well():
 
 def test_collabnet_wells():
     response = client.get("/collabnet/location_feature_collection")
-    print(response.json())
     assert response.status_code == 200
 
 

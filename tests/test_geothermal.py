@@ -100,6 +100,7 @@ def test_geothermal_interval():
     assert data["top_depth"] == 100
     assert data["bottom_depth"] == 200
 
+
 def test_geothermal_thermal_conductivity():
     """
     Test the geothermal thermal conductivity endpoint.
@@ -136,14 +137,13 @@ def test_geothermal_heatflow():
             "interval_id": 1,
             "gradient": 0.01,
             "gradient_unit": "mW/m²",
-
             "ka": 0.001,
             "ka_unit": "m²/s",  # Assuming ka is thermal diffusivity
             "kpr": 0.002,
             "kpr_unit": "m²/s",  # Assuming kpr is thermal conductivity
             "q": 100.0,  # Heat flow value
             "q_unit": "mW/m²",  # Assuming heat flow unit is mW/m²
-             "pm": 0.003,  # Assuming pm is some parameter related to heat flow
+            "pm": 0.003,  # Assuming pm is some parameter related to heat flow
             "pm_unit": "m²/s",  # Assuming pm is a unit related to heat flow
         },
     )
@@ -152,4 +152,6 @@ def test_geothermal_heatflow():
     data = response.json()
     assert data["interval_id"] == 1
     assert data["gradient"] == 0.01
+
+
 # ============= EOF =============================================

@@ -122,29 +122,17 @@ class GeothermalHeatFlow(Base, AutoBaseMixin):
         String(100), ForeignKey("lexicon.term"), default="mW/m²"
     )
 
-    ka = mapped_column(
-        Float
-    )  # Assuming ka is stored as a float (thermal diffusivity)
-    ka_unit = mapped_column(
-        String(100), ForeignKey("lexicon.term"), default="m²/s"
-    )
+    ka = mapped_column(Float)  # Assuming ka is stored as a float (thermal diffusivity)
+    ka_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="m²/s")
     kpr = mapped_column(
         Float
     )  # Assuming kpr is stored as a float (thermal conductivity)
-    kpr_unit = mapped_column(
-        String(100), ForeignKey("lexicon.term"), default="W/m·K"
-    )
-    q = mapped_column(
-        Float
-    )  # Assuming q is stored as a float (heat flow)
-    q_unit = mapped_column(
-        String(100), ForeignKey("lexicon.term"), default="mW/m²"
-    )
+    kpr_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="W/m·K")
+    q = mapped_column(Float)  # Assuming q is stored as a float (heat flow)
+    q_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="mW/m²")
 
-    pm = mapped_column(
-        Float
-    )  # Assuming pm is stored as a float (thermal power)
-    pm_unit = mapped_column(
-        String(100), ForeignKey("lexicon.term"), default="W/m²"
-    )
+    pm = mapped_column(Float)  # Assuming pm is stored as a float (thermal power)
+    pm_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="W/m²")
+
+
 # ============= EOF =============================================

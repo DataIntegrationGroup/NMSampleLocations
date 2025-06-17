@@ -64,7 +64,7 @@ class CreateGeothermalInterval(BaseModel):
     well_id: int
     top_depth: float
     bottom_depth: float
-    depth_unit: str = 'ft'
+    depth_unit: str = "ft"
 
 
 class CreateThermalConductivity(BaseModel):
@@ -75,7 +75,9 @@ class CreateThermalConductivity(BaseModel):
 
     interval_id: int
     conductivity: float
-    conductivity_unit: str = "W/m·K"  # Assuming unit is a string (e.g., 'W/m·K', 'mW/m·K')
+    conductivity_unit: str = (
+        "W/m·K"  # Assuming unit is a string (e.g., 'W/m·K', 'mW/m·K')
+    )
 
 
 class CreateHeatFlow(BaseModel):
@@ -86,7 +88,9 @@ class CreateHeatFlow(BaseModel):
 
     interval_id: int
     gradient: float
-    gradient_unit: str = "mW/m²"  # Assuming gradient unit is a string (e.g., 'mW/m²', 'W/m²')
+    gradient_unit: str = (
+        "mW/m²"  # Assuming gradient unit is a string (e.g., 'mW/m²', 'W/m²')
+    )
 
     ka: float  # Assuming ka is thermal diffusivity
     ka_unit: str = "m²/s"  # Assuming ka unit is a string (e.g., 'm²/s', 'cm²/s')

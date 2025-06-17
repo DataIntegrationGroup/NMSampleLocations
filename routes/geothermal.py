@@ -20,12 +20,18 @@ from models import get_db_session, adder
 from models.geothermal import (
     GeothermalTemperatureProfile,
     GeothermalTemperatureProfileObservation,
-    GeothermalBottomHoleTemperature, GeothermalWellInterval, GeothermalHeatFlow, GeothermalThermalConductivity,
+    GeothermalBottomHoleTemperature,
+    GeothermalWellInterval,
+    GeothermalHeatFlow,
+    GeothermalThermalConductivity,
 )
 from schemas.geothermal import (
     CreateTemperatureProfile,
     CreateTemperatureProfileObservation,
-    CreateBottomHoleTemperature, CreateGeothermalInterval, CreateHeatFlow, CreateThermalConductivity,
+    CreateBottomHoleTemperature,
+    CreateGeothermalInterval,
+    CreateHeatFlow,
+    CreateThermalConductivity,
 )
 
 router = APIRouter(prefix="/geothermal", tags=["geothermal"])
@@ -83,6 +89,7 @@ async def add_geothermal_interval(
     # Assuming you have a model for GeothermalInterval
     return adder(session, GeothermalWellInterval, interval_data)
 
+
 @router.post("/thermal_conductivity")
 async def add_thermal_conductivity(
     thermal_conductivity_data: CreateThermalConductivity,  # Replace with appropriate schema
@@ -95,7 +102,6 @@ async def add_thermal_conductivity(
     return adder(session, GeothermalThermalConductivity, thermal_conductivity_data)
 
 
-
 @router.post("/heat_flow")
 async def add_heat_flow(
     heat_flow_data: CreateHeatFlow,
@@ -106,4 +112,6 @@ async def add_heat_flow(
     """
     # Assuming you have a model for GeothermalHeatFlow
     return adder(session, GeothermalHeatFlow, heat_flow_data)
+
+
 # ============= EOF =============================================

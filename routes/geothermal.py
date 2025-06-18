@@ -23,7 +23,9 @@ from models.geothermal import (
     GeothermalBottomHoleTemperature,
     GeothermalWellInterval,
     GeothermalHeatFlow,
-    GeothermalThermalConductivity, GeothermalSampleSet, GeothermalBottomHoleTemperatureHeader,
+    GeothermalThermalConductivity,
+    GeothermalSampleSet,
+    GeothermalBottomHoleTemperatureHeader,
 )
 from schemas.geothermal import (
     CreateTemperatureProfile,
@@ -31,12 +33,15 @@ from schemas.geothermal import (
     CreateBottomHoleTemperature,
     CreateGeothermalInterval,
     CreateHeatFlow,
-    CreateThermalConductivity, CreateGeothermalSampleSet, CreateBottomHoleTemperatureHeader,
+    CreateThermalConductivity,
+    CreateGeothermalSampleSet,
+    CreateBottomHoleTemperatureHeader,
 )
 
 router = APIRouter(prefix="/geothermal", tags=["geothermal"])
 
-@router.post('/sample_set', status_code=status.HTTP_201_CREATED)
+
+@router.post("/sample_set", status_code=status.HTTP_201_CREATED)
 async def add_geothermal_sample_set(
     sample_set_data: CreateGeothermalSampleSet,  # Replace with appropriate schema
     session: Session = Depends(get_db_session),
@@ -47,7 +52,8 @@ async def add_geothermal_sample_set(
     # Assuming you have a model for GeothermalSampleSet
     return adder(session, GeothermalSampleSet, sample_set_data)
 
-@router.post('/bottom_hole_temperature_header', status_code=status.HTTP_201_CREATED)
+
+@router.post("/bottom_hole_temperature_header", status_code=status.HTTP_201_CREATED)
 async def add_bottom_hole_temperature_header(
     bottom_hole_temperature_header_data: CreateBottomHoleTemperatureHeader,
     session: Session = Depends(get_db_session),
@@ -56,7 +62,11 @@ async def add_bottom_hole_temperature_header(
     Add a new bottom hole temperature header.
     """
     # Assuming you have a model for GeothermalBottomHoleTemperatureHeader
-    return adder(session, GeothermalBottomHoleTemperatureHeader, bottom_hole_temperature_header_data)
+    return adder(
+        session,
+        GeothermalBottomHoleTemperatureHeader,
+        bottom_hole_temperature_header_data,
+    )
 
 
 @router.post("/temperature_profile", status_code=status.HTTP_201_CREATED)

@@ -28,7 +28,7 @@ router = APIRouter(
     "/add",
     summary="Add term",
     response_model=LexiconTermResponse,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 def add_term(term_data: CreateLexiconTerm, session=Depends(get_db_session)):
     """

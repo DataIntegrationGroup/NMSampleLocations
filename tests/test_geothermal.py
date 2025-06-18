@@ -93,9 +93,10 @@ def test_geothermal_bottom_hole_temperature_header():
     # Create a sample bottom hole temperature header data
     response = client.post(
         "/geothermal/bottom_hole_temperature_header",
-        json={"sample_set_id": 1,
-              "drill_fluid": "mud",
-              },
+        json={
+            "sample_set_id": 1,
+            "drill_fluid": "mud",
+        },
     )
 
     assert response.status_code == 201

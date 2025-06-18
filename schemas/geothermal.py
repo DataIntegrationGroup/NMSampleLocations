@@ -16,7 +16,6 @@
 from pydantic import BaseModel
 
 
-
 class CreateTemperatureProfile(BaseModel):
     """
     Pydantic model for creating a temperature profile.
@@ -43,9 +42,9 @@ class CreateTemperatureProfileObservation(BaseModel):
 
 class CreateGeothermalSampleSet(BaseModel):
     well_id: int
-    name: str | None = None# = mapped_column(String(128))
-    klass: str | None = None# = mapped_column(String(24))
-    type: str | None = None# = mapped_column(String(50))
+    name: str | None = None  # = mapped_column(String(128))
+    klass: str | None = None  # = mapped_column(String(24))
+    type: str | None = None  # = mapped_column(String(50))
 
     # SampleFm: # = mapped_column(String(50))
     # SampleLoc: # = mapped_column(String(128))
@@ -58,20 +57,20 @@ class CreateGeothermalSampleSet(BaseModel):
     # From_Elev: # = mapped_column(Float)
     # To_Elev: # = mapped_column(Float)
 
-    porosity: int | None = None # = mapped_column(Integer)
-    permeability: int | None = None# = mapped_column(Integer)
-    density: int | None = None# = mapped_column(Integer)
+    porosity: int | None = None  # = mapped_column(Integer)
+    permeability: int | None = None  # = mapped_column(Integer)
+    density: int | None = None  # = mapped_column(Integer)
 
-    dst_tests: bool | None = False # = mapped_column(Boolean)
-    thin_section: bool| None = False # = mapped_column(Boolean)
-    geochron: bool| None = False # = mapped_column(Boolean)
-    geochem: bool| None = False # = mapped_column(Boolean)
-    geothermal: bool| None = False # = mapped_column(Boolean)
-    wholerock: bool| None = False # = mapped_column(Boolean)
-    paleontology: bool| None = False # = mapped_column(Boolean)
+    dst_tests: bool | None = False  # = mapped_column(Boolean)
+    thin_section: bool | None = False  # = mapped_column(Boolean)
+    geochron: bool | None = False  # = mapped_column(Boolean)
+    geochem: bool | None = False  # = mapped_column(Boolean)
+    geothermal: bool | None = False  # = mapped_column(Boolean)
+    wholerock: bool | None = False  # = mapped_column(Boolean)
+    paleontology: bool | None = False  # = mapped_column(Boolean)
     # EnteredBy: # = mapped_column(String(4))
     # EntryDate: # = mapped_column(DateTime)
-    notes: str| None = None# = mapped_column(Text)
+    notes: str | None = None  # = mapped_column(Text)
 
 
 class CreateBottomHoleTemperatureHeader(BaseModel):

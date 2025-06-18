@@ -79,9 +79,7 @@ class GeothermalBottomHoleTemperatureHeader(Base, AutoBaseMixin):
     fluid_resistivity = mapped_column(
         Float
     )  # Assuming resistivity is stored as a float (e.g., in ohm·m)
-    fluid_ph = mapped_column(
-        Float
-    )  # Assuming pH is stored as a float (e.g., pH scale)
+    fluid_ph = mapped_column(Float)  # Assuming pH is stored as a float (e.g., pH scale)
     fluid_level = mapped_column(
         Float
     )  # Assuming fluid level is stored as a float (e.g., in meters)
@@ -102,10 +100,8 @@ class GeothermalBottomHoleTemperature(Base, AutoBaseMixin):
     header_id = mapped_column(
         Integer, ForeignKey("geothermal_bottom_hole_temperature_header.id")
     )
-    depth = mapped_column(
-        Float
-    )
-    depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default='ft')
+    depth = mapped_column(Float)
+    depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="ft")
 
     temperature = mapped_column(
         Float

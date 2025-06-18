@@ -31,9 +31,10 @@ router = APIRouter(
 
 
 @router.post(
-    "/well", response_model=WellTimeseriesResponse,
+    "/well",
+    response_model=WellTimeseriesResponse,
     summary="Add Well Timeseries",
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
 )
 def add_well_timeseries(
     well_timeseries_data: CreateWellTimeseries, session=Depends(get_db_session)

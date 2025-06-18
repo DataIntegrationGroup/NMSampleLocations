@@ -27,7 +27,7 @@ def test_add_well_timeseries():
             "well_id": 1,
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 def test_add_well_observations():
@@ -48,7 +48,7 @@ def test_add_well_observations():
             },
         ],
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 
 # ============= EOF =============================================

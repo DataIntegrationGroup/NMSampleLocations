@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from fastapi import Depends
+from fastapi import Depends, status
 from fastapi.routing import APIRoute, APIRouter
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -29,7 +29,7 @@ from schemas.collabnet import CreateCollaborativeNetworkWell
 router = APIRouter(prefix="/collabnet", tags=["collabnet"])
 
 
-@router.post("/add")
+@router.post("/add", status_code=status.HTTP_201_CREATED)
 def add_collabnet_well(
     data: CreateCollaborativeNetworkWell,
     session: Session = Depends(get_db_session),

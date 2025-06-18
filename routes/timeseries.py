@@ -15,7 +15,7 @@
 # ===============================================================================
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from models import get_db_session
 from models.timeseries import WellTimeseries, GroundwaterLevelObservation
@@ -31,7 +31,9 @@ router = APIRouter(
 
 
 @router.post(
-    "/well", response_model=WellTimeseriesResponse, summary="Add Well Timeseries"
+    "/well", response_model=WellTimeseriesResponse,
+    summary="Add Well Timeseries",
+    status_code=status.HTTP_201_CREATED
 )
 def add_well_timeseries(
     well_timeseries_data: CreateWellTimeseries, session=Depends(get_db_session)
@@ -49,6 +51,7 @@ def add_well_timeseries(
 
 @router.post(
     "/well/groundwater_level/observations",
+    status_code=status.HTTP_201_CREATED,
     summary="Add groundwater level observation",
 )
 def add_well_observations(

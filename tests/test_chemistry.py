@@ -26,7 +26,7 @@ def test_add_analysis_set():
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["well_id"] == 1
     assert data["laboratory"] == "Test Lab"
@@ -43,7 +43,7 @@ def test_add_analysis():
             "analyte": "TDS",
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["analysis_set_id"] == 1
     assert data["value"] == 7.0

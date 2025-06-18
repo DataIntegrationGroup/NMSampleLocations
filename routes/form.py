@@ -14,7 +14,7 @@
 # limitations under the License.
 # ===============================================================================
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
 from models import get_db_session
@@ -33,6 +33,7 @@ router = APIRouter(prefix="/form")
 @router.post(
     "/well",
     response_model=WellFormResponse,
+    status_code=status.HTTP_201_CREATED
 )
 async def well_form(form_data: WellForm, session=Depends(get_db_session)):
     """
@@ -79,7 +80,7 @@ async def well_form(form_data: WellForm, session=Depends(get_db_session)):
     return response_data
 
 
-@router.post("/groundwaterlevel", response_model=GroundwaterLevelFormResponse)
+@router.post("/groundwaterlevel", response_model=GroundwaterLevelFormResponse, status_code=status.HTTP_201_CREATED)
 async def groundwater_level_form(
     gwl_data: GroundwaterLevelForm, session=Depends(get_db_session)
 ):

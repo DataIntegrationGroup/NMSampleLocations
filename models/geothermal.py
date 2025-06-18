@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from sqlalchemy import Integer, ForeignKey, Float, String
-from sqlalchemy.testing.schema import mapped_column
+from sqlalchemy import Integer, ForeignKey, Float, String, DateTime, Text, Boolean
+from sqlalchemy.orm import mapped_column
 
 from models import AutoBaseMixin, Base
 
@@ -29,16 +29,83 @@ class GeothermalTemperatureProfile(Base, AutoBaseMixin):
         return f"<GeothermalTemperatureProfile(well_id={self.well_id})>"
 
 
+class GeothermalSampleSet(Base, AutoBaseMixin):
+
+    __tablename__ = "geothermal_sample_set"
+
+    well_id = mapped_column(Integer, ForeignKey("well.id"))
+
+    name = mapped_column(String(128))
+    klass = mapped_column(String(24))
+    type = mapped_column(String(50))
+
+    # SampleFm = mapped_column(String(50))
+    # SampleLoc = mapped_column(String(128))
+    # SampleDate = mapped_column(DateTime)
+    # From_Depth = mapped_column(Float)
+    # To_Depth = mapped_column(Float)
+    # SmpDpUnt = mapped_column(String(16))
+    # From_TVD = mapped_column(Float)
+    # To_TVD = mapped_column(Float)
+    # From_Elev = mapped_column(Float)
+    # To_Elev = mapped_column(Float)
+
+    porosity = mapped_column(Integer)
+    permeability = mapped_column(Integer)
+    density = mapped_column(Integer)
+
+    dst_tests = mapped_column(Boolean)
+    thin_section = mapped_column(Boolean)
+    geochron = mapped_column(Boolean)
+    geochem = mapped_column(Boolean)
+    geothermal = mapped_column(Boolean)
+    wholerock = mapped_column(Boolean)
+    paleontology = mapped_column(Boolean)
+    # EnteredBy = mapped_column(String(4))
+    # EntryDate = mapped_column(DateTime)
+    notes = mapped_column(Text)
+
+
+class GeothermalBottomHoleTemperatureHeader(Base, AutoBaseMixin):
+
+    __tablename__ = "geothermal_bottom_hole_temperature_header"
+
+    sample_set_id = mapped_column(Integer, ForeignKey("geothermal_sample_set.id"))
+
+    drill_fluid = mapped_column(String(100), ForeignKey("lexicon.term"), default="mud")
+    fluid_salinity = mapped_column(
+        Float
+    )  # Assuming salinity is stored as a float (e.g., in g/L)
+    fluid_resistivity = mapped_column(
+        Float
+    )  # Assuming resistivity is stored as a float (e.g., in ohm·m)
+    fluid_ph = mapped_column(
+        Float
+    )  # Assuming pH is stored as a float (e.g., pH scale)
+    fluid_level = mapped_column(
+        Float
+    )  # Assuming fluid level is stored as a float (e.g., in meters)
+    fluid_viscosity = mapped_column(
+        Float
+    )  # Assuming viscosity is stored as a float (e.g., in mPa·s)
+    fluid_loss = mapped_column(
+        Float
+    )  # Assuming fluid loss is stored as a float (e.g., in liters)
+    notes = mapped_column(Text)
+
+
 class GeothermalBottomHoleTemperature(Base, AutoBaseMixin):
     """ """
 
     __tablename__ = "geothermal_bottom_hole_temperature"
-    well_id = mapped_column(Integer, ForeignKey("well.id"))
-
-    # depth = mapped_column(
-    #     Float
-    # )
-    # depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default='ft')
+    # well_id = mapped_column(Integer, ForeignKey("well.id"))
+    header_id = mapped_column(
+        Integer, ForeignKey("geothermal_bottom_hole_temperature_header.id")
+    )
+    depth = mapped_column(
+        Float
+    )
+    depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default='ft')
 
     temperature = mapped_column(
         Float
@@ -46,6 +113,8 @@ class GeothermalBottomHoleTemperature(Base, AutoBaseMixin):
     temperature_unit = mapped_column(
         String(100), ForeignKey("lexicon.term"), default="F"
     )
+    hours_since_circulation = mapped_column(Float)
+    date_measured = mapped_column(DateTime)
 
     def __repr__(self):
         return f"<GeothermalBottomHoleTemperature(well_id={self.well_id}, temperature={self.temperature})>"
@@ -81,14 +150,15 @@ class GeothermalWellInterval(Base, AutoBaseMixin):
 
     __tablename__ = "geothermal_well_interval"
 
-    well_id = mapped_column(Integer, ForeignKey("well.id"))
+    # well_id = mapped_column(Integer, ForeignKey("well.id"))
+    sample_set_id = mapped_column(Integer, ForeignKey("geothermal_sample_set.id"))
     top_depth = mapped_column(Float)
     bottom_depth = mapped_column(Float)
     depth_unit = mapped_column(String(100), ForeignKey("lexicon.term"), default="ft")
 
     def __repr__(self):
         return (
-            f"<GeothermalWellInterval(well_id={self.well_id}, "
+            # f"<GeothermalWellInterval(well_id={self.well_id}, "
             f"top_depth={self.top_depth}, bottom_depth={self.bottom_depth})>"
         )
 

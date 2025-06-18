@@ -20,7 +20,7 @@ def test_add_location():
             "visible": True,
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["id"] == 1
 
@@ -32,7 +32,7 @@ def test_add_location():
             "visible": False,
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["id"] == 2
 
@@ -58,7 +58,7 @@ def test_add_well():
             "construction_notes": "this is a test of notes",
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
 
@@ -72,7 +72,7 @@ def test_add_well():
             "well_depth": 1200.0,
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
 
@@ -91,7 +91,7 @@ def test_add_equipment():
             "location_id": 2,
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
     assert data["location_id"] == 2
@@ -99,7 +99,7 @@ def test_add_equipment():
 
 def test_add_spring():
     response = client.post("/base/spring", json={"location_id": 1})
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
 
@@ -120,6 +120,7 @@ def test_add_well_screen():
         },
     )
 
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
     assert data["well_id"] == 1
@@ -127,7 +128,7 @@ def test_add_well_screen():
 
 def test_add_group():
     response = client.post("/base/group", json={"name": "Test Group"})
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
     assert data["name"] == "Test Group"
@@ -137,7 +138,7 @@ def test_add_group_location():
     response = client.post(
         "/base/group_location", json={"group_id": 1, "location_id": 1}
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
     assert data["group_id"] == 1
@@ -146,7 +147,7 @@ def test_add_group_location():
 
 def test_add_owner():
     response = client.post("/base/owner", json={"name": "Test Owner"})
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
     assert data["name"] == "Test Owner"
@@ -162,7 +163,7 @@ def test_add_contact():
             "phone": "999-999-9999",
         },
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert "id" in data
     assert data["name"] == "Test Contact"

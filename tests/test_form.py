@@ -47,7 +47,7 @@ def test_well_form():
     }
 
     response = client.post("/form/well", json=payload)
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     location = data.get("location", None)
     assert location is not None

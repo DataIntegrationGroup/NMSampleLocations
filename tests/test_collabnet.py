@@ -33,7 +33,7 @@ def test_add_collabnet_well():
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["well_id"] == 2
     assert data["actively_monitored"] is True

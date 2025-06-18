@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from models import adder, get_db_session
@@ -35,7 +35,7 @@ async def get_chemistry_analysis():
 
 
 # ====== POST ===============
-@router.post("/analysis_set")
+@router.post("/analysis_set", status_code=status.HTTP_201_CREATED)
 async def add_chemistry_analysis_set(
     analysis_set_data: CreateAnalysisSet, session: Session = Depends(get_db_session)
 ):
@@ -47,7 +47,7 @@ async def add_chemistry_analysis_set(
     return adder(session, WaterChemistryAnalysisSet, analysis_set_data)
 
 
-@router.post("/analysis", tags=["chemistry"])
+@router.post("/analysis", status_code=status.HTTP_201_CREATED, tags=["chemistry"])
 async def add_chemistry_analysis(
     analysis_data: CreateWaterChemistryAnalysis,
     session: Session = Depends(get_db_session),

@@ -15,7 +15,7 @@
 # ===============================================================================
 from typing import List, Union
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi_pagination.ext.sqlalchemy import paginate
 from geoalchemy2 import functions as geofunc
 from sqlalchemy import select, func
@@ -69,7 +69,7 @@ router = APIRouter(
 
 # ============= Create ============================================
 @router.post(
-    "/location", response_model=GetLocation, summary="Create a new sample location"
+    "/location", response_model=GetLocation, summary="Create a new sample location", status_code=status.HTTP_201_CREATED
 )
 def create_location(
     location_data: CreateLocation, session: Session = Depends(get_db_session)
@@ -80,7 +80,7 @@ def create_location(
     return adder(session, SampleLocation, location_data)
 
 
-@router.post("/well", response_model=GetWell, summary="Create a new well")
+@router.post("/well", response_model=GetWell, summary="Create a new well", status_code=status.HTTP_201_CREATED)
 def create_well(well_data: CreateWell, session: Session = Depends(get_db_session)):
     """
     Create a new well in the database.
@@ -88,7 +88,7 @@ def create_well(well_data: CreateWell, session: Session = Depends(get_db_session
     return adder(session, Well, well_data)
 
 
-@router.post("/wellscreen", summary="Create a new well screen")
+@router.post("/wellscreen", summary="Create a new well screen", status_code=status.HTTP_201_CREATED)
 def create_wellscreen(
     well_screen_data: CreateScreenWell, session: Session = Depends(get_db_session)
 ):
@@ -98,7 +98,7 @@ def create_wellscreen(
     return adder(session, WellScreen, well_screen_data)
 
 
-@router.post("/group", summary="Create a new group")
+@router.post("/group", summary="Create a new group", status_code=status.HTTP_201_CREATED)
 def create_group(group_data: CreateGroup, session: Session = Depends(get_db_session)):
     """
     Create a new group in the database.
@@ -106,7 +106,7 @@ def create_group(group_data: CreateGroup, session: Session = Depends(get_db_sess
     return adder(session, Group, group_data)
 
 
-@router.post("/group_location", summary="Create a new group location")
+@router.post("/group_location", summary="Create a new group location", status_code=status.HTTP_201_CREATED)
 def create_group_location(
     group_location_data: CreateGroupLocation, session: Session = Depends(get_db_session)
 ):
@@ -116,7 +116,7 @@ def create_group_location(
     return adder(session, GroupLocation, group_location_data)
 
 
-@router.post("/owner", summary="Create a new owner")
+@router.post("/owner", summary="Create a new owner", status_code=status.HTTP_201_CREATED)
 def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db_session)):
     """
     Create a new owner in the database.
@@ -124,14 +124,14 @@ def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db_sess
     return adder(session, Owner, owner_data)
 
 
-@router.post("/contact", summary="Create a new contact")
+@router.post("/contact", summary="Create a new contact", status_code=status.HTTP_201_CREATED)
 def create_contact(
     contact_data: CreateContact, session: Session = Depends(get_db_session)
 ):
     return adder(session, Contact, contact_data)
 
 
-@router.post("/spring", summary="Create a new spring")
+@router.post("/spring", summary="Create a new spring", status_code=status.HTTP_201_CREATED)
 def create_spring(
     spring_data: CreateSpring, session: Session = Depends(get_db_session)
 ):
@@ -141,7 +141,7 @@ def create_spring(
     return adder(session, Spring, spring_data)
 
 
-@router.post("/equipment", summary="Create a new equipment")
+@router.post("/equipment", summary="Create a new equipment", status_code=status.HTTP_201_CREATED)
 def create_equipment(
     equipment_data: CreateEquipment, session: Session = Depends(get_db_session)
 ):

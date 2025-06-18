@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+import pytest
+
 from tests import client
 
 
@@ -35,7 +37,7 @@ def test_geothermal_temperature_profile():
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["well_id"] == 1
     # assert response.json()["name"] == "Test Profile"
@@ -53,11 +55,52 @@ def test_geothermal_temperature_profile_observation():
         json={"temperature_profile_id": 1, "depth": 100, "temperature": 25.0},
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["temperature_profile_id"] == 1
     assert data["depth"] == 100
     assert data["temperature"] == 25.0
+
+
+def test_geothermal_sample_set():
+    """
+    Test the geothermal sample set endpoint.
+    This test should create a sample set and verify its creation.
+    """
+
+    # Create a sample geothermal sample set data
+    response = client.post(
+        "/geothermal/sample_set",
+        json={
+            "well_id": 1,
+            "name": "Test Sample Set",
+            "note": "A test geothermal sample set",
+        },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["well_id"] == 1
+    assert data["name"] == "Test Sample Set"
+
+
+def test_geothermal_bottom_hole_temperature_header():
+    """
+    Test the geothermal bottom hole temperature header endpoint.
+    This test should create a bottom hole temperature header and verify its creation.
+    """
+
+    # Create a sample bottom hole temperature header data
+    response = client.post(
+        "/geothermal/bottom_hole_temperature_header",
+        json={"sample_set_id": 1,
+              "drill_fluid": "mud",
+              },
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["sample_set_id"] == 1
 
 
 def test_geothermal_bottom_hole_temperature():
@@ -69,12 +112,12 @@ def test_geothermal_bottom_hole_temperature():
     # Create a sample bottom hole temperature data
     response = client.post(
         "/geothermal/bottom_hole_temperature",
-        json={"well_id": 1, "temperature": 60.0, "temperature_unit": "F"},
+        json={"header_id": 1, "temperature": 60.0, "temperature_unit": "F"},
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
-    assert data["well_id"] == 1
+    assert data["header_id"] == 1
     assert data["temperature"] == 60.0
 
 
@@ -88,15 +131,15 @@ def test_geothermal_interval():
     response = client.post(
         "/geothermal/interval",
         json={
-            "well_id": 1,
+            "sample_set_id": 1,
             "top_depth": 100,
             "bottom_depth": 200,
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
-    assert data["well_id"] == 1
+    assert data["sample_set_id"] == 1
     assert data["top_depth"] == 100
     assert data["bottom_depth"] == 200
 
@@ -117,7 +160,7 @@ def test_geothermal_thermal_conductivity():
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["interval_id"] == 1
     assert data["conductivity"] == 2.5
@@ -148,7 +191,7 @@ def test_geothermal_heatflow():
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     data = response.json()
     assert data["interval_id"] == 1
     assert data["gradient"] == 0.01

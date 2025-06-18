@@ -16,6 +16,7 @@
 from pydantic import BaseModel
 
 
+
 class CreateTemperatureProfile(BaseModel):
     """
     Pydantic model for creating a temperature profile.
@@ -40,13 +41,60 @@ class CreateTemperatureProfileObservation(BaseModel):
     )
 
 
+class CreateGeothermalSampleSet(BaseModel):
+    well_id: int
+    name: str | None = None# = mapped_column(String(128))
+    klass: str | None = None# = mapped_column(String(24))
+    type: str | None = None# = mapped_column(String(50))
+
+    # SampleFm: # = mapped_column(String(50))
+    # SampleLoc: # = mapped_column(String(128))
+    # SampleDate: # = mapped_column(DateTime)
+    # From_Depth: # = mapped_column(Float)
+    # To_Depth: # = mapped_column(Float)
+    # SmpDpUnt: # = mapped_column(String(16))
+    # From_TVD: # = mapped_column(Float)
+    # To_TVD: # = mapped_column(Float)
+    # From_Elev: # = mapped_column(Float)
+    # To_Elev: # = mapped_column(Float)
+
+    porosity: int | None = None # = mapped_column(Integer)
+    permeability: int | None = None# = mapped_column(Integer)
+    density: int | None = None# = mapped_column(Integer)
+
+    dst_tests: bool | None = False # = mapped_column(Boolean)
+    thin_section: bool| None = False # = mapped_column(Boolean)
+    geochron: bool| None = False # = mapped_column(Boolean)
+    geochem: bool| None = False # = mapped_column(Boolean)
+    geothermal: bool| None = False # = mapped_column(Boolean)
+    wholerock: bool| None = False # = mapped_column(Boolean)
+    paleontology: bool| None = False # = mapped_column(Boolean)
+    # EnteredBy: # = mapped_column(String(4))
+    # EntryDate: # = mapped_column(DateTime)
+    notes: str| None = None# = mapped_column(Text)
+
+
+class CreateBottomHoleTemperatureHeader(BaseModel):
+    sample_set_id: int
+
+    drill_fluid: str | None = None
+    fluid_salinity: float | None = None
+    fluid_resistivity: float | None = None
+    fluid_ph: float | None = None
+    fluid_level: float | None = None
+    fluid_viscosity: float | None = None
+    fluid_loss: float | None = None
+
+    notes: str | None = None
+
+
 class CreateBottomHoleTemperature(BaseModel):
     """
     Pydantic model for creating a bottom hole temperature observation.
     This model can be extended to include additional fields as needed.
     """
 
-    well_id: int
+    header_id: int
     # depth: float
     temperature: float
     # depth_unit: str  # Assuming depth unit is a string (e.g., 'm', 'ft')
@@ -61,7 +109,7 @@ class CreateGeothermalInterval(BaseModel):
     This model can be extended to include additional fields as needed.
     """
 
-    well_id: int
+    sample_set_id: int
     top_depth: float
     bottom_depth: float
     depth_unit: str = "ft"

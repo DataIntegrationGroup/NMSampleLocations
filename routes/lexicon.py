@@ -14,7 +14,7 @@
 # limitations under the License.
 # ===============================================================================
 from fastapi import APIRouter, Depends
-
+from fastapi import status
 from models import get_db_session
 from models.lexicon import Lexicon
 from schemas.lexicon import CreateLexiconTerm, LexiconTermResponse
@@ -28,6 +28,7 @@ router = APIRouter(
     "/add",
     summary="Add term",
     response_model=LexiconTermResponse,
+    status_code=status.HTTP_201_CREATED
 )
 def add_term(term_data: CreateLexiconTerm, session=Depends(get_db_session)):
     """

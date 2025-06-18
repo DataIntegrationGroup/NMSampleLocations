@@ -20,5 +20,7 @@
 
   {"term": "Provisional", "definition": "Provisional quality control status", "category": "quality_control_status"},
   {"term": "Approved", "definition": "Approved quality control status", "category": "quality_control_status"},
-  {"term": "Rejected", "definition": "Rejected quality control status", "category": "quality_control_status"}
+  {"term": "Rejected", "definition": "Rejected quality control status", "category": "quality_control_status"},
+
+  {"term": "mud", "definition": "drilling mud", "category":  "drilling_fluid"}
 ]

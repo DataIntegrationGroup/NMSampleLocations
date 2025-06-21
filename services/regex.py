@@ -13,33 +13,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
 
-from schemas import ORMBaseModel
+"""
+Returns a regex pattern to match query strings.
+The pattern matches the following structure:
+- A field name (alphanumeric characters, underscores, or hyphens)
+- An operator (e.g., 'eq', 'ne', 'gt', 'lt', etc.)
+- A value (which can be a boolean, number, or string)
+"""
+import re
 
-
-class CreateSpring(ORMBaseModel):
-    """
-    Schema for creating a spring.
-    """
-
-    location_id: int
-
-
-class CreateEquipment(ORMBaseModel):
-    """
-    Schema for creating equipment.
-    """
-
-    location_id: int
-
-    equipment_type: str
-    model: str | None = None
-    serial_no: str | None = None
-    date_installed: datetime | None = None  # ISO format date string
-    date_removed: datetime | None = None  # ISO format date string
-    recording_interval: int | None = None  # in seconds
-    equipment_notes: str | None = None
-
-
+QUERY_REGEX = re.compile(
+    r"(?P<field>[a-zA-Z_]+(?:\.[a-zA-Z_]+)?)\s+"
+    r"(?P<operator>eq|ne|gt|lt|ge|le|like|between)\s+"
+    r"(?P<value>'[^']{0,256}'|"
+    r"true|"
+    r"false|"
+    r"\d{1,10}(\.\d{1,10})?|"
+    r"\[\s*\d{1,10}(\.\d{1,10})?\s*,\s*\d{1,10}(\.\d{1,10})?\s*\])"
+)
 # ============= EOF =============================================

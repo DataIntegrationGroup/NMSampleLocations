@@ -8,17 +8,20 @@ os.environ["ADMIN_SECRET_KEY"] = "secret"
 
 from starlette.middleware.cors import CORSMiddleware
 
-from app import app
+from core.app import app
 
 from fastadmin import fastapi_app as admin_app
 
-from routes.base import router as base_router
-from routes.form import router as form_router
-from routes.timeseries import router as timeseries_router
-from routes.lexicon import router as lexicon_router
-from routes.chemisty import router as chemistry_router
-from routes.geothermal import router as geothermal_router
-from routes.collabnet import router as collabnet_router
+from api.base import router as base_router
+from api.form import router as form_router
+from api.timeseries import router as timeseries_router
+from api.lexicon import router as lexicon_router
+from api.chemisty import router as chemistry_router
+from api.geothermal import router as geothermal_router
+from api.collabnet import router as collabnet_router
+from api.geochronology import router as geochronology_router
+from api.publication import router as publication_router
+
 
 app.mount("/admin", admin_app)
 
@@ -29,6 +32,9 @@ app.include_router(lexicon_router)
 app.include_router(chemistry_router)
 app.include_router(geothermal_router)
 app.include_router(collabnet_router)
+app.include_router(geochronology_router)
+app.include_router(publication_router)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,8 +47,6 @@ app.add_middleware(
 add_pagination(app)
 
 # import all the admin models
-from admin.user import UserModelAdmin
-from admin.base import SampleLocationsAdmin, WellAdmin
 
 
 if __name__ == "__main__":

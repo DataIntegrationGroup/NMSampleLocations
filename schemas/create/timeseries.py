@@ -15,31 +15,17 @@
 # ===============================================================================
 from datetime import datetime
 
-from schemas import ORMBaseModel
-
-
-class CreateSpring(ORMBaseModel):
-    """
-    Schema for creating a spring.
-    """
-
-    location_id: int
-
-
-class CreateEquipment(ORMBaseModel):
-    """
-    Schema for creating equipment.
-    """
-
-    location_id: int
-
-    equipment_type: str
-    model: str | None = None
-    serial_no: str | None = None
-    date_installed: datetime | None = None  # ISO format date string
-    date_removed: datetime | None = None  # ISO format date string
-    recording_interval: int | None = None  # in seconds
-    equipment_notes: str | None = None
+from pydantic import BaseModel
 
 
 # ============= EOF =============================================
+class CreateWellTimeseries(BaseModel):
+    name: str
+    description: str | None = None
+    well_id: int
+
+
+class CreateGroundwaterLevelObservation(BaseModel):
+    timestamp: datetime  # ISO 8601 format
+    value: float
+    timeseries_id: int

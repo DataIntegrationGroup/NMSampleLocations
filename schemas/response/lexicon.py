@@ -13,33 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
-
 from schemas import ORMBaseModel
 
 
-class CreateSpring(ORMBaseModel):
+class LexiconTermResponse(ORMBaseModel):
     """
-    Schema for creating a spring.
-    """
-
-    location_id: int
-
-
-class CreateEquipment(ORMBaseModel):
-    """
-    Schema for creating equipment.
+    Pydantic model for the response of a lexicon term.
+    This model can be extended to include additional fields as needed.
     """
 
-    location_id: int
+    term: str
+    definition: str
+    category: str | None = None
 
-    equipment_type: str
-    model: str | None = None
-    serial_no: str | None = None
-    date_installed: datetime | None = None  # ISO format date string
-    date_removed: datetime | None = None  # ISO format date string
-    recording_interval: int | None = None  # in seconds
-    equipment_notes: str | None = None
+
+class LexiconCategoryResponse(ORMBaseModel):
+    """
+    Pydantic model for the response of a lexicon category.
+    This model can be extended to include additional fields as needed.
+    """
+
+    id: int
+    name: str
+    description: str | None = None
+    # terms: list[LexiconTermResponse] | None = None
 
 
 # ============= EOF =============================================

@@ -13,44 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from services.validation import get_category
 from tests import client
 
 
-def test_add_lexicon_category():
-    name = "Test Category"
-    description = "This is a test category."
-
+def test_add_publication():
     response = client.post(
-        "/lexicon/category/add",
-        json={"name": name, "description": description},
+        "/publication/add",
+        json={
+            "title": "Test Publication",
+            "authors": ["Author One", "Author Two"],
+            "year": 2025,
+            "doi": "10.1000/testdoi",
+            "url": "http://example.com/test-publication",
+            "publication_type": "Thesis",
+        },
     )
 
     assert response.status_code == 201
     data = response.json()
-    assert data["name"] == name
-    assert data["description"] == description
-
-
-def test_add_lexicon_term():
-    term = "test_term"
-    definition = "This is a test definition."
-    category = "Test Category"
-
-    response = client.post(
-        "/lexicon/add",
-        json={"term": term, "definition": definition, "category": category},
-    )
-
-    assert response.status_code == 201
-    data = response.json()
-    assert data["term"] == term
-    assert data["definition"] == definition
-
-
-def test_get_category():
-    items = get_category("casing_material")
-    assert isinstance(items, list)
+    assert data["title"] == "Test Publication"
+    assert data["year"] == 2025
+    assert data["doi"] == "10.1000/testdoi"
+    assert data["url"] == "http://example.com/test-publication"
+    assert data["publication_type"] == "Thesis"
+    # Ensure that the authors are correctly formatted
+    assert isinstance(data["authors"], list)
+    assert len(data["authors"]) == 2
+    assert data["authors"][0]["name"] == "Author One"
+    assert data["authors"][1]["name"] == "Author Two"
 
 
 # ============= EOF =============================================

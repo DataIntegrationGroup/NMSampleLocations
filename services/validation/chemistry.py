@@ -13,33 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
-
-from schemas import ORMBaseModel
-
-
-class CreateSpring(ORMBaseModel):
-    """
-    Schema for creating a spring.
-    """
-
-    location_id: int
+from db import database_sessionmaker
+from db.lexicon import Lexicon
+from schemas.create.chemistry import CreateWaterChemistryAnalysis
+from services.validation import get_category
 
 
-class CreateEquipment(ORMBaseModel):
-    """
-    Schema for creating equipment.
-    """
+async def validate_analyte(analysis_data: CreateWaterChemistryAnalysis):
+    session = database_sessionmaker()
+    with session:
+        # get valid analytes from the database
+        valid_analytes = get_category("water_chemistry")
 
-    location_id: int
-
-    equipment_type: str
-    model: str | None = None
-    serial_no: str | None = None
-    date_installed: datetime | None = None  # ISO format date string
-    date_removed: datetime | None = None  # ISO format date string
-    recording_interval: int | None = None  # in seconds
-    equipment_notes: str | None = None
+        if analysis_data.analyte not in valid_analytes:
+            raise ValueError(
+                f"Invalid analyte: {analysis_data.analyte}. "
+                f"Valid options are: {', '.join(valid_analytes)}."
+            )
+    return analysis_data
 
 
 # ============= EOF =============================================

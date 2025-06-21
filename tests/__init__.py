@@ -15,9 +15,9 @@
 # ===============================================================================
 from fastapi.testclient import TestClient
 
-from app import init_lexicon
+from core.app import init_lexicon
 from main import app
-from models import Base, engine
+from db import Base, engine
 
 Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)

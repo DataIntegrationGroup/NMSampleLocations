@@ -13,33 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
-
-from schemas import ORMBaseModel
+from pydantic import BaseModel
 
 
-class CreateSpring(ORMBaseModel):
+class AuthorResponse(BaseModel):
     """
-    Schema for creating a spring.
+    Schema for the response of an author.
     """
 
-    location_id: int
+    id: int
+    name: str
+    email: str | None = None
+    affiliation: str | None = None
 
 
-class CreateEquipment(ORMBaseModel):
+class PublicationResponse(BaseModel):
     """
-    Schema for creating equipment.
+    Schema for the response of a publication.
     """
 
-    location_id: int
-
-    equipment_type: str
-    model: str | None = None
-    serial_no: str | None = None
-    date_installed: datetime | None = None  # ISO format date string
-    date_removed: datetime | None = None  # ISO format date string
-    recording_interval: int | None = None  # in seconds
-    equipment_notes: str | None = None
+    id: int
+    title: str
+    authors: list[AuthorResponse]
+    year: int
+    doi: str | None = None
+    url: str | None = None
+    publication_type: str
 
 
 # ============= EOF =============================================

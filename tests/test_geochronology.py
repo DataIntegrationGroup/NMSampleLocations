@@ -13,33 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
 
-from schemas import ORMBaseModel
-
-
-class CreateSpring(ORMBaseModel):
-    """
-    Schema for creating a spring.
-    """
-
-    location_id: int
+from tests import client
 
 
-class CreateEquipment(ORMBaseModel):
-    """
-    Schema for creating equipment.
-    """
+def test_add_geochronology_age():
+    response = client.post(
+        "/geochronology/age",
+        json={"location_id": 1, "age": 100.0, "age_error": 5.0, "method": "U/Pb"},
+    )
 
-    location_id: int
-
-    equipment_type: str
-    model: str | None = None
-    serial_no: str | None = None
-    date_installed: datetime | None = None  # ISO format date string
-    date_removed: datetime | None = None  # ISO format date string
-    recording_interval: int | None = None  # in seconds
-    equipment_notes: str | None = None
+    assert response.status_code == 201
 
 
 # ============= EOF =============================================

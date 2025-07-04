@@ -50,7 +50,8 @@ class PhoneResponse(ORMBaseModel):
 
     id: int
     phone_number: str
-    phone_type: str   # e.g., 'mobile', 'landline', etc.
+    phone_type: str  # e.g., 'mobile', 'landline', etc.
+
 
 class EmailResponse(ORMBaseModel):
     """
@@ -60,6 +61,7 @@ class EmailResponse(ORMBaseModel):
     id: int
     email: str
     email_type: str  # e.g., 'personal', 'work', etc.
+
 
 class AddressResponse(ORMBaseModel):
     """
@@ -74,6 +76,7 @@ class AddressResponse(ORMBaseModel):
     postal_code: str
     country: str
 
+
 class ContactResponse(ORMBaseModel):
     """
     Response schema for contact details.
@@ -85,4 +88,6 @@ class ContactResponse(ORMBaseModel):
     emails: list[EmailResponse] = []
     phones: list[PhoneResponse] = []
     addresses: list[AddressResponse] = []
+
+
 # ============= EOF =============================================

@@ -35,8 +35,8 @@ def test_phone_validation_fail():
                 "name": "Test Contact 2",
                 "location_id": 1,
                 "role": "Primary",
-                "emails": [{'email': "fasdfasdf@gmail.com",'email_type': "Primary"}],
-                "phones": [{'phone_number': phone, 'phone_type': "Primary"}],
+                "emails": [{"email": "fasdfasdf@gmail.com", "email_type": "Primary"}],
+                "phones": [{"phone_number": phone, "phone_type": "Primary"}],
                 "addresses": [
                     {
                         "address_line_1": "123 Main St",
@@ -51,10 +51,10 @@ def test_phone_validation_fail():
         )
         data = response.json()
         assert response.status_code == 422
-        assert 'detail' in data, "Expected 'detail' in response"
-        assert len(data['detail']) == 1, "Expected 1 error in response"
-        detail = data['detail'][0]
-        assert detail['msg'] == f'Value error, Invalid phone number. {phone}'
+        assert "detail" in data, "Expected 'detail' in response"
+        assert len(data["detail"]) == 1, "Expected 1 error in response"
+        detail = data["detail"][0]
+        assert detail["msg"] == f"Value error, Invalid phone number. {phone}"
 
 
 def test_email_validation_fail():
@@ -72,8 +72,8 @@ def test_email_validation_fail():
                 "name": "Test ContactX",
                 "location_id": 1,
                 "role": "Primary",
-                "emails": [{'email': email,'email_type': "Primary"}],
-                "phones": [{'phone_number': '+12345678901', 'phone_type': "Primary"}],
+                "emails": [{"email": email, "email_type": "Primary"}],
+                "phones": [{"phone_number": "+12345678901", "phone_type": "Primary"}],
                 "addresses": [
                     {
                         "address_line_1": "123 Main St",
@@ -88,10 +88,10 @@ def test_email_validation_fail():
         )
         data = response.json()
         assert response.status_code == 422
-        assert 'detail' in data, "Expected 'detail' in response"
-        assert len(data['detail']) == 1, "Expected 1 error in response"
-        detail = data['detail'][0]
-        assert detail['msg'] == f'Value error, Invalid email format. {email}'
+        assert "detail" in data, "Expected 'detail' in response"
+        assert len(data["detail"]) == 1, "Expected 1 error in response"
+        detail = data["detail"][0]
+        assert detail["msg"] == f"Value error, Invalid email format. {email}"
 
 
 # ============= EOF =============================================

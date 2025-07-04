@@ -52,7 +52,6 @@ class SampleLocation(Base, AutoBaseMixin):
     assets = association_proxy("asset_associations", "asset")
 
 
-
 # class Owner(Base, AutoBaseMixin):
 #     name = Column(String(100), nullable=False, unique=True)
 #     description = Column(String(255), nullable=True)
@@ -100,7 +99,9 @@ class Contact(Base, AutoBaseMixin):
 
 
 class Phone(Base, AutoBaseMixin):
-    contact_id = Column(Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False)
+    contact_id = Column(
+        Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False
+    )
     phone_number = Column(String(20), nullable=False)
     phone_type = Column(String(50), ForeignKey("lexicon_term.term"), nullable=True)
 
@@ -108,7 +109,9 @@ class Phone(Base, AutoBaseMixin):
 
 
 class Email(Base, AutoBaseMixin):
-    contact_id = Column(Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False)
+    contact_id = Column(
+        Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False
+    )
     email = Column(String(100), nullable=False)
     email_type = Column(String(50), ForeignKey("lexicon_term.term"), nullable=True)
 
@@ -116,7 +119,9 @@ class Email(Base, AutoBaseMixin):
 
 
 class Address(Base, AutoBaseMixin):
-    contact_id = Column(Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False)
+    contact_id = Column(
+        Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False
+    )
     address_line_1 = Column(String(255), nullable=False)
     address_line_2 = Column(String(255), nullable=True)
     city = Column(String(100), nullable=False)

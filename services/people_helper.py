@@ -29,8 +29,10 @@ def add_contact(
     if isinstance(contact_data, CreateContact):
         contact_data = contact_data.model_dump()
 
-    contact = Contact(name=contact_data["name"],
-                      role=contact_data["role"],)
+    contact = Contact(
+        name=contact_data["name"],
+        role=contact_data["role"],
+    )
     for e in contact_data.get("emails", []):
         email = Email(**e)
         contact.emails.append(email)

@@ -41,7 +41,6 @@ from db.base import (
     WellScreen,
     Spring,
     Equipment,
-
 )
 from services.geospatial_helper import create_shapefile, make_within_wkt
 from api.pagination import CustomPage
@@ -59,7 +58,8 @@ from schemas.create.well import CreateWell, CreateWellScreen
 from schemas.base_get import GetWell, GetLocation
 from schemas.base_responses import (
     SpringResponse,
-    EquipmentResponse, ContactResponse,
+    EquipmentResponse,
+    ContactResponse,
 )
 from schemas.response.well import (
     WellResponse,
@@ -143,9 +143,10 @@ def create_group_location(
 
 
 @router.post(
-    "/contact", summary="Create a new contact",
+    "/contact",
+    summary="Create a new contact",
     status_code=status.HTTP_201_CREATED,
-    response_model=ContactResponse
+    response_model=ContactResponse,
 )
 def create_contact(
     contact_data: CreateContact, session: Session = Depends(get_db_session)

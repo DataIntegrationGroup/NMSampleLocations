@@ -53,8 +53,8 @@ def extract_locations():
     This function should connect to the database and retrieve location data.
     """
     df = pd.read_csv("data/location.csv")
-    df = df[df['SiteType'] == 'GW']
-    df = df[df['Easting'].notna() & df['Northing'].notna()]
+    df = df[df["SiteType"] == "GW"]
+    df = df[df["Easting"].notna() & df["Northing"].notna()]
     return df
 
 
@@ -76,7 +76,6 @@ def transform_wells(df):
     df = df.replace(pd.NA, None)
     df = df.replace({np.nan: None})
 
-
     return df
 
 
@@ -85,19 +84,18 @@ def load_locations(sess, df):
         # Convert the row to a dictionary
         row_dict = row._asdict()
 
-        e, n = row_dict['Easting'], row_dict['Northing']
+        e, n = row_dict["Easting"], row_dict["Northing"]
 
         point = Point(e, n)
         transformed_point = transform_srid(
-            point,
-            source_srid=26913,
-            target_srid=4326  # WGS84 SRID
+            point, source_srid=26913, target_srid=4326  # WGS84 SRID
         )
 
-        sl = SampleLocation(name = row_dict['PointID'],
-                            point = transformed_point.wkt,
-                            visible = row_dict['PublicRelease']
-                            )
+        sl = SampleLocation(
+            name=row_dict["PointID"],
+            point=transformed_point.wkt,
+            visible=row_dict["PublicRelease"],
+        )
 
         sess.add(sl)
         try:
@@ -114,26 +112,30 @@ def load_wells(sess, df):
     n = len(df)
 
     for i, row in enumerate(df.itertuples()):
-        if not i %100:
+        if not i % 100:
             print(f"Processing row {i} of {n}")
 
         row_dict = row._asdict()
 
-        location = sess.query(SampleLocation).filter_by(name=row_dict['PointID']).one_or_none()
+        location = (
+            sess.query(SampleLocation).filter_by(name=row_dict["PointID"]).one_or_none()
+        )
 
         if location:
             well = Well()
             well.location = location
-            well.well_depth = row_dict['WellDepth']
-            well.hole_depth = row_dict['HoleDepth']
-            well.ose_pod_id = row_dict['OSEWellID']
-            well.casing_depth = row_dict['CasingDepth']
-            well.casing_diameter = row_dict['CasingDiameter']
-            well.casing_description = row_dict['CasingDescription']
+            well.well_depth = row_dict["WellDepth"]
+            well.hole_depth = row_dict["HoleDepth"]
+            well.ose_pod_id = row_dict["OSEWellID"]
+            well.casing_depth = row_dict["CasingDepth"]
+            well.casing_diameter = row_dict["CasingDiameter"]
+            well.casing_description = row_dict["CasingDescription"]
 
-            wt = row_dict['Meaning']
+            wt = row_dict["Meaning"]
 
-            add_lexicon_term(sess, wt, 'Current use of the well, aka well type', 'current_use')
+            add_lexicon_term(
+                sess, wt, "Current use of the well, aka well type", "current_use"
+            )
 
             well.well_type = wt
 
@@ -141,8 +143,6 @@ def load_wells(sess, df):
             sess.add(well)
             sess.commit()
             # break
-
-
 
 
 def location_etl(sess):

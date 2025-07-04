@@ -152,8 +152,8 @@ def test_add_contact():
             "name": "Test Contact",
             "role": "Owner",
             "location_id": 1,
-            "emails": [{'email': "fasdfasdf@gmail.com",'email_type': "Primary"}],
-            "phones": [{'phone_number': "+12345678901", 'phone_type': "Primary"}],
+            "emails": [{"email": "fasdfasdf@gmail.com", "email_type": "Primary"}],
+            "phones": [{"phone_number": "+12345678901", "phone_type": "Primary"}],
             "addresses": [
                 {
                     "address_line_1": "123 Main St",
@@ -179,7 +179,6 @@ def test_add_contact():
     assert data["phones"][0]["phone_number"] == "+12345678901"
     assert len(data["addresses"]) == 1
     assert data["addresses"][0]["address_line_1"] == "123 Main St"
-
 
     # assert data["email"] == "fasdfasdf@gmail.com"
 

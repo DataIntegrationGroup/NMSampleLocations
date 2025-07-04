@@ -52,7 +52,6 @@ async def well_form(form_data: WellForm, session=Depends(get_db_session)):
 
             group.locations.append(location)
 
-
     # add owner to the database
     # owner = Owner(**owner_data)
     # existing_owner = simple_get_by_name(session, Owner, owner.name)

@@ -48,13 +48,14 @@ class CreateGroupLocation(ORMBaseModel):
     group_id: int
     location_id: int
 
+
 class CreateEmail(ORMBaseModel):
     """
     Schema for creating an email.
     """
 
     email: str
-    email_type: str = 'Primary'  # Default to 'Primary'
+    email_type: str = "Primary"  # Default to 'Primary'
 
     @field_validator("email")
     @classmethod
@@ -99,17 +100,17 @@ class CreateAddress(ORMBaseModel):
     address_line_1: str  # Required (e.g., "123 Main St")
     address_line_2: str | None = None  # Optional (e.g., "Apt 4B", "Suite 200")
     city: str
-    state: str = 'NM'  # Default to New Mexico
+    state: str = "NM"  # Default to New Mexico
     postal_code: str
-    country: str = 'US' # Default to United States
+    country: str = "US"  # Default to United States
     address_type: str | None = None  # Optional (e.g., "Primary", "Billing", "Shipping")
-
 
 
 class CreateContact(ORMBaseModel):
     """
     Schema for creating a contact.
     """
+
     location_id: int
     name: str
     role: str
@@ -117,8 +118,8 @@ class CreateContact(ORMBaseModel):
     # email: str | None = None
     # phone: str | None = None
 
-    emails : list[CreateEmail]
-    phones : list[CreatePhone]
+    emails: list[CreateEmail]
+    phones: list[CreatePhone]
     addresses: list[CreateAddress]
 
     #

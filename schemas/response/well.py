@@ -63,27 +63,4 @@ class GroupResponse(ORMBaseModel):
     description: str | None = None
 
 
-class ContactResponse(ORMBaseModel):
-    """
-    Response schema for contact details.
-    """
-
-    id: int
-    name: str
-    email: str | None = None
-    phone: str | None = None
-
-
-class OwnerResponse(ORMBaseModel):
-    """
-    Response schema for owner details.
-    """
-
-    id: int
-    name: str
-    contacts: List[ContactResponse] = []  # List of contacts associated with the owner
-    # email: str | None = None
-    # phone: str | None = None
-
-
 # ============= EOF =============================================

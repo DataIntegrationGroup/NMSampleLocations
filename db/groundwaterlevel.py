@@ -13,15 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from db.asset import *
-from db.base import *
-from db.chemistry import *
-from db.collabnet import *
-from db.geothermal import *
-from db.geochronology import *
-from db.lexicon import *
-from db.publication import *
-from db.series import *
-from db.groundwaterlevel import *
+from sqlalchemy import Integer, ForeignKey, Float
+from sqlalchemy.orm import mapped_column
+
+from db import Base, AutoBaseMixin
+from db.series import QCMixin
+
+
+class GroundwaterLevelObservation(Base, AutoBaseMixin, QCMixin):
+    time_observation_id = mapped_column(
+        "time_observation_id",
+        Integer,
+        ForeignKey("time_observation.id", ondelete="CASCADE"),
+    )
+    measuring_point_height = mapped_column(Float, nullable=False)
 
 # ============= EOF =============================================

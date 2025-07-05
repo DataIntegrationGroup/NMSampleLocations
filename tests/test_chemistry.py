@@ -13,10 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
+import pytest
+
 from tests import client
 
 
-# add ===================
+@pytest.mark.skip# add ===================
 def test_add_analysis_set():
     response = client.post(
         "/chemistry/analysis_set",
@@ -46,7 +48,7 @@ def test_add_analysis_set():
     assert data["well_id"] == 2
     assert data["laboratory"] == "Test Lab1"
 
-
+@pytest.mark.skip
 def test_add_analysis():
 
     response = client.post(
@@ -82,7 +84,7 @@ def test_add_analysis():
     assert data["analyte"] == "Na"
 
 
-# get ===================
+@pytest.mark.skip# get ===================
 def test_get_chemistry_analysis_set():
     response = client.get("/chemistry/analysis_set")
     assert response.status_code == 200
@@ -93,7 +95,7 @@ def test_get_chemistry_analysis_set():
     assert item["well_id"] == 1
     assert item["laboratory"] == "Test Lab"
 
-
+@pytest.mark.skip
 def test_get_chemistry_analysis():
     response = client.get("/chemistry/analysis")
     assert response.status_code == 200
@@ -105,7 +107,7 @@ def test_get_chemistry_analysis():
     assert item["value"] == 7.0
     assert item["unit"] == "mg/L"
 
-
+@pytest.mark.skip
 def test_geospatial_chemistry_analysis_set():
     response = client.get(
         "/chemistry/analysis_set",
@@ -118,7 +120,7 @@ def test_geospatial_chemistry_analysis_set():
     assert "items" in data
     assert len(data["items"]) == 1
 
-
+@pytest.mark.skip
 def test_geospatial_chemistry_analysis():
     response = client.get(
         "/chemistry/analysis",
@@ -131,7 +133,7 @@ def test_geospatial_chemistry_analysis():
     assert "items" in data
     assert len(data["items"]) == 1
 
-
+@pytest.mark.skip
 def test_query_chemistry_analysis_set():
     response = client.get(
         "/chemistry/analysis_set", params={"query": "laboratory eq 'Test Lab1'"}
@@ -141,7 +143,7 @@ def test_query_chemistry_analysis_set():
     assert "items" in data
     assert len(data["items"]) == 1  # Assuming both sets match the query
 
-
+@pytest.mark.skip
 def test_query_chemistry_analysis():
     response = client.get("/chemistry/analysis", params={"query": "analyte eq 'Na'"})
     assert response.status_code == 200

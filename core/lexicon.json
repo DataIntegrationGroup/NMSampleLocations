@@ -1,4 +1,8 @@
 [
+  {"term":  "manual", "definition":  "manual sampling", "category":  "collection_method"},
+  {"term":  "continuous", "definition":  "continuous sampling", "category":  "collection_method"},
+
+  {"term":  "groundwater level", "definition":  "groundwater level measurement", "category":  "observed_property"},
 
   {"term":  "Owner", "definition":  "Owner", "category": "role"},
 

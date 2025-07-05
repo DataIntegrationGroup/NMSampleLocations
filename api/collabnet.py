@@ -23,7 +23,6 @@ from geoalchemy2 import functions as geofunc
 from db import get_db_session, adder
 from db.base import SampleLocation, Well
 from db.collabnet import CollaborativeNetworkWell
-from db.timeseries import GroundwaterLevelObservation, WellTimeseries
 from schemas.create.collabnet import CreateCollaborativeNetworkWell
 
 router = APIRouter(prefix="/collabnet", tags=["collabnet"])

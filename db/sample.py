@@ -13,15 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from db.asset import *
-from db.base import *
-from db.chemistry import *
-from db.collabnet import *
-from db.geothermal import *
-from db.geochronology import *
-from db.lexicon import *
-from db.publication import *
-from db.series import *
-from db.groundwaterlevel import *
+from sqlalchemy import DateTime, String, ForeignKey
+from sqlalchemy.orm import mapped_column
+
+from db import Base, AutoBaseMixin
+
 
 # ============= EOF =============================================
+class Sample(Base, AutoBaseMixin):
+    collection_timestamp = mapped_column(DateTime, nullable=False)
+    collection_method = mapped_column(
+        String(100), ForeignKey("lexicon_term.term"), nullable=False
+    )

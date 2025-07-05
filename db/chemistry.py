@@ -37,7 +37,9 @@ class WaterChemistryObservation(Base, AutoBaseMixin, QCMixin):
         ForeignKey("time_observation.id", ondelete="CASCADE"),
     )
 
-    cas_number = mapped_column(String(100), ForeignKey('lexicon_term.term'), nullable=False)
+    cas_number = mapped_column(
+        String(100), ForeignKey("lexicon_term.term"), nullable=False
+    )
 
 
 #

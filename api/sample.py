@@ -23,16 +23,23 @@ from db.series import TimeObservation, TimeSeries
 from db.sample import Sample
 from schemas.response.timeseries import WellTimeseriesResponse
 from schemas.create.timeseries import (
-    CreateTimeSeries, CreateSample, CreateTimeObservation
+    CreateTimeSeries,
+    CreateSample,
+    CreateTimeObservation,
 )
 
 router = APIRouter(
     prefix="/sample",
 )
 
-@router.post('/timeseries/add',
-             status_code=status.HTTP_201_CREATED,)
-def add_sample_timeseries(timeseries_data: CreateTimeSeries, session: Session = Depends(get_db_session)):
+
+@router.post(
+    "/timeseries/add",
+    status_code=status.HTTP_201_CREATED,
+)
+def add_sample_timeseries(
+    timeseries_data: CreateTimeSeries, session: Session = Depends(get_db_session)
+):
 
     timeseries = TimeSeries(**timeseries_data.model_dump())
     session.add(timeseries)
@@ -40,9 +47,7 @@ def add_sample_timeseries(timeseries_data: CreateTimeSeries, session: Session = 
     return timeseries
 
 
-@router.post('/add',
-             status_code=status.HTTP_201_CREATED,
-             summary="Add Sample")
+@router.post("/add", status_code=status.HTTP_201_CREATED, summary="Add Sample")
 def add_sample(
     sample_data: CreateSample,
     session: Session = Depends(get_db_session),
@@ -57,9 +62,11 @@ def add_sample(
     return sample
 
 
-@router.post('/timeseries/observations/add',
-             status_code=status.HTTP_201_CREATED,
-             summary="Add Sample Timeseries Observations")
+@router.post(
+    "/timeseries/observations/add",
+    status_code=status.HTTP_201_CREATED,
+    summary="Add Sample Timeseries Observations",
+)
 def add_sample_observations(
     observations: List[CreateTimeObservation],
     session: Session = Depends(get_db_session),
@@ -77,6 +84,8 @@ def add_sample_observations(
 
     session.commit()
     return obs
+
+
 #
 # @router.post(
 #     "/well",

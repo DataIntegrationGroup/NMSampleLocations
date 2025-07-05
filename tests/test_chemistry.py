@@ -18,7 +18,7 @@ import pytest
 from tests import client
 
 
-@pytest.mark.skip# add ===================
+@pytest.mark.skip  # add ===================
 def test_add_analysis_set():
     response = client.post(
         "/chemistry/analysis_set",
@@ -47,6 +47,7 @@ def test_add_analysis_set():
     data = response.json()
     assert data["well_id"] == 2
     assert data["laboratory"] == "Test Lab1"
+
 
 @pytest.mark.skip
 def test_add_analysis():
@@ -84,7 +85,7 @@ def test_add_analysis():
     assert data["analyte"] == "Na"
 
 
-@pytest.mark.skip# get ===================
+@pytest.mark.skip  # get ===================
 def test_get_chemistry_analysis_set():
     response = client.get("/chemistry/analysis_set")
     assert response.status_code == 200
@@ -94,6 +95,7 @@ def test_get_chemistry_analysis_set():
     item = data["items"][0]
     assert item["well_id"] == 1
     assert item["laboratory"] == "Test Lab"
+
 
 @pytest.mark.skip
 def test_get_chemistry_analysis():
@@ -106,6 +108,7 @@ def test_get_chemistry_analysis():
     assert item["analysis_set_id"] == 1
     assert item["value"] == 7.0
     assert item["unit"] == "mg/L"
+
 
 @pytest.mark.skip
 def test_geospatial_chemistry_analysis_set():
@@ -120,6 +123,7 @@ def test_geospatial_chemistry_analysis_set():
     assert "items" in data
     assert len(data["items"]) == 1
 
+
 @pytest.mark.skip
 def test_geospatial_chemistry_analysis():
     response = client.get(
@@ -133,6 +137,7 @@ def test_geospatial_chemistry_analysis():
     assert "items" in data
     assert len(data["items"]) == 1
 
+
 @pytest.mark.skip
 def test_query_chemistry_analysis_set():
     response = client.get(
@@ -142,6 +147,7 @@ def test_query_chemistry_analysis_set():
     data = response.json()
     assert "items" in data
     assert len(data["items"]) == 1  # Assuming both sets match the query
+
 
 @pytest.mark.skip
 def test_query_chemistry_analysis():

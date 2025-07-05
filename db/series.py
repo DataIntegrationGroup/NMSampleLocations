@@ -53,8 +53,7 @@ class SampleWellAssociation(Base, AutoBaseMixin):
         Integer,
         ForeignKey("well.id", ondelete="CASCADE"),
         nullable=False,
-        )
-
+    )
 
 
 class TimeSeries(Base, AutoBaseMixin):
@@ -85,13 +84,16 @@ class TimeObservation(Base, AutoBaseMixin, QCMixin):
 
 
 class DomainSeries(Base, AutoBaseMixin):
-    domain = mapped_column(
+    domain = mapped_column(String(100), ForeignKey("lexicon_term.term"), nullable=False)
+    observed_property = mapped_column(
         String(100), ForeignKey("lexicon_term.term"), nullable=False
     )
-    observed_property = mapped_column(
-        String(100), ForeignKey("lexicon_term.term"), nullable=False)
-    domain_unit = mapped_column(String(100), ForeignKey("lexicon_term.term"), nullable=False)
-    value_unit = mapped_column(String(100), ForeignKey("lexicon_term.term"), nullable=False)
+    domain_unit = mapped_column(
+        String(100), ForeignKey("lexicon_term.term"), nullable=False
+    )
+    value_unit = mapped_column(
+        String(100), ForeignKey("lexicon_term.term"), nullable=False
+    )
 
 
 class DomainObservation(Base, AutoBaseMixin):
@@ -113,12 +115,11 @@ class DomainObservation(Base, AutoBaseMixin):
         nullable=False,
     )
 
-
-
-
     # sample_domain_series = relationship(
     #     "SampleDomainSeries", back_populates="observations", cascade="all, delete-orphan"
     # )
+
+
 # class WellTimeseries(Base, TimeseriesMixin, AutoBaseMixin, PropertiesMixin):
 #     well_id = mapped_column(
 #         "well_id", Integer, ForeignKey("well.id", ondelete="CASCADE"), nullable=False

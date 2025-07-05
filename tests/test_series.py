@@ -19,6 +19,7 @@ from sqlalchemy import func, select, cast, Interval
 from sqlalchemy_utils.types.range import intervals
 
 from db import get_db_session
+
 # from db.timeseries import GroundwaterLevelObservation
 from tests import client
 
@@ -28,7 +29,7 @@ def test_add_sample():
         "/sample/add",
         json={
             "collection_timestamp": datetime.datetime.now().isoformat(),
-            "collection_method": 'manual',
+            "collection_method": "manual",
         },
     )
 
@@ -44,13 +45,14 @@ def test_add_sample_timeseries():
         json={
             "name": "Test Sample Timeseries",
             "observed_property": "groundwater level",
-            "unit": "ft"
+            "unit": "ft",
         },
     )
     assert response.status_code == 201
     data = response.json()
-    assert data['observed_property'] == "groundwater level", "Expected 'observed_property' to be 'groundwater level'"
-
+    assert (
+        data["observed_property"] == "groundwater level"
+    ), "Expected 'observed_property' to be 'groundwater level'"
 
 
 def test_add_sample_observation():
@@ -70,10 +72,9 @@ def test_add_sample_observation():
     data = response.json()
     assert isinstance(data, list), "Expected a list of observations"
     assert len(data) == 1, "Expected one observation to be added"
-    assert data[0]['value'] == 10.5, "Expected observation value to be 10.5"
-    assert data[0]['sample_id'] == 1, "Expected observation sample_id to be 1"
-    assert data[0]['time_series_id'] == 1, "Expected observation time_series_id to be 1"
-
+    assert data[0]["value"] == 10.5, "Expected observation value to be 10.5"
+    assert data[0]["sample_id"] == 1, "Expected observation sample_id to be 1"
+    assert data[0]["time_series_id"] == 1, "Expected observation time_series_id to be 1"
 
 
 # def test_add_timeseries():

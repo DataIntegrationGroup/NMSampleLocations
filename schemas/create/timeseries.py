@@ -17,6 +17,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+
 class CreateTimeSeries(BaseModel):
     observed_property: str
     unit: str

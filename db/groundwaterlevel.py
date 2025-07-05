@@ -28,4 +28,5 @@ class GroundwaterLevelObservation(Base, AutoBaseMixin, QCMixin):
     )
     measuring_point_height = mapped_column(Float, nullable=False)
 
+
 # ============= EOF =============================================

@@ -40,9 +40,9 @@ class SampleLocation(Base, AutoBaseMixin):
         Geometry(geometry_type="POINT", srid=4326, spatial_index=True)
     )
 
-    owner_id = Column(
-        Integer, ForeignKey("owner.id", ondelete="CASCADE"), nullable=True
-    )
+    # owner_id = Column(
+    #     Integer, ForeignKey("owner.id", ondelete="CASCADE"), nullable=True
+    # )
 
     asset_associations = relationship(
         "AssetLocationAssociation",
@@ -52,24 +52,24 @@ class SampleLocation(Base, AutoBaseMixin):
     assets = association_proxy("asset_associations", "asset")
 
 
-class Owner(Base, AutoBaseMixin):
-    name = Column(String(100), nullable=False, unique=True)
-    description = Column(String(255), nullable=True)
+# class Owner(Base, AutoBaseMixin):
+#     name = Column(String(100), nullable=False, unique=True)
+#     description = Column(String(255), nullable=True)
+#
+#     search_vector = Column(TSVectorType("name", "description"))
+#
+#     contacts = relationship(
+#         "Contact",
+#         secondary="owner_contact_association",
+#     )
+#     # contacts = relationship(
+#     #     "Contact", back_populates="owner", cascade="all, delete-orphan"
+#     # )
 
-    search_vector = Column(TSVectorType("name", "description"))
 
-    contacts = relationship(
-        "Contact",
-        secondary="owner_contact_association",
-    )
-    # contacts = relationship(
-    #     "Contact", back_populates="owner", cascade="all, delete-orphan"
-    # )
-
-
-class OwnerContactAssociation(Base, AutoBaseMixin):
-    __tablename__ = "owner_contact_association"
-    owner_id = Column(Integer, ForeignKey("owner.id"), nullable=False)
+class LocationContactAssociation(Base, AutoBaseMixin):
+    __tablename__ = "location_contact_association"
+    location_id = Column(Integer, ForeignKey("sample_location.id"), nullable=False)
     contact_id = Column(Integer, ForeignKey("contact.id"), nullable=False)
 
     # owner = relationship("Owner")
@@ -77,14 +77,18 @@ class OwnerContactAssociation(Base, AutoBaseMixin):
 
 
 class Contact(Base, AutoBaseMixin):
-    name = Column(String(100), nullable=False, unique=True)
-    description = Column(String(255), nullable=True)
-    email = Column(String(100), nullable=True)
-    phone = Column(String(20), nullable=True)
+    name = Column(String(100), nullable=False)
+    role = Column(String(100), ForeignKey("lexicon_term.term"), nullable=False)
+
+    phones = relationship("Phone", back_populates="contact")
+    emails = relationship("Email", back_populates="contact")
+    addresses = relationship("Address", back_populates="contact")
+    # email = Column(String(100), nullable=True)
+    # phone = Column(String(20), nullable=True)
     # owner_id = Column(Integer, ForeignKey("owner.id"), nullable=False)
     # owner = relationship("Owner")
 
-    search_vector = Column(TSVectorType("name", "description", "email", "phone"))
+    # search_vector = Column(TSVectorType("name", "description", "email", "phone"))
 
     author_associations = relationship(
         "AuthorContactAssociation",
@@ -92,6 +96,41 @@ class Contact(Base, AutoBaseMixin):
         cascade="all, delete-orphan",
     )
     authors = association_proxy("author_associations", "author")
+
+
+class Phone(Base, AutoBaseMixin):
+    contact_id = Column(
+        Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False
+    )
+    phone_number = Column(String(20), nullable=False)
+    phone_type = Column(String(50), ForeignKey("lexicon_term.term"), nullable=True)
+
+    contact = relationship("Contact", back_populates="phones")
+
+
+class Email(Base, AutoBaseMixin):
+    contact_id = Column(
+        Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False
+    )
+    email = Column(String(100), nullable=False)
+    email_type = Column(String(50), ForeignKey("lexicon_term.term"), nullable=True)
+
+    contact = relationship("Contact", back_populates="emails")
+
+
+class Address(Base, AutoBaseMixin):
+    contact_id = Column(
+        Integer, ForeignKey("contact.id", ondelete="CASCADE"), nullable=False
+    )
+    address_line_1 = Column(String(255), nullable=False)
+    address_line_2 = Column(String(255), nullable=True)
+    city = Column(String(100), nullable=False)
+    state = Column(String(50), nullable=False)
+    postal_code = Column(String(20), nullable=False)
+    country = Column(String(100), nullable=True)
+    address_type = Column(String(50), ForeignKey("lexicon_term.term"), nullable=True)
+
+    contact = relationship("Contact", back_populates="addresses")
 
 
 class Well(Base, AutoBaseMixin):

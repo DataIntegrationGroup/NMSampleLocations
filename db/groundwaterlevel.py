@@ -13,24 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
+from sqlalchemy import Integer, ForeignKey, Float
+from sqlalchemy.orm import mapped_column
 
-from pydantic import BaseModel
+from db import Base, AutoBaseMixin
+from db.series import QCMixin
 
 
-# class CreateAnalysisSet(BaseModel):
-#     well_id: int  # mapped_column(Integer, ForeignKey('well.id'))
-#     laboratory: str | None = None  # mapped_column(String(100), nullable=True)
-#
-#     collection_timestamp: datetime
-#
-#
-# class CreateWaterChemistryAnalysis(BaseModel):
-#     analysis_set_id: int
-#     value: float
-#     unit: str
-#     analyte: str
-#     analysis_timestamp: datetime | None = None
+class GroundwaterLevelObservation(Base, AutoBaseMixin, QCMixin):
+    time_observation_id = mapped_column(
+        "time_observation_id",
+        Integer,
+        ForeignKey("time_observation.id", ondelete="CASCADE"),
+    )
+    measuring_point_height = mapped_column(Float, nullable=False)
 
 
 # ============= EOF =============================================

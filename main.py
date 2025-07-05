@@ -14,7 +14,7 @@ from fastadmin import fastapi_app as admin_app
 
 from api.base import router as base_router
 from api.form import router as form_router
-from api.timeseries import router as timeseries_router
+from api.sample import router as sample_router
 from api.lexicon import router as lexicon_router
 from api.chemisty import router as chemistry_router
 from api.geothermal import router as geothermal_router
@@ -26,7 +26,7 @@ from api.asset import router as asset_router
 
 app.include_router(base_router)
 app.include_router(form_router)
-app.include_router(timeseries_router)
+app.include_router(sample_router)
 app.include_router(lexicon_router)
 app.include_router(chemistry_router)
 app.include_router(geothermal_router)

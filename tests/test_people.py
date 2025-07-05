@@ -32,13 +32,29 @@ def test_phone_validation_fail():
         response = client.post(
             "/base/contact",
             json={
-                "owner_id": 2,
                 "name": "Test Contact 2",
-                "email": "fasdfasdf@gmail.com",
-                "phone": phone,
+                "location_id": 1,
+                "role": "Primary",
+                "emails": [{"email": "fasdfasdf@gmail.com", "email_type": "Primary"}],
+                "phones": [{"phone_number": phone, "phone_type": "Primary"}],
+                "addresses": [
+                    {
+                        "address_line_1": "123 Main St",
+                        "city": "Test City",
+                        "state": "NM",
+                        "postal_code": "87501",
+                        "country": "US",
+                        "address_type": "Primary",
+                    }
+                ],
             },
         )
+        data = response.json()
         assert response.status_code == 422
+        assert "detail" in data, "Expected 'detail' in response"
+        assert len(data["detail"]) == 1, "Expected 1 error in response"
+        detail = data["detail"][0]
+        assert detail["msg"] == f"Value error, Invalid phone number. {phone}"
 
 
 def test_email_validation_fail():
@@ -53,26 +69,29 @@ def test_email_validation_fail():
         response = client.post(
             "/base/contact",
             json={
-                "owner_id": 1,
-                "name": "Test Contact2",
-                "email": email,
-                "phone": "+12345678901",
+                "name": "Test ContactX",
+                "location_id": 1,
+                "role": "Primary",
+                "emails": [{"email": email, "email_type": "Primary"}],
+                "phones": [{"phone_number": "+12345678901", "phone_type": "Primary"}],
+                "addresses": [
+                    {
+                        "address_line_1": "123 Main St",
+                        "city": "Test City",
+                        "state": "NM",
+                        "postal_code": "87501",
+                        "country": "US",
+                        "address_type": "Primary",
+                    }
+                ],
             },
         )
-        assert response.status_code == 422, f"Failed for email: {email}"
-
-
-def test_phone_validation_success():
-    response = client.post(
-        "/base/contact",
-        json={
-            "owner_id": 2,
-            "name": "Contact X",
-            "email": "foobar@gmail.com",
-            "phone": "+12345678901",
-        },
-    )
-    assert response.status_code == 201
+        data = response.json()
+        assert response.status_code == 422
+        assert "detail" in data, "Expected 'detail' in response"
+        assert len(data["detail"]) == 1, "Expected 1 error in response"
+        detail = data["detail"][0]
+        assert detail["msg"] == f"Value error, Invalid email format. {email}"
 
 
 # ============= EOF =============================================

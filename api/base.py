@@ -37,12 +37,10 @@ from db.base import (
     SampleLocation,
     Group,
     GroupLocationAssociation,
-    Owner,
     Contact,
     WellScreen,
     Spring,
     Equipment,
-    OwnerContactAssociation,
 )
 from services.geospatial_helper import create_shapefile, make_within_wkt
 from api.pagination import CustomPage
@@ -54,7 +52,6 @@ from schemas.create.location import (
     CreateLocation,
     CreateGroup,
     CreateGroupLocation,
-    CreateOwner,
     CreateContact,
 )
 from schemas.create.well import CreateWell, CreateWellScreen
@@ -62,14 +59,13 @@ from schemas.base_get import GetWell, GetLocation
 from schemas.base_responses import (
     SpringResponse,
     EquipmentResponse,
+    ContactResponse,
 )
 from schemas.response.well import (
     WellResponse,
     SampleLocationWellResponse,
     WellScreenResponse,
     GroupResponse,
-    ContactResponse,
-    OwnerResponse,
 )
 from schemas.response.location import SampleLocationResponse, GroupLocationResponse
 
@@ -147,17 +143,10 @@ def create_group_location(
 
 
 @router.post(
-    "/owner", summary="Create a new owner", status_code=status.HTTP_201_CREATED
-)
-def create_owner(owner_data: CreateOwner, session: Session = Depends(get_db_session)):
-    """
-    Create a new owner in the database.
-    """
-    return adder(session, Owner, owner_data)
-
-
-@router.post(
-    "/contact", summary="Create a new contact", status_code=status.HTTP_201_CREATED
+    "/contact",
+    summary="Create a new contact",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ContactResponse,
 )
 def create_contact(
     contact_data: CreateContact, session: Session = Depends(get_db_session)
@@ -334,27 +323,6 @@ async def get_groups(session: Session = Depends(get_db_session)):
     return simple_all_getter(session, Group)
 
 
-@router.get("/owner", response_model=List[OwnerResponse], summary="Get owners")
-async def get_owners(
-    search: str = None,  # Optional search parameter
-    session: Session = Depends(get_db_session),
-):
-    """
-    Retrieve all owners from the database.
-    """
-    if not search:
-        # If no search parameter, return all owners
-        return simple_all_getter(session, Owner)
-
-    return searchable_getter(
-        session,
-        Owner,
-        search=search,
-        vector=Owner.search_vector | Contact.search_vector,
-        joins=[OwnerContactAssociation, Contact],
-    )
-
-
 @router.get("/contact", response_model=List[ContactResponse], summary="Get contacts")
 async def get_contacts(session: Session = Depends(get_db_session)):
     """
@@ -437,19 +405,6 @@ async def get_spring_by_id(spring_id: int, session: Session = Depends(get_db_ses
     if not spring:
         return {"message": "Spring not found"}
     return spring
-
-
-@router.get(
-    "/owner/{owner_id}", response_model=OwnerResponse, summary="Get owner by ID"
-)
-async def get_owner_by_id(owner_id: int, session: Session = Depends(get_db_session)):
-    """
-    Retrieve an owner by ID from the database.
-    """
-    owner = simple_get_by_id(session, Owner, owner_id)
-    if not owner:
-        return {"message": "Owner not found"}
-    return owner
 
 
 @router.get(

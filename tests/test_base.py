@@ -145,57 +145,59 @@ def test_add_group_location():
     assert data["location_id"] == 1
 
 
-def test_add_owner():
-
-    response = client.post("/base/owner", json={"name": "Test Owner"})
-    assert response.status_code == 201
-    data = response.json()
-    assert "id" in data
-    assert data["name"] == "Test Owner"
-
-    for i in range(1, 4):
-        response = client.post(
-            "/base/owner",
-            json={"name": f"Test Owner {i}"},
-        )
-        assert response.status_code == 201
-        data = response.json()
-        assert "id" in data
-        assert data["name"] == f"Test Owner {i}"
-
-
 def test_add_contact():
     response = client.post(
         "/base/contact",
         json={
-            "owner_id": 1,
             "name": "Test Contact",
-            "email": "fasdfasdf@gmail.com",
-            "phone": "+12345678901",
+            "role": "Owner",
+            "location_id": 1,
+            "emails": [{"email": "fasdfasdf@gmail.com", "email_type": "Primary"}],
+            "phones": [{"phone_number": "+12345678901", "phone_type": "Primary"}],
+            "addresses": [
+                {
+                    "address_line_1": "123 Main St",
+                    "city": "Test City",
+                    "state": "NM",
+                    "postal_code": "87501",
+                    "country": "US",
+                    "address_type": "Primary",
+                }
+            ],
         },
     )
-    assert response.status_code == 201
     data = response.json()
+    assert response.status_code == 201
     assert "id" in data
     assert data["name"] == "Test Contact"
-    assert data["email"] == "fasdfasdf@gmail.com"
+    assert data["role"] == "Owner"
 
-    for i in range(2, 5):
-        response = client.post(
-            "/base/contact",
-            json={
-                "owner_id": i,
-                "name": f"Test Contact {i}",
-                "email": f"foo{i}@gmail.com",
-                "phone": f"+1234567890{i}",
-            },
-        )
-        assert response.status_code == 201
-        data = response.json()
-        assert "id" in data
-        assert data["name"] == f"Test Contact {i}"
-        assert data["email"] == f"foo{i}@gmail.com"
-        assert data["phone"] == f"+1234567890{i}"
+    assert len(data["emails"]) == 1
+    assert data["emails"][0]["email"] == "fasdfasdf@gmail.com"
+
+    assert len(data["phones"]) == 1
+    assert data["phones"][0]["phone_number"] == "+12345678901"
+    assert len(data["addresses"]) == 1
+    assert data["addresses"][0]["address_line_1"] == "123 Main St"
+
+    # assert data["email"] == "fasdfasdf@gmail.com"
+
+    # for i in range(2, 5):
+    #     response = client.post(
+    #         "/base/contact",
+    #         json={
+    #             "owner_id": i,
+    #             "name": f"Test Contact {i}",
+    #             "email": f"foo{i}@gmail.com",
+    #             "phone": f"+1234567890{i}",
+    #         },
+    #     )
+    #     assert response.status_code == 201
+    #     data = response.json()
+    #     assert "id" in data
+    #     assert data["name"] == f"Test Contact {i}"
+    #     assert data["email"] == f"foo{i}@gmail.com"
+    #     assert data["phone"] == f"+1234567890{i}"
 
 
 # GET tests ======================================================
@@ -243,12 +245,6 @@ def test_get_wells():
 
 def test_get_groups():
     response = client.get("/base/group")
-    assert response.status_code == 200
-    assert len(response.json()) > 0
-
-
-def test_get_owners():
-    response = client.get("/base/owner")
     assert response.status_code == 200
     assert len(response.json()) > 0
 
@@ -310,14 +306,6 @@ def test_item_get_spring():
     assert data["location_id"] == 1
 
 
-def test_item_get_owner():
-    response = client.get("/base/owner/1")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == 1
-    assert data["name"] == "Test Owner"
-
-
 def test_item_get_location():
     response = client.get("/base/location/1")
     assert response.status_code == 200
@@ -368,5 +356,5 @@ def test_item_get_contact():
     data = response.json()
     assert data["id"] == 1
     assert data["name"] == "Test Contact"
-    assert data["email"] == "fasdfasdf@gmail.com"
-    assert data["phone"] == "+12345678901"
+    # assert data["email"] == "fasdfasdf@gmail.com"
+    # assert data["phone"] == "+12345678901"

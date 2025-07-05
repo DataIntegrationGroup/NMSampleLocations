@@ -13,24 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ===============================================================================
-from datetime import datetime
+from sqlalchemy import DateTime, String, ForeignKey
+from sqlalchemy.orm import mapped_column
 
-from pydantic import BaseModel
-
-
-# class CreateAnalysisSet(BaseModel):
-#     well_id: int  # mapped_column(Integer, ForeignKey('well.id'))
-#     laboratory: str | None = None  # mapped_column(String(100), nullable=True)
-#
-#     collection_timestamp: datetime
-#
-#
-# class CreateWaterChemistryAnalysis(BaseModel):
-#     analysis_set_id: int
-#     value: float
-#     unit: str
-#     analyte: str
-#     analysis_timestamp: datetime | None = None
+from db import Base, AutoBaseMixin
 
 
 # ============= EOF =============================================
+class Sample(Base, AutoBaseMixin):
+    collection_timestamp = mapped_column(DateTime, nullable=False)
+    collection_method = mapped_column(
+        String(100), ForeignKey("lexicon_term.term"), nullable=False
+    )

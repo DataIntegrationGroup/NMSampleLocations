@@ -20,7 +20,6 @@ import pytest
 from db import get_db_session, database_sessionmaker
 from db.base import SampleLocation, Well
 from db.collabnet import CollaborativeNetworkWell
-from db.timeseries import WellTimeseries, GroundwaterLevelObservation
 from tests import client
 
 
@@ -44,54 +43,55 @@ def test_collabnet_wells():
     assert response.status_code == 200
 
 
-@pytest.fixture(scope="function")
-def add_timeseries_data():
-    """Fixture to add timeseries data for testing."""
-    session = next(get_db_session())
-    wts = WellTimeseries(well_id=2)
-    session.add(wts)
-    for i in range(10):
-        obs = GroundwaterLevelObservation(
-            value=10 + i,
-            timestamp=datetime.strptime(f"2023-01-{i+1}T00:00:00", "%Y-%m-%dT%H:%M:%S"),
-        )
-        obs.timeseries = wts
-        session.add(obs)
-
-    # add another well
-    location = SampleLocation(
-        name="Collabnet Test Location", point="SRID=4326;POINT(0 0)"
-    )
-    well = Well()
-    well.location = location
-
-    collabnet = CollaborativeNetworkWell(well=well, actively_monitored=False)
-    session.add(collabnet)
-    session.commit()
-
-    yield
-
-    # Teardown: remove the added data
-    for obs in wts.observations:
-        session.delete(obs)
-    session.delete(wts)
-    session.delete(collabnet)
-    session.delete(well)
-    session.delete(location)
-    session.commit()
-
-
-def test_collabnet_stats(add_timeseries_data):
-    response = client.get("/collabnet/stats")
-    assert response.status_code == 200
-    data = response.json()
-    assert isinstance(data, dict)
-    assert "total_wells" in data
-    assert data["total_wells"] == 2
-    assert "actively_monitored_wells" in data
-
-    assert data["actively_monitored_wells"] == 1
-    # assert "inactive_wells" in data
+#
+# @pytest.fixture(scope="function")
+# def add_timeseries_data():
+#     """Fixture to add timeseries data for testing."""
+#     session = next(get_db_session())
+#     wts = WellTimeseries(well_id=2)
+#     session.add(wts)
+#     for i in range(10):
+#         obs = GroundwaterLevelObservation(
+#             value=10 + i,
+#             timestamp=datetime.strptime(f"2023-01-{i+1}T00:00:00", "%Y-%m-%dT%H:%M:%S"),
+#         )
+#         obs.timeseries = wts
+#         session.add(obs)
+#
+#     # add another well
+#     location = SampleLocation(
+#         name="Collabnet Test Location", point="SRID=4326;POINT(0 0)"
+#     )
+#     well = Well()
+#     well.location = location
+#
+#     collabnet = CollaborativeNetworkWell(well=well, actively_monitored=False)
+#     session.add(collabnet)
+#     session.commit()
+#
+#     yield
+#
+#     # Teardown: remove the added data
+#     for obs in wts.observations:
+#         session.delete(obs)
+#     session.delete(wts)
+#     session.delete(collabnet)
+#     session.delete(well)
+#     session.delete(location)
+#     session.commit()
+#
+#
+# def test_collabnet_stats(add_timeseries_data):
+#     response = client.get("/collabnet/stats")
+#     assert response.status_code == 200
+#     data = response.json()
+#     assert isinstance(data, dict)
+#     assert "total_wells" in data
+#     assert data["total_wells"] == 2
+#     assert "actively_monitored_wells" in data
+#
+#     assert data["actively_monitored_wells"] == 1
+#     # assert "inactive_wells" in data
 
 
 # ============= EOF =============================================

@@ -290,6 +290,11 @@ raise PydanticStyleException(
 
 ## Model Change Workflow
 
+For a dataset the system does not yet hold -- deciding where it belongs in the
+Location/Thing/FieldEvent/Sample/Observation model, and what to build in what
+order -- read **`docs/data-modeling-new-datasets.md`** first. The workflow below
+covers changes to models that already exist.
+
 When modifying data models:
 
 1. **Update DB Model**: Revise model in `db/` directory

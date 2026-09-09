@@ -30,7 +30,6 @@ from services.water_level_csv import bulk_upload_water_levels
 from services.well_inventory_csv import import_well_inventory_csv
 from sqlalchemy import select
 
-
 # One shape for every ingest's return value; see services/ingest_result.py.
 WellInventoryResult = IngestResult
 

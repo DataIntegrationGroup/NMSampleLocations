@@ -71,6 +71,11 @@ from services.chemistry_field_sheet import (
     read_google_spreadsheet,
     read_local_export,
 )
+from services.ingest_raw_zone import (
+    archive_tables,
+    raw_zone_url,
+    read_snapshot,
+)
 from services.chemistry_lims import (
     ChemistryUploadResult,
     _existing_suffix_ints,
@@ -90,6 +95,9 @@ FIELD_PARAMETERS_TAB = "FieldParameters"
 FIELD_SHEET_TABS = (SAMPLE_INFO_TAB, FIELD_PARAMETERS_TAB)
 
 SHEET_ID_ENV_VAR = "CHEMISTRY_FIELD_SHEET_ID"
+
+FIELD_SHEET_DATASET = "chemistry_field_sheet"
+"""Raw-zone dataset holding the archived tabs."""
 
 
 class FieldParamsMappingError(ValueError):
@@ -442,7 +450,10 @@ def _apply_attributes(
 
 
 def import_field_tables(
-    tables: Sequence[SheetTable], *, dry_run: bool = False
+    tables: Sequence[SheetTable],
+    *,
+    dry_run: bool = False,
+    raw: dict | None = None,
 ) -> ChemistryUploadResult:
     """Load the field spreadsheet's two tabs into the NMA chemistry tables.
 
@@ -458,6 +469,7 @@ def import_field_tables(
                 "Found neither a ChemistrySampleInfo nor a FieldParameters tab. "
                 f"Tabs seen: {', '.join(t.title for t in tables) or 'none'}."
             ],
+            raw=raw,
         )
 
     validation_errors: list[str] = []
@@ -508,6 +520,7 @@ def import_field_tables(
                 imported=0,
                 validation_errors=validation_errors,
                 warnings=warnings,
+                raw=raw,
             )
 
         # sample point id -> the sample it names, for the FieldParameters join.
@@ -650,6 +663,7 @@ def import_field_tables(
                 imported=0,
                 validation_errors=validation_errors,
                 warnings=warnings,
+                raw=raw,
             )
 
         if dry_run:
@@ -666,6 +680,7 @@ def import_field_tables(
         samples_matched=samples_matched,
         skipped_parameters=skipped_parameters,
         dry_run=dry_run,
+        raw=raw,
     )
 
 
@@ -683,13 +698,45 @@ def _lookup_sample_by_point(
 # --- entrypoints ---------------------------------------------------------------
 
 
+def _archive_then_read(
+    tables: Sequence[SheetTable],
+    *,
+    source_label: str,
+    raw_url: str | None,
+) -> tuple[list[SheetTable], dict]:
+    """Archive what was read, then read it back and map *that*.
+
+    The round trip is the point: what gets loaded is provably what was kept, and
+    the replay path is exercised on every run rather than the first time someone
+    needs it.
+    """
+    extract = archive_tables(
+        tables,
+        dataset=FIELD_SHEET_DATASET,
+        source_label=source_label,
+        raw_url=raw_url,
+    )
+    archived = read_snapshot(FIELD_SHEET_DATASET, extract.load_id, raw_url=extract.url)
+    return archived, {
+        "load_id": extract.load_id,
+        "url": extract.url,
+        "dataset": extract.dataset,
+        "rows_archived": extract.total_rows,
+    }
+
+
 def sync_field_sheet(
-    reference: str | None = None, *, dry_run: bool = False
+    reference: str | None = None,
+    *,
+    dry_run: bool = False,
+    archive: bool = True,
+    raw_url: str | None = None,
 ) -> ChemistryUploadResult:
     """Ingest the field spreadsheet from Google Drive.
 
     ``reference`` is a spreadsheet URL or file id; it defaults to
-    ``$CHEMISTRY_FIELD_SHEET_ID``.
+    ``$CHEMISTRY_FIELD_SHEET_ID``. Unless ``archive`` is off, the tabs are
+    written to the raw zone first and the load is mapped from that snapshot.
     """
     reference = reference or os.environ.get(SHEET_ID_ENV_VAR, "").strip()
     if not reference:
@@ -697,21 +744,68 @@ def sync_field_sheet(
             f"No spreadsheet given. Pass --sheet-id, or set {SHEET_ID_ENV_VAR}."
         )
     tables = read_google_spreadsheet(reference, tabs=None)
-    return import_field_tables(tables, dry_run=dry_run)
+
+    raw = None
+    # A dry run writes nothing anywhere, the archive included -- an operator
+    # checking what would happen should not leave a snapshot behind.
+    if archive and not dry_run:
+        tables, raw = _archive_then_read(
+            tables, source_label=reference, raw_url=raw_url
+        )
+    return import_field_tables(tables, dry_run=dry_run, raw=raw)
 
 
 def upload_field_export(
-    paths: Iterable[Path | str], *, dry_run: bool = False
+    paths: Iterable[Path | str],
+    *,
+    dry_run: bool = False,
+    archive: bool = True,
+    raw_url: str | None = None,
 ) -> ChemistryUploadResult:
     """Ingest downloaded ``.xlsx``/``.csv`` copies of the field spreadsheet.
 
     More than one path is accepted because a CSV export holds a single tab, so
     the two tabs arrive as two files.
     """
+    paths = [Path(path) for path in paths]
     tables: list[SheetTable] = []
     for path in paths:
         tables.extend(read_local_export(path))
-    return import_field_tables(tables, dry_run=dry_run)
+
+    raw = None
+    if archive and not dry_run:  # see sync_field_sheet
+        tables, raw = _archive_then_read(
+            tables,
+            source_label=", ".join(path.name for path in paths),
+            raw_url=raw_url,
+        )
+    return import_field_tables(tables, dry_run=dry_run, raw=raw)
+
+
+def replay_field_sheet(
+    load_id: str | None = None,
+    *,
+    dry_run: bool = False,
+    raw_url: str | None = None,
+) -> ChemistryUploadResult:
+    """Ingest an archived snapshot again, without reading the source.
+
+    This is what a mapping fix is tested against: the same rows the original run
+    saw, including whatever was wrong with them. The load is still idempotent,
+    so replaying a snapshot that already loaded writes nothing.
+    """
+    tables = read_snapshot(FIELD_SHEET_DATASET, load_id, raw_url=raw_url)
+    resolved = load_id or "latest"
+    return import_field_tables(
+        tables,
+        dry_run=dry_run,
+        raw={
+            "load_id": resolved,
+            "url": raw_zone_url(raw_url),
+            "dataset": FIELD_SHEET_DATASET,
+            "replayed": True,
+        },
+    )
 
 
 # --- result shaping ------------------------------------------------------------
@@ -727,6 +821,7 @@ def _result(
     samples_matched: list[dict] | None = None,
     skipped_parameters: list[dict] | None = None,
     dry_run: bool = False,
+    raw: dict | None = None,
 ) -> ChemistryUploadResult:
     warnings = warnings or []
     samples_created = samples_created or []
@@ -748,6 +843,7 @@ def _result(
         "samples_created": samples_created,
         "samples_matched": samples_matched,
         "skipped_parameters": skipped_parameters,
+        "raw": raw or {},
     }
     stderr_parts = []
     if validation_errors:

@@ -23,6 +23,11 @@ import typer
 from dotenv import load_dotenv
 
 from cli import ingest_report as report
+
+# Anything reaching db/engine.py must be imported lazily, inside the command
+# that needs it: the engine reads its connection settings at import time, and
+# load_dotenv() below has not run yet. (This module is safe -- it imports no
+# engine.)
 from services.materialized_views import MATERIALIZED_VIEWS
 
 # CLI should load `.env` defaults without clobbering an explicitly prepared environment.
@@ -990,6 +995,13 @@ def _render_field_sheet_result(result, colors: dict[str, str], source: str) -> N
         headline = "[CHEMISTRY FIELD SHEET] ABORTED -- nothing written"
     report.banner(headline, colors, ok=result.exit_code == 0)
     typer.secho(f"Source: {source}", fg=colors["accent"])
+    raw = payload.get("raw") or {}
+    if raw.get("load_id"):
+        verb = "Replayed" if raw.get("replayed") else "Archived"
+        typer.secho(
+            f"{verb}: {raw['dataset']}/{raw['load_id']} at {raw['url']}",
+            fg=colors["accent"],
+        )
     typer.echo()
 
     if summary:
@@ -1072,7 +1084,36 @@ def water_chemistry_sync_sheet(
     dry_run: bool = typer.Option(
         False,
         "--dry-run",
-        help="Read, validate and report without writing anything.",
+        help=(
+            "Read, validate and report without writing anything -- no database "
+            "rows and no raw-zone snapshot."
+        ),
+    ),
+    replay: str = typer.Option(
+        None,
+        "--replay",
+        help=(
+            "Load an archived snapshot again instead of reading the sheet. "
+            "Pass a load id, or 'latest'."
+        ),
+    ),
+    no_raw: bool = typer.Option(
+        False,
+        "--no-raw",
+        help="Skip the raw-zone archive and map straight from the sheet.",
+    ),
+    raw_url: str = typer.Option(
+        None,
+        "--raw-url",
+        help=(
+            "Raw zone to archive into (gs://bucket/prefix or file:///path). "
+            "Defaults to $INGESTION_GCS_BUCKET, then $OCO_RAW_ZONE_DIR."
+        ),
+    ),
+    list_snapshots: bool = typer.Option(
+        False,
+        "--list-snapshots",
+        help="List the archived snapshots and exit.",
     ),
     theme: ThemeMode = typer.Option(
         ThemeMode.auto, "--theme", help="Color theme: auto, light, dark."
@@ -1090,19 +1131,54 @@ def water_chemistry_sync_sheet(
     import.
     """
     from services.chemistry_drive import ChemistryDriveConfigError
-    from services.chemistry_field_params import sync_field_sheet
+    from services.chemistry_field_params import (
+        FIELD_SHEET_DATASET,
+        replay_field_sheet,
+        sync_field_sheet,
+    )
     from services.chemistry_field_sheet import FieldSheetError
+    from services.ingest_raw_zone import RawZoneError, list_snapshots as _snapshots
 
     colors = _palette(theme)
+
+    if list_snapshots:
+        try:
+            snapshots = _snapshots(FIELD_SHEET_DATASET, raw_url=raw_url)
+        except RawZoneError as exc:
+            typer.secho(str(exc), fg=colors["issue"], bold=True, err=True)
+            raise typer.Exit(1) from exc
+        report.banner("[CHEMISTRY FIELD SHEET] SNAPSHOTS", colors)
+        report.bullet_section(
+            "ARCHIVED SNAPSHOTS (newest last)",
+            snapshots,
+            colors,
+            color_key="field",
+            title_color_key="accent",
+            limit=None,
+        )
+        if not snapshots:
+            typer.secho("  none archived yet", fg=colors["muted"])
+        report.rule(colors)
+        raise typer.Exit(0)
+
     try:
-        result = sync_field_sheet(sheet, dry_run=dry_run)
-    except (ChemistryDriveConfigError, FieldSheetError) as exc:
+        if replay:
+            result = replay_field_sheet(
+                None if replay == "latest" else replay,
+                dry_run=dry_run,
+                raw_url=raw_url,
+            )
+            source = f"raw zone snapshot {replay}"
+        else:
+            result = sync_field_sheet(
+                sheet, dry_run=dry_run, archive=not no_raw, raw_url=raw_url
+            )
+            source = sheet or os.environ.get("CHEMISTRY_FIELD_SHEET_ID", "")
+    except (ChemistryDriveConfigError, FieldSheetError, RawZoneError) as exc:
         typer.secho(str(exc), fg=colors["issue"], bold=True, err=True)
         raise typer.Exit(1) from exc
 
-    _render_field_sheet_result(
-        result, colors, sheet or os.environ.get("CHEMISTRY_FIELD_SHEET_ID", "")
-    )
+    _render_field_sheet_result(result, colors, source)
     raise typer.Exit(result.exit_code)
 
 
@@ -1125,6 +1201,19 @@ def water_chemistry_field_upload(
         "--dry-run",
         help="Read, validate and report without writing anything.",
     ),
+    no_raw: bool = typer.Option(
+        False,
+        "--no-raw",
+        help="Skip the raw-zone archive and map straight from the file.",
+    ),
+    raw_url: str = typer.Option(
+        None,
+        "--raw-url",
+        help=(
+            "Raw zone to archive into (gs://bucket/prefix or file:///path). "
+            "Defaults to $INGESTION_GCS_BUCKET, then $OCO_RAW_ZONE_DIR."
+        ),
+    ),
     theme: ThemeMode = typer.Option(
         ThemeMode.auto, "--theme", help="Color theme: auto, light, dark."
     ),
@@ -1136,11 +1225,14 @@ def water_chemistry_field_upload(
     """
     from services.chemistry_field_params import upload_field_export
     from services.chemistry_field_sheet import FieldSheetError
+    from services.ingest_raw_zone import RawZoneError
 
     colors = _palette(theme)
     try:
-        result = upload_field_export(file_paths, dry_run=dry_run)
-    except FieldSheetError as exc:
+        result = upload_field_export(
+            file_paths, dry_run=dry_run, archive=not no_raw, raw_url=raw_url
+        )
+    except (FieldSheetError, RawZoneError) as exc:
         typer.secho(str(exc), fg=colors["issue"], bold=True, err=True)
         raise typer.Exit(1) from exc
 

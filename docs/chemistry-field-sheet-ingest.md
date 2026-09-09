@@ -9,6 +9,8 @@ and `FieldParameters` tabs become `NMA_Chemistry_SampleInfo` and
 - Code:
   - `services/chemistry_field_sheet.py` — read the spreadsheet (Google Sheet,
     `.xlsx` in Drive, or a local `.csv`/`.xlsx` export).
+  - `services/ingest_raw_zone.py` — archive what was read (dlt → partitioned
+    parquet), and read a snapshot back for replay.
   - `services/chemistry_field_params.py` — map rows, match samples, write.
   - `cli/cli.py` — `oco water-chemistry sync-sheet` and
     `oco water-chemistry field-upload`.
@@ -43,12 +45,47 @@ Prerequisites are the LIMS ingest's (`uv sync --locked --group cli`, database
 reachable), plus read access to the spreadsheet for whatever identity the CLI
 runs as — application-default credentials locally, the `GCS_SERVICE_ACCOUNT_KEY`
 service account in production. Set `CHEMISTRY_FIELD_SHEET_ID` to the sheet id or
-URL.
+URL, and a raw zone (next section).
 
 There is **no manifest**. The LIMS sync needs one because a workbook is a
 one-shot batch; this spreadsheet is a living document that grows week over
 week, so it is re-read in full every run and idempotency comes from the
 database instead (section 3).
+
+---
+
+## 1a. The raw zone (dlt)
+
+Every run **archives what it read before it maps anything, and then maps from
+the archive**. What loaded is provably what was kept.
+
+```bash
+oco water-chemistry sync-sheet --list-snapshots     # what is archived
+oco water-chemistry sync-sheet --replay <load_id>   # load a snapshot again
+oco water-chemistry sync-sheet --replay latest
+```
+
+- **Where**: `INGESTION_GCS_BUCKET` (the raw-zone bucket the Dagster+ ingestion
+  uses — *never* `GCS_BUCKET_NAME`, the API's upload bucket), or
+  `OCO_RAW_ZONE_DIR` for a local directory, or `--raw-url` per run. None of
+  these is defaulted: **the ingest refuses to run rather than write nowhere
+  useful.** Pass `--no-raw` to ingest without archiving.
+- **Layout**: `{tab}/year=/month=/day=/{load_id}.{file_id}.parquet`, matching
+  the Dagster+ raw zone, so a snapshot is found by prefix without reading files.
+- **What a row holds**: `{tab, row_number, header_json, cells_json}`. Headings
+  are archived exactly as typed rather than as one column each — a crew adding
+  "DO (mg/L)" to a tab is an ordinary edit, and it should not become a schema
+  migration in the archive. Date cells are archived as ISO text.
+- **A dry run archives nothing**, the same as it writes no database rows.
+- **A failed run still archives.** The abort happens during mapping, after the
+  snapshot is written — which is the point: the record of what arrived is what
+  you need in order to fix it.
+
+This is dlt doing extraction, parquet and load packages. Mapping, validation and
+the writes into Ocotillo's tables stay in the service layer: the destination is
+an FK-heavy relational schema owned by alembic, not a warehouse for dlt to
+evolve. `dlt[filesystem,gs]`, `pyarrow` and `gcsfs` are in the `cli` dependency
+group, so the API image is unaffected.
 
 ---
 
@@ -170,3 +207,6 @@ disagreements) or **skips** (parameters already recorded) succeeds.
   workbook — so those tabs currently have no ingest path.
 - **No alerting, and prod excludes the CLI deps.** As with the LIMS ingest, this
   runs from an engineer's machine and failures surface only in its output.
+- **The raw zone is write-and-keep.** Nothing prunes old snapshots, and nothing
+  reconciles them against what was loaded — a replay is something an engineer
+  chooses, not a repair the ingest performs.

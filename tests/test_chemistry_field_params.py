@@ -25,13 +25,16 @@ from sqlalchemy import delete, select
 from db.engine import session_ctx
 from db.nma_legacy import NMA_Chemistry_SampleInfo, NMA_FieldParameters
 from services.chemistry_field_params import (
+    FIELD_SHEET_DATASET,
     FieldParamsMappingError,
     import_field_tables,
     prep_field_parameters,
     prep_sample_info,
+    replay_field_sheet,
     select_tables,
     upload_field_export,
 )
+from services.ingest_raw_zone import list_snapshots, read_snapshot
 from services.chemistry_field_sheet import SheetTable, read_local_export
 
 WELL = "Test Well"
@@ -466,7 +469,8 @@ def test_upload_from_a_downloaded_workbook(
     path = tmp_path / "field.xlsx"
     workbook.save(path)
 
-    result = upload_field_export([path])
+    # Archiving is covered below; this is about reading the file.
+    result = upload_field_export([path], archive=False)
 
     assert result.exit_code == 0, result.stderr
     (sample,) = _samples()
@@ -498,11 +502,131 @@ def test_upload_from_one_csv_per_tab(
     sample_info, field_params = select_tables(tables)
     assert sample_info is not None and field_params is not None
 
-    result = upload_field_export([info_path, params_path])
+    result = upload_field_export([info_path, params_path], archive=False)
 
     assert result.exit_code == 0, result.stderr
     (sample,) = _samples()
     assert len(_parameters(sample.id)) == 6
+
+
+# ------------------------- raw zone -------------------------------------------
+
+
+@pytest.fixture()
+def raw_zone(tmp_path, monkeypatch):
+    """A raw zone on disk, with dlt's own state kept out of the developer's home."""
+    monkeypatch.setenv("DLT_DATA_DIR", str(tmp_path / "dlt"))
+    return (tmp_path / "raw").resolve().as_uri()
+
+
+def _workbook(tmp_path, sample_rows=None, param_rows=None):
+    workbook = Workbook()
+    workbook.remove(workbook.active)
+    info = workbook.create_sheet("ChemistrySampleInfo")
+    info.append(SAMPLE_INFO_HEADER)
+    for row in sample_rows if sample_rows is not None else [_sample_info_row()]:
+        info.append([row.get(c) for c in SAMPLE_INFO_HEADER])
+    params = workbook.create_sheet("FieldParameters")
+    params.append(FIELD_PARAMS_HEADER)
+    for row in param_rows if param_rows is not None else [_field_params_row()]:
+        params.append([row.get(c) for c in FIELD_PARAMS_HEADER])
+    path = tmp_path / "field.xlsx"
+    workbook.save(path)
+    return path
+
+
+def test_upload_archives_what_it_read_then_loads_that(
+    tmp_path, raw_zone, water_well_thing, _cleanup_field_chemistry
+):
+    """What gets loaded is what was archived, not a second read of the source."""
+    result = upload_field_export([_workbook(tmp_path)], raw_url=raw_zone)
+
+    assert result.exit_code == 0, result.stderr
+    raw = result.payload["raw"]
+    assert raw["load_id"]
+    assert raw["dataset"] == FIELD_SHEET_DATASET
+    assert raw["rows_archived"] == 2
+
+    (sample,) = _samples()
+    assert len(_parameters(sample.id)) == 6
+
+
+def test_replay_reloads_a_snapshot_without_the_source(
+    tmp_path, raw_zone, water_well_thing, _cleanup_field_chemistry
+):
+    """A mapping fix is retested against the rows the original run saw."""
+    path = _workbook(tmp_path)
+    first = upload_field_export([path], raw_url=raw_zone)
+    load_id = first.payload["raw"]["load_id"]
+
+    # The source is gone; the archive is not.
+    path.unlink()
+    with session_ctx() as session:
+        session.execute(
+            delete(NMA_Chemistry_SampleInfo).where(
+                NMA_Chemistry_SampleInfo.nma_sample_point_id.like(f"{WELL}%")
+            )
+        )
+        session.commit()
+
+    replayed = replay_field_sheet(load_id, raw_url=raw_zone)
+
+    assert replayed.exit_code == 0, replayed.stderr
+    (sample,) = _samples()
+    assert len(_parameters(sample.id)) == 6
+    assert replayed.payload["raw"]["replayed"] is True
+
+
+def test_replay_is_still_idempotent(
+    tmp_path, raw_zone, water_well_thing, _cleanup_field_chemistry
+):
+    load_id = upload_field_export([_workbook(tmp_path)], raw_url=raw_zone).payload[
+        "raw"
+    ]["load_id"]
+
+    again = replay_field_sheet(load_id, raw_url=raw_zone)
+
+    assert again.payload["summary"]["total_rows_imported"] == 0
+    assert again.payload["summary"]["parameters_skipped"] == 6
+    assert len(_samples()) == 1
+
+
+def test_a_dry_run_leaves_no_snapshot_behind(
+    tmp_path, raw_zone, water_well_thing, _cleanup_field_chemistry
+):
+    """Checking what would happen should not write to the archive either."""
+    result = upload_field_export([_workbook(tmp_path)], dry_run=True, raw_url=raw_zone)
+
+    assert result.exit_code == 0, result.stderr
+    assert result.payload["raw"] == {}
+    assert list_snapshots(FIELD_SHEET_DATASET, raw_url=raw_zone) == []
+    assert _samples() == []
+
+
+def test_archiving_can_be_skipped(
+    tmp_path, raw_zone, water_well_thing, _cleanup_field_chemistry
+):
+    result = upload_field_export([_workbook(tmp_path)], archive=False, raw_url=raw_zone)
+
+    assert result.exit_code == 0, result.stderr
+    assert result.payload["raw"] == {}
+    assert list_snapshots(FIELD_SHEET_DATASET, raw_url=raw_zone) == []
+    assert len(_samples()) == 1
+
+
+def test_the_archive_keeps_a_bad_row_as_written(
+    tmp_path, raw_zone, water_well_thing, _cleanup_field_chemistry
+):
+    """A run that aborts still archives: that is the record of what arrived."""
+    path = _workbook(
+        tmp_path, sample_rows=[_sample_info_row(CollectionDate=None)], param_rows=[]
+    )
+    result = upload_field_export([path], raw_url=raw_zone)
+
+    assert result.exit_code == 1
+    assert result.payload["raw"]["load_id"]
+    (archived,) = read_snapshot(FIELD_SHEET_DATASET, raw_url=raw_zone)
+    assert archived.rows[0]["CollectionDate"] is None
 
 
 # ============= EOF =============================================

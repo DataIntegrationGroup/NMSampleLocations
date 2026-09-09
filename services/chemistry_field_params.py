@@ -55,7 +55,7 @@ import os
 import re
 import uuid
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -64,6 +64,7 @@ from sqlalchemy.orm import Session
 
 from db import NMA_Chemistry_SampleInfo, NMA_FieldParameters
 from db.engine import session_ctx
+from domain.values import to_datetime, to_float
 from services.chemistry_field_sheet import (
     FieldSheetError,
     SheetTable,
@@ -178,58 +179,14 @@ def _cell(record: dict, *headings: str) -> Any:
 
 
 def _to_float(value: Any) -> float | None:
-    if value is None or value == "":
-        return None
-    if isinstance(value, (int, float)):
-        return float(value)
-    text = str(value).strip().replace(",", "")
-    # A qualifier written into the value cell ("<0.01") is a detection limit,
-    # not a field reading; the field tabs have no qualifier column, so strip it
-    # and keep the number rather than failing the row.
-    text = text.lstrip("<>~=").strip()
-    try:
-        return float(text)
-    except (TypeError, ValueError):
-        return None
+    """A field reading. Lenient: the field tabs have no qualifier column, so a
+    qualifier typed into the value is stripped rather than failing the row."""
+    return to_float(value, lenient=True)
 
 
 def _to_datetime(value: Any) -> datetime | None:
-    """Parse a collection date, accepting what the spreadsheet actually holds.
-
-    The template's own cells are ISO-8601 with a ``T``; copies pasted from
-    elsewhere arrive as real datetimes or in US formats.
-    """
-    if value is None or value == "":
-        return None
-    if isinstance(value, datetime):
-        return value
-    if isinstance(value, date):
-        return datetime(value.year, value.month, value.day)
-
-    text = str(value).strip()
-    if not text:
-        return None
-    # The sheet holds a handful of hand-typed times with a single-digit hour
-    # ("2025-06-06T2:15:00"), which is not ISO-8601 and which the crew plainly
-    # meant as 02:15. Pad it rather than rejecting a real collection date.
-    text = re.sub(r"([T ])(\d):(\d{2})", r"\g<1>0\g<2>:\g<3>", text)
-    try:
-        return datetime.fromisoformat(text)
-    except ValueError:
-        pass
-    for fmt in (
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%d %H:%M",
-        "%Y-%m-%d",
-        "%m/%d/%Y %H:%M:%S",
-        "%m/%d/%Y %H:%M",
-        "%m/%d/%Y",
-    ):
-        try:
-            return datetime.strptime(text, fmt)
-        except ValueError:
-            continue
-    return None
+    """A collection or measurement time, as the crew actually writes them."""
+    return to_datetime(value, pad_single_digit_hour=True)
 
 
 # --- row normalization ---------------------------------------------------------

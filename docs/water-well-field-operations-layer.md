@@ -583,6 +583,38 @@ already added four on the observation chain.
   continuous aggregates; the largest table in the schema and the one that will
   decide whether the nightly refresh is acceptable
 
+### What the first staging profile found
+
+The list above missed three tables the *feature view* reaches once per output
+row, and they turned out to dominate the layer's cost. Measured on
+`ocotillo-staging` (10 034 wells, PostgreSQL 17.9), full download, 16 376 ms:
+
+| node | loops | total |
+| --- | --- | --- |
+| `Seq Scan on group_thing_association` (the `grp` LATERAL) | 10 034 | 10 736 ms |
+| `Seq Scan on phone` (`primary_contact_phone`) | 10 034 | 1 475 ms |
+| `Seq Scan on email` (`primary_contact_email`) | 10 034 | 780 ms |
+
+~13 s of the 16.4 s, on three unindexed foreign-key columns. The same three
+scans dominate the ordinary paged request: `ORDER BY id LIMIT 10` measured
+14 417 ms, because the sort computes every row's columns before the limit
+applies. `e7f8a9b0c1d2` adds `group_thing_association (thing_id)`,
+`phone (contact_id)` and `email (contact_id)`.
+
+Two things the same profile settled, against expectation:
+
+- **The expensive half is the cheap one.** Building the stats matview — the
+  aggregates over 4.1 M `transducer_observation` rows that motivated the split
+  in §5 — measured 1 909 ms. The nightly refresh is not the cost to watch.
+- **`count(*)` does not pay for the per-row work.** pygeoapi issues a count on
+  every `/items` request, but Postgres prunes the unreferenced CTEs and
+  target-list subqueries: 97 ms. A single feature is 56 ms; a bbox query uses
+  `idx_location_point` through the view and measured 3 257 ms.
+
+The 13 note columns are per-row subqueries too, but `ix_notes_polymorphic_link`
+already serves them — they do not appear among the costed nodes. No index was
+added for them.
+
 ## 11. Settled, and still open
 
 Settled before implementation:

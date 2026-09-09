@@ -1235,6 +1235,203 @@ def water_chemistry_manifest_status(
     typer.secho("=" * 72, fg=colors["accent"])
 
 
+def _render_field_sheet_result(result, colors: dict[str, str], source: str) -> None:
+    """Print the outcome of a chemistry field-sheet import."""
+    payload = result.payload if isinstance(result.payload, dict) else {}
+    summary = payload.get("summary", {})
+    dry_run = summary.get("dry_run")
+
+    if dry_run:
+        header = "[CHEMISTRY FIELD SHEET] DRY RUN (nothing written)"
+    elif result.exit_code == 0:
+        header = "[CHEMISTRY FIELD SHEET] SUCCESS"
+    else:
+        header = "[CHEMISTRY FIELD SHEET] ABORTED -- nothing written"
+    typer.secho(
+        header, fg=colors["ok"] if result.exit_code == 0 else colors["issue"], bold=True
+    )
+    typer.secho("=" * 72, fg=colors["accent"])
+    typer.secho(f"Source: {source}", fg=colors["accent"])
+    typer.echo()
+
+    if summary:
+        typer.secho("SUMMARY", fg=colors["accent"], bold=True)
+        rows_with_issues = summary.get("validation_errors_or_warnings", 0)
+        for label, value, color in (
+            ("rows read", summary.get("total_rows_processed", 0), colors["accent"]),
+            ("readings loaded", summary.get("total_rows_imported", 0), colors["ok"]),
+            ("samples created", summary.get("samples_created", 0), colors["ok"]),
+            ("samples matched", summary.get("samples_matched", 0), colors["accent"]),
+            (
+                "readings skipped",
+                summary.get("parameters_skipped", 0),
+                colors["muted"],
+            ),
+            (
+                "rows_with_issues",
+                rows_with_issues,
+                colors["issue"] if rows_with_issues else colors["ok"],
+            ),
+        ):
+            typer.secho(f"  {label:<17} | {value:>6}", fg=color)
+        typer.echo()
+
+    created = payload.get("samples_created", [])
+    if created:
+        typer.secho("SAMPLES CREATED", fg=colors["ok"], bold=True)
+        for sample in created:
+            typer.secho(
+                f"  - {sample['sample_point_id']} "
+                f"({sample['pointid']} @ {sample['collection_date']})",
+                fg=colors["ok"],
+            )
+        typer.echo()
+
+    matched = payload.get("samples_matched", [])
+    if matched:
+        typer.secho(
+            "SAMPLES MATCHED (already recorded for that well and date)",
+            fg=colors["accent"],
+            bold=True,
+        )
+        for sample in matched:
+            typer.secho(
+                f"  - {sample['sample_point_id']} "
+                f"({sample['pointid']} @ {sample['collection_date']})",
+                fg=colors["field"],
+            )
+        typer.echo()
+
+    skipped = payload.get("skipped_parameters", [])
+    if skipped:
+        typer.secho("SKIPPED (already recorded)", fg=colors["muted"], bold=True)
+        for entry in skipped[:25]:
+            typer.secho(
+                f"  - {entry['sample_point_id']}: {entry['field_parameter']}",
+                fg=colors["field"],
+            )
+        if len(skipped) > 25:
+            typer.secho(f"  ... and {len(skipped) - 25} more", fg=colors["muted"])
+        typer.echo()
+
+    warnings = payload.get("warnings", [])
+    if warnings:
+        typer.secho("WARNINGS (loaded, but check these)", fg=colors["field"], bold=True)
+        for entry in warnings[:25]:
+            typer.secho(f"  - {entry}", fg=colors["field"])
+        if len(warnings) > 25:
+            typer.secho(f"  ... and {len(warnings) - 25} more", fg=colors["field"])
+        typer.echo()
+
+    validation_errors = payload.get("validation_errors", [])
+    if validation_errors:
+        typer.secho("VALIDATION", fg=colors["accent"], bold=True)
+        typer.secho(
+            f"Validation errors: {len(validation_errors)}",
+            fg=colors["issue"],
+            bold=True,
+        )
+        for entry in validation_errors[:25]:
+            typer.secho(f"  - {entry}", fg=colors["issue"])
+        if len(validation_errors) > 25:
+            typer.secho(
+                f"... and {len(validation_errors) - 25} more validation errors",
+                fg=colors["issue"],
+            )
+
+    typer.secho("=" * 72, fg=colors["accent"])
+
+
+@water_chemistry.command("sync-sheet")
+def water_chemistry_sync_sheet(
+    sheet: str = typer.Option(
+        None,
+        "--sheet-id",
+        "--url",
+        help=(
+            "Google spreadsheet id or URL holding the ChemistrySampleInfo and "
+            "FieldParameters tabs. Defaults to $CHEMISTRY_FIELD_SHEET_ID."
+        ),
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Read, validate and report without writing anything.",
+    ),
+    theme: ThemeMode = typer.Option(
+        ThemeMode.auto, "--theme", help="Color theme: auto, light, dark."
+    ),
+):
+    """
+    ingest the AMP chemistry field spreadsheet from Google Drive: the
+    ChemistrySampleInfo and FieldParameters tabs, into NMA_Chemistry_SampleInfo
+    and NMA_FieldParameters. Lab result tabs in the same workbook are left to
+    the LIMS ingest.
+
+    Samples are matched to what is already recorded on well PointID plus
+    collection date, so a field visit and its lab batch share one sample and
+    re-running loads nothing twice. Any data-quality problem aborts the whole
+    import.
+    """
+    from services.chemistry_drive import ChemistryDriveConfigError
+    from services.chemistry_field_params import sync_field_sheet
+    from services.chemistry_field_sheet import FieldSheetError
+
+    colors = _palette(theme)
+    try:
+        result = sync_field_sheet(sheet, dry_run=dry_run)
+    except (ChemistryDriveConfigError, FieldSheetError) as exc:
+        typer.secho(str(exc), fg=colors["issue"], bold=True, err=True)
+        raise typer.Exit(1) from exc
+
+    _render_field_sheet_result(
+        result, colors, sheet or os.environ.get("CHEMISTRY_FIELD_SHEET_ID", "")
+    )
+    raise typer.Exit(result.exit_code)
+
+
+@water_chemistry.command("field-upload")
+def water_chemistry_field_upload(
+    file_paths: list[str] = typer.Option(
+        ...,
+        "--file",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help=(
+            "Downloaded copy of the field spreadsheet (.xlsx with both tabs, or "
+            ".csv). Repeat --file to pass one CSV per tab."
+        ),
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Read, validate and report without writing anything.",
+    ),
+    theme: ThemeMode = typer.Option(
+        ThemeMode.auto, "--theme", help="Color theme: auto, light, dark."
+    ),
+):
+    """
+    ingest a downloaded copy of the AMP chemistry field spreadsheet. Same rules
+    as `sync-sheet`, for an engineer who has the file but not Drive access to
+    the sheet.
+    """
+    from services.chemistry_field_params import upload_field_export
+    from services.chemistry_field_sheet import FieldSheetError
+
+    colors = _palette(theme)
+    try:
+        result = upload_field_export(file_paths, dry_run=dry_run)
+    except FieldSheetError as exc:
+        typer.secho(str(exc), fg=colors["issue"], bold=True, err=True)
+        raise typer.Exit(1) from exc
+
+    _render_field_sheet_result(result, colors, ", ".join(file_paths))
+    raise typer.Exit(result.exit_code)
+
+
 @data_migrations.command("list")
 def data_migrations_list(
     theme: ThemeMode = typer.Option(

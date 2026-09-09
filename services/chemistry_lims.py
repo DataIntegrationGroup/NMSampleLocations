@@ -387,12 +387,18 @@ def split_pointid(pointid: str) -> tuple[str, str | None]:
     return match.group("base"), match.group("suffix")
 
 
-def _resolve_thing_id(session: Session, pointid: str) -> int | None:
+def resolve_thing_id(session: Session, pointid: str) -> int | None:
+    """The Thing id for a well PointID, or None when the well is unknown."""
     things = session.scalars(select(Thing).where(Thing.name == pointid)).all()
     if not things:
         return None
     # Thing.name is not guaranteed unique; take the lowest id deterministically.
     return min(t.id for t in things)
+
+
+# The field-sheet ingest resolves wells the same way; kept as a module-private
+# alias so the existing call sites read unchanged.
+_resolve_thing_id = resolve_thing_id
 
 
 def _suffix_to_int(suffix: str) -> int:

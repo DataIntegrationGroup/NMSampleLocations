@@ -100,7 +100,7 @@ group, so the API image is unaffected.
 | `CollectionDate` | `CollectionDate` — **required**, it is the match key |
 | `AnalysisAgency` | `AnalysesAgency` (defaults to `NMBGMR`) |
 | `SampleType (SD)` | `SampleType` |
-| `CollectionMethod (F = faucet)` | `CollectionMethod` |
+| `CollectionMethod (F = faucet)` | `CollectionMethod`, as the legacy code (see below) |
 | `CollectedBy (GR = grab??)` | `CollectedBy` (5 characters; longer is rejected) |
 | `Data Source` | `DataSource` |
 | `Sample Notes` | `SampleNotes` |
@@ -108,6 +108,27 @@ group, so the API image is unaffected.
 
 Headings are matched with any parenthetical hint stripped, so rewording
 "`SampleType (SD)`" to "`SampleType (SD/GW)`" does not silently drop the column.
+
+`CollectionMethod` takes either the method written out or NM_Aquifer's
+one-letter `LU_CollectionMethod` code. Prefer the words: `F` and `H` are both
+faucets, and nobody reading the letter alone can tell the well head from the
+house. Case and spacing do not matter. Either way the ingest stores the code,
+because that is what every legacy `NMA_Chemistry_SampleInfo` row holds, so a
+sheet row matched to a legacy row compares equal instead of being reported as a
+disagreement:
+
+| Meaning | Code (also accepted, and what is stored) |
+|---|---|
+| `Bailer` | `B` |
+| `Faucet at well head` | `F` |
+| `Grab sample` | `G` |
+| `Faucet or outlet at house` | `H` |
+| `Pump` | `P` |
+| `Thief sampler` | `T` |
+| `Unknown` | `U` |
+
+Anything outside the table is refused. The vocabulary is `COLLECTION_METHODS`
+in `services/chemistry_field_params.py`.
 
 `Staff` has no column of its own in the legacy schema. Folding it into the notes
 keeps the only record of who was on site; a dedicated column would be a schema
@@ -181,6 +202,7 @@ What aborts a run:
 | `PointID 'WL-####' has no well identifier assigned yet` | A real sample whose well has not been given an id. | Assign the PointID, then re-run. |
 | `WellPointID ...: no matching Thing (well) found` | The well is not in Ocotillo. | Transfer or create the well first. |
 | `SamplePointID ... does not belong to well ...` | The lettered point's base is a different well. | Fix one of the two cells. |
+| `CollectionMethod ... is not a known collection method` | Neither one of the seven `LU_CollectionMethod` meanings nor its code. | Use one from the list in section 2. |
 | `CollectedBy ... is longer than 5 characters` | The legacy column holds a 5-character code. | Use the code, not the name — names belong in `Staff`. |
 | `non-numeric reading(s)` | A field parameter cell holds text. | Blank it or fix the number. |
 | `no sample <point> -- it is neither in the ChemistrySampleInfo tab nor already in the database` | A `FieldParameters` row with no sample. | Add the sample-info row, or fix the `SamplePointID`. |

@@ -165,6 +165,27 @@ _SAMPLE_INFO_FIELDS = {
 # CollectedBy is a 5-character code column in the legacy schema.
 _COLLECTED_BY_MAX = 5
 
+# NM_Aquifer's LU_CollectionMethod, meaning -> code. The sheet may hold either;
+# the meaning is preferred because "F" and "H" are both faucets, and a crew
+# reading the letter alone cannot tell the well head from the house. The column
+# stores the code, which is what every legacy NMA_Chemistry_SampleInfo row
+# holds, so a sheet row and a legacy row for the same visit compare equal when
+# filling blanks.
+COLLECTION_METHODS: dict[str, str] = {
+    "Bailer": "B",
+    "Faucet at well head": "F",
+    "Grab sample": "G",
+    "Faucet or outlet at house": "H",
+    "Pump": "P",
+    "Thief sampler": "T",
+    "Unknown": "U",
+}
+
+_COLLECTION_METHOD_BY_MEANING = {
+    meaning.casefold(): code for meaning, code in COLLECTION_METHODS.items()
+}
+_COLLECTION_METHOD_CODES = frozenset(COLLECTION_METHODS.values())
+
 
 # --- cell helpers --------------------------------------------------------------
 
@@ -195,6 +216,27 @@ def _to_float(value: Any) -> float | None:
 def _to_datetime(value: Any) -> datetime | None:
     """A collection or measurement time, as the crew actually writes them."""
     return to_datetime(value, pad_single_digit_hour=True)
+
+
+def _collection_method_code(value: Any) -> str:
+    """The legacy code for a collection method, written out or as the code.
+
+    The meaning is preferred, but the legacy letter is accepted too, since
+    crews trained on the old template still write it. Case and spacing are
+    forgiven either way.
+    """
+    written = " ".join(str(value).split())
+    code = _COLLECTION_METHOD_BY_MEANING.get(written.casefold())
+    if code is not None:
+        return code
+    if written.upper() in _COLLECTION_METHOD_CODES:
+        return written.upper()
+
+    allowed = ", ".join(repr(m) for m in COLLECTION_METHODS)
+    raise FieldParamsMappingError(
+        f"CollectionMethod {written!r} is not a known collection method; "
+        f"use one of {allowed}, or its legacy code"
+    )
 
 
 # --- row normalization ---------------------------------------------------------
@@ -261,6 +303,11 @@ def prep_sample_info(record: dict) -> dict:
         if value is None:
             continue
         attributes[attribute] = str(value).strip() if isinstance(value, str) else value
+
+    if "collection_method" in attributes:
+        attributes["collection_method"] = _collection_method_code(
+            attributes["collection_method"]
+        )
 
     collected_by = attributes.get("collected_by")
     if collected_by is not None and len(str(collected_by)) > _COLLECTED_BY_MAX:

@@ -71,7 +71,7 @@ def _sample_info_row(**overrides):
         "AnalysisAgency": "NMBGMR",
         "SampleType (SD)": "SD",
         "CollectionDate": "2025-06-10T12:05:00",
-        "CollectionMethod (F = faucet)": "F",
+        "CollectionMethod (F = faucet)": "Faucet at well head",
         "CollectedBy (GR = grab??)": None,
         "Data Source": "NMBGMR",
         "Staff": "Dan Lavery, Sianin Spaur",
@@ -162,6 +162,44 @@ def test_prep_sample_info_reads_headings_with_hints():
     assert prepped["attributes"]["sample_type"] == "SD"
     assert prepped["attributes"]["collection_method"] == "F"
     assert prepped["attributes"]["data_source"] == "NMBGMR"
+
+
+@pytest.mark.parametrize(
+    "written,code",
+    [
+        ("Bailer", "B"),
+        ("Faucet at well head", "F"),
+        ("Grab sample", "G"),
+        ("Faucet or outlet at house", "H"),
+        ("Pump", "P"),
+        ("Thief sampler", "T"),
+        ("Unknown", "U"),
+        # Case and spacing are forgiven.
+        ("faucet AT  well head ", "F"),
+        # The legacy code itself is accepted too.
+        ("F", "F"),
+        ("h", "H"),
+        (" U ", "U"),
+    ],
+)
+def test_collection_method_is_stored_as_its_legacy_code(written, code):
+    prepped = prep_sample_info(
+        _sample_info_row(**{"CollectionMethod (F = faucet)": written})
+    )
+    assert prepped["attributes"]["collection_method"] == code
+
+
+def test_collection_method_outside_the_vocabulary_is_refused():
+    with pytest.raises(FieldParamsMappingError) as exc:
+        prep_sample_info(_sample_info_row(**{"CollectionMethod (F = faucet)": "X"}))
+    assert "not a known collection method" in str(exc.value)
+
+
+def test_collection_method_may_be_left_blank():
+    prepped = prep_sample_info(
+        _sample_info_row(**{"CollectionMethod (F = faucet)": None})
+    )
+    assert "collection_method" not in prepped["attributes"]
 
 
 def test_prep_sample_info_folds_staff_into_notes():
@@ -290,6 +328,7 @@ def test_import_creates_sample_and_field_parameters(
     assert sample.nma_sample_point_id == f"{WELL}A"
     assert sample.collection_date == datetime(2025, 6, 10, 12, 5)
     assert sample.sample_type == "SD"
+    assert sample.collection_method == "F"
 
     parameters = _parameters(sample.id)
     assert {p.field_parameter for p in parameters} == {
@@ -412,6 +451,29 @@ def test_existing_values_are_not_overwritten_but_are_reported(
     (sample,) = _samples()
     assert sample.sample_type == "GW"
     assert any("sample_type" in w for w in result.payload["warnings"])
+
+
+def test_a_legacy_collection_method_code_agrees_with_its_meaning(
+    water_well_thing, _cleanup_field_chemistry
+):
+    """Legacy rows hold "F"; the sheet says "Faucet at well head". Same thing."""
+    with session_ctx() as session:
+        session.add(
+            NMA_Chemistry_SampleInfo(
+                thing_id=water_well_thing.id,
+                nma_sample_point_id=f"{WELL}A",
+                collection_date=datetime(2025, 6, 10, 12, 5),
+                collection_method="F",
+            )
+        )
+        session.commit()
+
+    result = import_field_tables(_tables())
+
+    assert result.exit_code == 0, result.stderr
+    (sample,) = _samples()
+    assert sample.collection_method == "F"
+    assert not any("collection_method" in w for w in result.payload["warnings"])
 
 
 def test_unknown_well_aborts_the_whole_import(

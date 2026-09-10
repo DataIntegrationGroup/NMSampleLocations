@@ -102,6 +102,27 @@ class RawExtract:
         return sum(self.row_counts.values())
 
 
+def _bucket_name(value: str) -> str:
+    """The bucket out of a name or a ``gs://bucket/prefix`` URL."""
+    return value.strip().removeprefix("gs://").strip("/").split("/", 1)[0]
+
+
+def _reject_uploads_bucket(value: str, *, source: str) -> None:
+    """Refuse a raw zone pointing at the API's user-upload bucket.
+
+    Applies to every way a bucket can be named -- the environment variable and
+    an explicit ``--raw-url`` alike. A guard that only covers the default is not
+    a guard: the flag is exactly what someone reaches for when the default is
+    not what they want.
+    """
+    uploads = os.environ.get("GCS_BUCKET_NAME", "").strip()
+    if uploads and _bucket_name(value) == _bucket_name(uploads):
+        raise RawZoneError(
+            f"{source} points at GCS_BUCKET_NAME, the API's user-upload "
+            "bucket. Source payloads must not be written there."
+        )
+
+
 def raw_zone_url(explicit: str | None = None) -> str:
     """Where archives are written, as an fsspec URL.
 
@@ -109,17 +130,15 @@ def raw_zone_url(explicit: str | None = None) -> str:
     bucket, then a local directory.
     """
     if explicit:
-        return explicit.rstrip("/")
+        explicit = explicit.rstrip("/")
+        if explicit.startswith("gs://"):
+            _reject_uploads_bucket(explicit, source="--raw-url")
+        return explicit
 
     bucket = os.environ.get(BUCKET_ENV_VAR, "").strip()
     if bucket:
-        uploads = os.environ.get("GCS_BUCKET_NAME", "").strip()
-        if uploads and bucket == uploads:
-            raise RawZoneError(
-                f"{BUCKET_ENV_VAR} points at GCS_BUCKET_NAME, the API's "
-                "user-upload bucket. Source payloads must not be written there."
-            )
-        bucket = bucket.removeprefix("gs://").strip("/")
+        _reject_uploads_bucket(bucket, source=BUCKET_ENV_VAR)
+        bucket = _bucket_name(bucket)
         return f"gs://{bucket}/{RAW_PREFIX}"
 
     local = os.environ.get(LOCAL_DIR_ENV_VAR, "").strip()
@@ -267,9 +286,12 @@ def read_snapshot(
             )
         load_id = available[-1]
 
+    # Narrowed to the wanted load id rather than listing the dataset and
+    # filtering here: on GCS a listing costs a request per page, and snapshots
+    # accumulate for as long as the archive is kept.
     paths = [
         path
-        for path in fs.glob(f"{root.rstrip('/')}/{dataset}/**/*.parquet")
+        for path in fs.glob(f"{root.rstrip('/')}/{dataset}/**/{load_id}.*.parquet")
         if (match := _LOAD_FILE_RE.search(str(path))) is not None
         and match.group("load_id") == load_id
     ]

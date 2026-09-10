@@ -17,7 +17,9 @@
 (services/ingest_raw_zone.py)."""
 
 from datetime import datetime
+from unittest import mock
 
+import fsspec
 import pytest
 
 from services.chemistry_field_sheet import SheetTable
@@ -89,6 +91,49 @@ def test_raw_zone_url_refuses_the_user_upload_bucket(monkeypatch):
     with pytest.raises(RawZoneError) as exc:
         raw_zone_url()
     assert "user-upload bucket" in str(exc.value)
+
+
+@pytest.mark.parametrize(
+    "explicit",
+    ["gs://ocotillo/oco-raw", "gs://ocotillo", "gs://ocotillo/nested/prefix"],
+)
+def test_raw_url_cannot_route_around_the_upload_bucket_guard(monkeypatch, explicit):
+    """--raw-url is exactly what someone reaches for when the default is wrong."""
+    monkeypatch.setenv("GCS_BUCKET_NAME", "ocotillo")
+    with pytest.raises(RawZoneError) as exc:
+        raw_zone_url(explicit)
+    assert "user-upload bucket" in str(exc.value)
+
+
+def test_raw_url_to_another_bucket_is_fine(monkeypatch):
+    monkeypatch.setenv("GCS_BUCKET_NAME", "ocotillo")
+    assert raw_zone_url("gs://nmbgmr-raw/oco-raw") == "gs://nmbgmr-raw/oco-raw"
+
+
+def test_a_local_raw_url_is_not_checked_against_the_bucket(monkeypatch, tmp_path):
+    monkeypatch.setenv("GCS_BUCKET_NAME", "ocotillo")
+    url = tmp_path.resolve().as_uri()
+    assert raw_zone_url(url) == url
+
+
+def test_reading_a_snapshot_lists_only_that_snapshot(raw_url, pipelines_dir):
+    """A read must not page through every snapshot ever archived."""
+    _archive([_table()], raw_url, pipelines_dir)
+    wanted = _archive([_table(title="FieldParameters")], raw_url, pipelines_dir)
+
+    fs, root = fsspec.core.url_to_fs(raw_url)
+    seen = []
+    original = fs.glob
+
+    def recording_glob(pattern, **kwargs):
+        seen.append(pattern)
+        return original(pattern, **kwargs)
+
+    with mock.patch.object(fs.__class__, "glob", side_effect=recording_glob):
+        read_snapshot(DATASET, wanted.load_id, raw_url=raw_url)
+
+    assert seen, "read_snapshot did not glob at all"
+    assert all(wanted.load_id in pattern for pattern in seen), seen
 
 
 def test_raw_zone_url_falls_back_to_a_local_directory(monkeypatch, tmp_path):

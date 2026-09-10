@@ -60,6 +60,7 @@ from schemas.water_level_csv import (
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 from services.contact_helper import add_contact
+from services.ingest_result import IngestResult
 from services.thing_helper import find_water_wells_by_name
 
 REQUIRED_FIELDS: List[str] = list(WATER_LEVEL_REQUIRED_FIELDS)
@@ -67,12 +68,8 @@ HEADER_ALIASES: dict[str, str] = dict(WATER_LEVEL_HEADER_ALIASES)
 IGNORED_FIELDS: set[str] = set(WATER_LEVEL_IGNORED_FIELDS)
 
 
-@dataclass
-class BulkUploadResult:
-    exit_code: int
-    stdout: str
-    stderr: str
-    payload: dict[str, Any]
+# One shape for every ingest's return value; see services/ingest_result.py.
+BulkUploadResult = IngestResult
 
 
 @dataclass
